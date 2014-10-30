@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="fill_vertical|center"
+    android:orientation="horizontal"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/listview_QuestPrototype_Name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/listview_QuestStartButton"
+        android:gravity="left"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:text="asgashf  jsdh kjasf fdgf hgdgfdfgd hdghfgfh "
+        android:textAlignment="gravity"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/listview_QuestStartButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="6dp"
+        android:text="@string/startQuest" />
+
+</RelativeLayout>

@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="app_name">DrachenMobile</string>
+
+    <string name="username">Username</string>
+
+    <string name="password">Password</string>
+    <string name="server_host">10.0.2.2</string>
+    <string name="please_wait_">Please wait ...</string>
+    <string name="load_QuestPrototype">Downloading available Quests...</string>
+    <string name="startQuest">Start</string>
+    <string name="starting_quest">Starting Quest</string>
+	<string name="your_location">Current Location</string>
+	<string name="greetings">Greetings %1$s</string>
+	<string name="logging_in">Logging in ...</string>
+	<string name="abortQuest">Abort</string>
+	<string name="aborting_quest">Aborting Quest</string>
+	<string name="load_Quests">load Quests</string>
+	<string name="unknown">Unknown</string>
+</resources>

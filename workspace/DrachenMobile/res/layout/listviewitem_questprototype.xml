@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="fill_vertical|center" 
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft">
+
+        <TextView
+            android:id="@+id/listview_QuestPrototype_Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:text="asg"
+            android:textAlignment="gravity"
+            android:textSize="19dp" />
+
+        <Button
+            android:id="@+id/listview_QuestStartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/startQuest" 
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10" >
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/listview_QuestPrototypeDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:text="desc"
+            android:textSize="30px" 
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</LinearLayout>
