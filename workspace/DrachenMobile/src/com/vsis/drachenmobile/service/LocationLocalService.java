@@ -20,6 +20,7 @@ import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
 import com.vsis.drachenmobile.DrachenApplication;
+import com.vsis.drachenmobile.sensor.AccelarationSensor;
 import com.vsis.drachenmobile.sensor.GPSSensor;
 import com.vsis.drachenmobile.sensor.LocationSensor;
 
@@ -52,13 +53,19 @@ public class LocationLocalService extends Service {
 		SensorService sensorService = app.getAppData().getSensorService();
 		GPSSensor gpsSensor = new GPSSensor("GPS Sensor", this);
 		LocationSensor locationSensor = new LocationSensor("GPS Sensor", this);
+		AccelarationSensor accelSensor = new AccelarationSensor(
+				"Accelaration Sensor", this);
+
 		sensorService.registerSensor(SensorType.Position, gpsSensor);
 		sensorService.registerSensor(SensorType.Location, locationSensor);
 		sensorService.setDefaultSensor(SensorType.Position, gpsSensor);
 		sensorService.setDefaultSensor(SensorType.Location, locationSensor);
+		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
+		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
 
 		gpsSensor.start();
 		locationSensor.start();
+		accelSensor.start();
 	}
 
 	@Override
