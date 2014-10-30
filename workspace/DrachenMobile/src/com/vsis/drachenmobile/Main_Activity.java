@@ -101,8 +101,8 @@ public class Main_Activity extends Activity {
 			showLocation(locationService.getCurrentLocation());
 		}
 		ActionBar actionBar = getActionBar();
-		actionBar.setSubtitle("mytest");
-		actionBar.setTitle("vogella.com");
+		actionBar.setSubtitle("");
+		actionBar.setTitle("Drachen!!!");
 	}
 
 	private BroadcastReceiver locationChangedReceiver = new BroadcastReceiver() {
