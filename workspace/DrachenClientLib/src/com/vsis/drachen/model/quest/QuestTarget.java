@@ -3,6 +3,7 @@ package com.vsis.drachen.model.quest;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
+import com.visis.drachen.sensor.data.ISensorData;
 import com.vsis.drachen.model.IdObject;
 
 public abstract class QuestTarget extends IdObject {
@@ -130,10 +131,9 @@ public abstract class QuestTarget extends IdObject {
 	 * 
 	 * @param type
 	 *            Type of the sending sensor
-	 * @param data
-	 *            send by the sensor
+	 * @param data TODO
 	 * @return true if there is an update in the state
 	 */
-	public abstract boolean receiveSensordata(SensorType type, Object... data);
+	public abstract boolean receiveSensordata(SensorType type, ISensorData data);
 
 }

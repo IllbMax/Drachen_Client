@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 
 import com.visis.drachen.sensor.AbstractSensor;
 import com.visis.drachen.sensor.ISensor;
+import com.visis.drachen.sensor.data.AccelarationSensorData;
 
 public class AccelarationSensor extends AbstractSensor implements ISensor {
 
@@ -94,7 +95,7 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		float y = values[1];
 		float z = values[2];
 
-		callListener(x, y, z);
+		callListener(new AccelarationSensorData(x, y, z));
 	}
 
 	protected void useDataOld() {
@@ -102,7 +103,7 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		float y = values[1];
 		float z = values[2];
 
-		callListener(x, y, z);
+		callListener(new AccelarationSensorData(x, y, z));
 	}
 
 	@Override

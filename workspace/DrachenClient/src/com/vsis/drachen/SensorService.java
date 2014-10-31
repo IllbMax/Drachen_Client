@@ -11,6 +11,7 @@ import java.util.Set;
 import com.visis.drachen.sensor.ISensor;
 import com.visis.drachen.sensor.SensorListener;
 import com.visis.drachen.sensor.SensorType;
+import com.visis.drachen.sensor.data.ISensorData;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 
@@ -22,7 +23,7 @@ public class SensorService {
 
 		List<QuestTarget> _questTargets;
 		SensorType _type;
-		Object[] _lastSensorData;
+		ISensorData _lastSensorData;
 
 		public SensorMapItem(SensorType type) {
 			_registeredSensors = new ArrayList<ISensor>();
@@ -92,8 +93,9 @@ public class SensorService {
 		}
 
 		@Override
-		public void newSensorData(Object... data) {
-			System.out.println("recv new newSensorData: " + _type + data);
+		public void newSensorData(ISensorData data) {
+			System.out
+					.println("recv new newSensorData: " + _type + ", " + data);
 			List<QuestTarget> updateTargets = new LinkedList<QuestTarget>();
 			for (QuestTarget qt : _questTargets)
 				if (isTargetTracked(qt) && qt.needsNewSensordata(_type)
@@ -224,7 +226,7 @@ public class SensorService {
 	 * @param data
 	 */
 	protected void sendSensorData(List<QuestTarget> questTargets,
-			SensorType type, Object... data) {
+			SensorType type, ISensorData data) {
 
 		for (QuestTarget qt : questTargets) {
 			// TODO lock for update

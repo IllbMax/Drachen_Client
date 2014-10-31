@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.visis.drachen.sensor.AbstractSensor;
 import com.visis.drachen.sensor.ISensor;
+import com.visis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.service.LocationLocalService;
 
@@ -83,7 +84,8 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 	}
 
 	protected void useData(Location location) {
-		callListener(location.getLatitude(), location.getLongitude());
+		callListener(new GPSSensorData(location.getLatitude(),
+				location.getLongitude()));
 	}
 
 	@Override

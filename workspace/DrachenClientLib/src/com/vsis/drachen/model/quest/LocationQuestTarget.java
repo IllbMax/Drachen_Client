@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
+import com.visis.drachen.sensor.data.ISensorData;
+import com.visis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachen.model.world.Location;
 
 public class LocationQuestTarget extends QuestTarget {
@@ -33,10 +35,11 @@ public class LocationQuestTarget extends QuestTarget {
 	}
 
 	@Override
-	public boolean receiveSensordata(SensorType type, Object... data) {
+	public boolean receiveSensordata(SensorType type, ISensorData data) {
 		assert (type == SensorType.Location);
 
-		Location loc = (Location) data[0];
+		LocationSensorData locdata = (LocationSensorData) data;
+		Location loc = locdata.getLocation();
 		Location p = loc;
 		boolean success = false;
 		do {

@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.visis.drachen.sensor.AbstractSensor;
 import com.visis.drachen.sensor.ISensor;
+import com.visis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.DrachenApplication;
@@ -91,7 +92,7 @@ public class LocationSensor extends AbstractSensor implements ISensor {
 	}
 
 	protected void useData(Location location) {
-		callListener(location);
+		callListener(new LocationSensorData(location));
 	}
 
 	@Override

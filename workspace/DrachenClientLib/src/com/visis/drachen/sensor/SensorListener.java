@@ -1,5 +1,7 @@
 package com.visis.drachen.sensor;
 
+import com.visis.drachen.sensor.data.ISensorData;
+
 public interface SensorListener {
 	/**
 	 * Called if the Sensor receives new data
@@ -7,5 +9,5 @@ public interface SensorListener {
 	 * @param data
 	 *            new data of the sensor
 	 */
-	void newSensorData(Object... data);
+	void newSensorData(ISensorData data);
 }

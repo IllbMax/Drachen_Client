@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
+import com.visis.drachen.sensor.data.AccelarationSensorData;
+import com.visis.drachen.sensor.data.ISensorData;
 
 public class AccelerationQuestTarget extends QuestTarget {
 
@@ -44,12 +46,14 @@ public class AccelerationQuestTarget extends QuestTarget {
 	}
 
 	@Override
-	public boolean receiveSensordata(SensorType type, Object... data) {
+	public boolean receiveSensordata(SensorType type, ISensorData data) {
 		assert (type == SensorType.Position);
 
-		double ax = (double) data[0];
-		double ay = (double) data[1];
-		double az = (double) data[2];
+		AccelarationSensorData accelData = (AccelarationSensorData) data;
+
+		double ax = accelData.getAx();
+		double ay = accelData.getAy();
+		double az = accelData.getAz();
 
 		double sum = ax * ax + ay * ay + az * az;
 		boolean success = lowerBound * lowerBound <= sum

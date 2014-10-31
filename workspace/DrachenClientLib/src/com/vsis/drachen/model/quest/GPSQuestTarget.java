@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
+import com.visis.drachen.sensor.data.GPSSensorData;
+import com.visis.drachen.sensor.data.ISensorData;
 import com.vsis.drachen.model.world.Point;
 import com.vsis.drachen.model.world.Polygon;
 
@@ -35,11 +37,13 @@ public class GPSQuestTarget extends QuestTarget {
 	}
 
 	@Override
-	public boolean receiveSensordata(SensorType type, Object... data) {
+	public boolean receiveSensordata(SensorType type, ISensorData data) {
 		assert (type == SensorType.Position);
 
-		double lat = (double) data[0];
-		double lon = (double) data[1];
+		GPSSensorData gpsdata = (GPSSensorData) data;
+
+		double lat = gpsdata.getLatitude();
+		double lon = gpsdata.getLongitude();
 
 		boolean contains = targetArea.Contains(new Point(lat, lon));
 		// TODO: user contains

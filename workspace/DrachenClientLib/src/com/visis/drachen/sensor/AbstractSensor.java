@@ -3,6 +3,8 @@ package com.visis.drachen.sensor;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.visis.drachen.sensor.data.ISensorData;
+
 public abstract class AbstractSensor implements ISensor {
 
 	protected List<SensorListener> _listerners;
@@ -33,7 +35,7 @@ public abstract class AbstractSensor implements ISensor {
 	 * @param data
 	 *            Objects with the data
 	 */
-	protected void callListener(final Object... data) {
+	protected void callListener(final ISensorData data) {
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				for (SensorListener sl : _listerners) {
