@@ -3,11 +3,16 @@ package com.vsis.drachenmobile;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -15,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.vsis.drachen.model.User;
+import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class Login_Activity extends Activity {
 
@@ -25,7 +31,6 @@ public class Login_Activity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		// TODO Auto-generated method stub
 
 		btnLogin = (Button) findViewById(R.id.btnLogin);
 
@@ -47,6 +52,29 @@ public class Login_Activity extends Activity {
 			}
 		});
 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.loginmenu, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// action with ID action_refresh was selected
+		case R.id.action_pref:
+			Intent intent = new Intent(this, ConnectionSettingsActivity.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
+
+		return true;
 	}
 
 	LocationManager locationManager;
@@ -87,6 +115,14 @@ public class Login_Activity extends Activity {
 					ctx.getString(R.string.please_wait_),
 					ctx.getString(R.string.logging_in), true);
 			ringProgressDialog.setCancelable(true);
+			ringProgressDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					// actually could set running = false; right here, but I'll
+					// stick to contract.
+					boolean success = cancel(true);
+				}
+			});
 		}
 
 		@Override
@@ -99,6 +135,12 @@ public class Login_Activity extends Activity {
 
 			boolean success = client.login(username, password);
 			return success;
+		}
+
+		@Override
+		protected void onCancelled(Boolean result) {
+			super.onCancelled(result);
+			// TODO evtl clean up
 		}
 
 		@Override

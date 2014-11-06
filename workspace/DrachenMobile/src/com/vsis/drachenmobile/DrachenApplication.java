@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.vsis.drachenmobile.service.LocationLocalService;
@@ -19,6 +20,8 @@ public class DrachenApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		PreferenceManager.setDefaultValues(this, R.xml.pref_connection, true);
+
 		appdata = new MyDataSet(this);
 	}
 
