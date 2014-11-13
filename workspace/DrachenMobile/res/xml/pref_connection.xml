@@ -2,17 +2,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <EditTextPreference
-        android:dialogTitle="@string/pref_hostname"
-        android:key="pref_host_name"
-        android:title="@string/pref_hostname" 
-        android:defaultValue="@string/server_host"
+        android:dialogTitle="@string/pref_serverBaseUrl"
+        android:key="pref_base_url"
+        android:title="@string/pref_serverBaseUrl" 
+        android:defaultValue="@string/server_baseURL"
         />
-   
-    <com.vsis.drachenmobile.settings.NumberEditTextPreference
-        android:dialogTitle="@string/pref_hostport"
-        android:key="pref_host_port"
-        android:title="@string/pref_hostport" 
-        android:defaultValue="@integer/server_port"
-        android:inputType="number" />
 
 </PreferenceScreen>

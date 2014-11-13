@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -38,9 +39,7 @@ import com.vsis.net.CookieManager;
 
 public class BlubClient {
 	private CookieManager cookieManager;
-	private String _protocol;
-	private String _host;
-	private int _port;
+	private URL _base;
 
 	public User Login(String username, String password) {
 
@@ -209,7 +208,8 @@ public class BlubClient {
 	private URL getURL(CharSequence scriptname, CharSequence queryPOST)
 			throws MalformedURLException {
 		String paramString = queryPOST.length() == 0 ? "" : ("?" + queryPOST);
-		return new URL(_protocol, _host, _port, "/" + scriptname + paramString);
+		return new URL(_base, scriptname + paramString);
+		// new URL(_protocol, _host, _port, "/" + scriptname + paramString);
 	}
 
 	private URL getURL(CharSequence scriptname,
@@ -258,7 +258,7 @@ public class BlubClient {
 			CharSequence requestParamString) throws IOException,
 			ProtocolException, InterruptedException {
 
-		HttpsURLConnection urlConnection = (HttpsURLConnection) url
+		HttpURLConnection urlConnection = (HttpURLConnection) url
 				.openConnection();
 
 		System.out.println(url.toString());
@@ -310,23 +310,34 @@ public class BlubClient {
 
 	}
 
-	public void initConnection() throws Exception {
-		String host
-		// = "rzssh1";
-		= "localhost";
-		int port = 8443;
-		initConnection(host, port);
-	}
+	// public void initConnection() throws Exception {
+	// String host
+	// // = "rzssh1";
+	// = "localhost";
+	// int port = 8443;
+	// initConnection(host, port);
+	// }
 
-	public void initConnection(String host, int port) throws Exception {
+	/**
+	 * Initializes the client (enables cookies und sets the base url)
+	 * 
+	 * @param base
+	 *            url to the server (eg. "https://example.org" or
+	 *            "http://sub.example.com:80/path/to/dir/")
+	 * @throws Exception
+	 */
+	public void initConnection(URL base) throws Exception {
 
-		_protocol = "https";
+		if (base == null)
+			throw new NullPointerException("base");
+		// _protocol = "https";
 		// _host = "rzssh1";
 		// _host = "localhost";
 		// _host = "10.0.2.2";
 		// _port = 8443;
-		_host = host;
-		_port = port;
+		// _host = host;
+		// _port = port;
+		_base = base;
 
 		java.net.CookieManager def = new java.net.CookieManager();
 		java.net.CookieHandler.setDefault(def);

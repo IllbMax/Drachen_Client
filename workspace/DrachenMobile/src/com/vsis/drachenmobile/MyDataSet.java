@@ -1,5 +1,7 @@
 package com.vsis.drachenmobile;
 
+import java.net.URL;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -37,14 +39,16 @@ public class MyDataSet {
 	private void initClient() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(ctx);
-		String host = pref.getString(ConnectionSettingsActivity.KEY_PREF_HOST_NAME, "");
-		int port = Integer.parseInt(pref.getString(
-				ConnectionSettingsActivity.KEY_PREF_HOST_PORT, "0"));
-		// String host = ctx.getResources().getString(R.string.server_host);
-		// int port = ctx.getResources().getInteger(R.integer.server_port);
+
+		String baseStr = pref.getString(
+				ConnectionSettingsActivity.KEY_PREF_BASE_URL, ctx
+						.getResources().getString(R.string.server_baseURL));
+		baseStr = baseStr.trim();
 
 		try {
-			client.initConnection(host, port);
+			URL baseUrl = new URL(baseStr);
+
+			client.initConnection(baseUrl);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

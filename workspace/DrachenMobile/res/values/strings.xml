@@ -5,7 +5,7 @@
     <string name="username">Username</string>
 
     <string name="password">Password</string>
-    <string name="server_host">10.0.2.2</string>
+    <string name="server_baseURL">https://10.0.2.2:8443</string>
     <string name="please_wait_">Please wait ...</string>
     <string name="load_QuestPrototype">Downloading available Quests...</string>
     <string name="startQuest">Start</string>
@@ -17,6 +17,6 @@
 	<string name="aborting_quest">Aborting Quest</string>
 	<string name="load_Quests">load Quests</string>
 	<string name="unknown">Unknown</string>
-	<string name="pref_hostname">Host name</string>
+	<string name="pref_serverBaseUrl">Server: Base URL</string>
 	<string name="pref_hostport">Host port</string>
 </resources>

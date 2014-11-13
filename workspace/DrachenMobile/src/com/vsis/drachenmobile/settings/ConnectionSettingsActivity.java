@@ -8,8 +8,7 @@ import com.vsis.drachenmobile.R;
 
 public class ConnectionSettingsActivity extends Activity {
 
-	public static final String KEY_PREF_HOST_NAME = "pref_host_name";
-	public static final String KEY_PREF_HOST_PORT = "pref_host_port";
+	public static final String KEY_PREF_BASE_URL = "pref_base_url";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

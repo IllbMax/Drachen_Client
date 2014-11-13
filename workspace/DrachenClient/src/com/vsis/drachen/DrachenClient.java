@@ -1,5 +1,6 @@
 package com.vsis.drachen;
 
+import java.net.URL;
 import java.util.List;
 
 import com.vsis.drachen.model.User;
@@ -16,7 +17,7 @@ public class DrachenClient {
 		BlubClient blub = new BlubClient();
 
 		try {
-			blub.initConnection();
+			blub.initConnection(new URL("localhost:8080"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
