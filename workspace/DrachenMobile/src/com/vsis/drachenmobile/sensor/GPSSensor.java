@@ -90,13 +90,11 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 
 	@Override
 	public boolean isPaused() {
-		// TODO Auto-generated method stub
-		return false;
+		return !_running;
 	}
 
 	@Override
 	public boolean isStopped() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -216,21 +216,21 @@ public class SensorManager_Activity extends Activity {
 		public View getView(final int position, View convertView,
 				ViewGroup parent) {
 
-			if (convertView != null) {
+			if (convertView == null) {
 				LayoutInflater inflater = (LayoutInflater) SensorManager_Activity.this
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflater.inflate(
-						R.layout.listviewitem_questprototype, parent, false);
+						R.layout.listviewitem_sensortype, parent, false);
 			}
 			TextView textViewSensorType = (TextView) convertView
 					.findViewById(R.id.textView_SensorType);
 			TextView textViewSensorName = (TextView) convertView
 					.findViewById(R.id.textView_SelectedSensor);
-			TextView textViewStatus = (TextView) convertView
+			final TextView textViewStatus = (TextView) convertView
 					.findViewById(R.id.textView_SensorStatus);
 			Button butttonDetails = (Button) convertView
 					.findViewById(R.id.button_details);
-			MultiStateToggleButton stateButton = (MultiStateToggleButton) convertView
+			final MultiStateToggleButton stateButton = (MultiStateToggleButton) convertView
 					.findViewById(R.id.mstb_multi_id);
 
 			SensorService sensorService = ((DrachenApplication) SensorManager_Activity.this
@@ -242,26 +242,12 @@ public class SensorManager_Activity extends Activity {
 			if (sensor == null) {
 				// DO something
 				textViewSensorName.setText(" --- ");
-				textViewStatus.setText(" --- ");
-				stateButton.setVisibility(View.GONE);
 
 			} else {
-				stateButton.setVisibility(sensor.isAvailable() ? View.VISIBLE
-						: View.INVISIBLE);
-				// TODO: use resources for Enum (SensorType) naming
 				textViewSensorName.setText(sensor.getName());
-				// TODO: define resource for SensorStatus
-				String status = "";
-				if (!sensor.isAvailable())
-					status = "not available";
-				else if (sensor.isStopped())
-					status = "stopped";
-				else if (sensor.isPaused())
-					status = "paused";
-				else
-					status = "running";
-				textViewStatus.setText(status);
+
 			}
+			showStatus(sensor, stateButton, textViewStatus);
 			butttonDetails.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -271,24 +257,63 @@ public class SensorManager_Activity extends Activity {
 
 			});
 			stateButton.setOnValueChangedListener(new OnValueChangedListener() {
+				boolean dontset = false;
 
 				@Override
 				public void onValueChanged(int value) {
-					if (!sensor.isAvailable())
+					if (sensor == null || !sensor.isAvailable())
 						return;
+					if (dontset) {
 
-					if (value == 0) // stop
-						sensor.stop();
-					else if (value == 1) // pause
-						sensor.pause();
-					else if (value == 2) // start
-						sensor.start();
+						dontset = false;
+					} else {
+						if (value == 0) // stop
+							sensor.stop();
+						else if (value == 1) // pause
+							sensor.pause();
+						else if (value == 2) // start
+							sensor.start();
+
+						dontset = true;
+						showStatus(sensor, stateButton, textViewStatus);
+						dontset = false;
+					}
+
+					// TODO: if start()/stope() gets async do something
+
 				}
 			});
 			return convertView;
 		}
 
-		@Override
+		private void showStatus(ISensor sensor,
+				MultiStateToggleButton stateButton, TextView textViewStatus) {
+			if (sensor == null) {
+				textViewStatus.setText(" --- ");
+				stateButton.setVisibility(View.GONE);
+
+			} else {
+				stateButton.setVisibility(sensor.isAvailable() ? View.VISIBLE
+						: View.INVISIBLE);
+				// TODO: use resources for Enum (SensorType) naming
+				// TODO: define resource for SensorStatus
+				String status = "";
+				if (!sensor.isAvailable()) {
+					status = "not available";
+				} else if (sensor.isStopped()) {
+					status = "stopped";
+					stateButton.setValue(0);
+				} else if (sensor.isPaused()) {
+					status = "paused";
+					stateButton.setValue(1);
+				} else {
+					status = "running";
+					stateButton.setValue(2);
+				}
+				textViewStatus.setText(status);
+			}
+		}
+
 		public long getItemId(int position) {
 			SensorType item = getItem(position);
 			return mIdMap.get(item);
