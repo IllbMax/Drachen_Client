@@ -1,12 +1,17 @@
 package com.vsis.drachenmobile;
 
+import java.net.URL;
+
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.vsis.drachen.BlubClient;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.User;
+import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class MyDataSet {
 	/**
@@ -21,21 +26,37 @@ public class MyDataSet {
 	private QuestService questService;
 	private SensorService sensorService;
 
+	Context ctx;
+
 	public MyDataSet(Context ctx) {
 		// to enable all the cookies
-		String host = ctx.getResources().getString(R.string.server_host);
-		int port = ctx.getResources().getInteger(R.integer.server_port);
 		client = new BlubClient();
 
-		try {
-			client.initConnection(host, port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.ctx = ctx;
 
 	}
 
+	private void initClient() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(ctx);
+
+		String baseStr = pref.getString(
+				ConnectionSettingsActivity.KEY_PREF_BASE_URL, ctx
+						.getResources().getString(R.string.server_baseURL));
+		baseStr = baseStr.trim();
+
+		try {
+			URL baseUrl = new URL(baseStr);
+
+			client.initConnection(baseUrl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public boolean login(String username, String password) {
+		initClient();
+
 		// TODO: fix wrong username/password
 		User user = client.Login(username, password);
 		locationService = new LocationService(client);

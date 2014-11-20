@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:dialogTitle="@string/pref_serverBaseUrl"
+        android:key="pref_base_url"
+        android:title="@string/pref_serverBaseUrl" 
+        android:defaultValue="@string/server_baseURL"
+        />
+
+</PreferenceScreen>
