@@ -20,8 +20,8 @@
             android:layout_gravity="left|top"
             android:layout_row="0"
             android:ems="10"
-            android:inputType="textPersonName" 
-            android:textColor="@android:color/white"/>
+            android:inputType="textPersonName"
+            android:textColor="@android:color/white" />
 
         <EditText
             android:id="@+id/editTextPassword"
@@ -30,8 +30,8 @@
             android:layout_gravity="left|top"
             android:layout_row="1"
             android:ems="10"
-            android:inputType="textPassword" 
-            android:textColor="@android:color/white"/>
+            android:inputType="textPassword"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/textView1"
@@ -59,7 +59,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Login"
+            android:text="@string/login"
             android:textColor="@android:color/white"
             android:textSize="25sp"
             android:textStyle="bold" />
@@ -69,16 +69,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Singin"
+            android:text="@string/register"
             android:textColor="@android:color/white"
             android:textSize="25sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <ExpandableListView
-        android:id="@+id/expandableListView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ExpandableListView>
 
 </LinearLayout>

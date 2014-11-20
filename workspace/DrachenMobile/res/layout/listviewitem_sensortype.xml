@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView_SensorType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SensorType"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textView_SelectedSensor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default-Sensorname" />
+        </LinearLayout>
+
+        <Button
+            android:layout_alignParentRight="true"
+            android:id="@+id/button_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView_SensorStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SensorStatus (Stopped, Paused, Running)" />
+
+    <org.honorato.multistatetogglebutton.MultiStateToggleButton
+        android:id="@+id/mstb_multi_id"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dip"
+        android:layout_weight="0.72"
+        android:entries="@array/sensorState_array" 
+        />
+
+</LinearLayout>

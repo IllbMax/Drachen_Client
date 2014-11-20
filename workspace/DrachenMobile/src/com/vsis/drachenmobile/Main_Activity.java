@@ -57,28 +57,21 @@ public class Main_Activity extends Activity {
 			}
 		});
 
+		btn = (Button) findViewById(R.id.button_main_SensorManager);
+		btn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(Main_Activity.this,
+						SensorManager_Activity.class);
+				startActivity(intent);
+			}
+		});
+
 		DrachenApplication app = (DrachenApplication) getApplication();
-		LocationService locationService = app.getAppData().getLocationService();
 		User user = app.getAppData().getUser();
 
-		// locationService.RegisterListener(new LocationChanged() {
-		//
-		// @Override
-		// public void Changed(Location oldLocation, final Location newLocation)
-		// {
-		// runOnUiThread(new Runnable() {
-		// public void run() {
-		// showLocation(newLocation);
-		// }
-		// });
-		//
-		// }
-		// });
 		TextView textView = (TextView) findViewById(R.id.textView_yourLocation);
-		// String name = user.getLocation() != null ?
-		// user.getLocation().getName()
-		// : "Unknown";
-		// textView.setText(name);
 		textView = (TextView) findViewById(R.id.textView_Main_title);
 		textView.setText(String.format(getString(R.string.greetings),
 				user.getDisplayName()));

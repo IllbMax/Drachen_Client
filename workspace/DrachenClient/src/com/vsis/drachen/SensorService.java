@@ -17,6 +17,10 @@ import com.vsis.drachen.model.quest.QuestTarget;
 
 public class SensorService {
 
+	public interface OnQuestTargetChangedListener {
+		void onQuestTargetChanged(QuestTarget qt);
+	}
+
 	class SensorMapItem implements SensorListener {
 		List<ISensor> _registeredSensors;
 		private ISensor _defaultSensor;
@@ -79,9 +83,11 @@ public class SensorService {
 				unregisterDefaultListener();
 
 			this._defaultSensor = sensor;
-			if (!_registeredSensors.contains(sensor))
-				_registeredSensors.add(sensor);
-			registerDefaultListener();
+			if (sensor != null) {
+				if (!_registeredSensors.contains(sensor))
+					_registeredSensors.add(sensor);
+				registerDefaultListener();
+			}
 		}
 
 		private void registerDefaultListener() {
@@ -118,6 +124,7 @@ public class SensorService {
 			SensorType.class);
 
 	Set<QuestTarget> _trackedQuests = new HashSet<>();
+	List<OnQuestTargetChangedListener> _questTargetListeners = new ArrayList<>();
 
 	public SensorService(BlubClient client) {
 		_client = client;
@@ -131,6 +138,21 @@ public class SensorService {
 		for (SensorType st : SensorType.values()) {
 			_map.put(st, new SensorMapItem(st));
 		}
+	}
+
+	public void registerQuestTargetChangedListener(
+			OnQuestTargetChangedListener lst) {
+		_questTargetListeners.add(lst);
+	}
+
+	public void unregisterQuestTargetChangedListener(
+			OnQuestTargetChangedListener lst) {
+		_questTargetListeners.remove(lst);
+	}
+
+	private void CallOnQuestTargetChangedListerns(QuestTarget qt) {
+		for (OnQuestTargetChangedListener lst : _questTargetListeners)
+			lst.onQuestTargetChanged(qt);
 	}
 
 	public void registerSensor(SensorType type, ISensor sensor) {
@@ -229,7 +251,6 @@ public class SensorService {
 			SensorType type, ISensorData data) {
 
 		for (QuestTarget qt : questTargets) {
-			// TODO lock for update
 			synchronized (qt) {
 				boolean update = qt.receiveSensordata(type, data);
 				System.out.println(qt.getName() + ": " + update);
@@ -238,8 +259,9 @@ public class SensorService {
 					// TODO: if false return qt to previous state
 					System.out.println(qt.getName() + ", Server: " + su);
 
-					// TODO: if true notify System that there is a
-
+					// TODO: if true notify System that there is a change
+					if (su)
+						CallOnQuestTargetChangedListerns(qt);
 				}
 			}
 

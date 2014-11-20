@@ -38,6 +38,10 @@
             <intent-filter>
             </intent-filter>
         </activity>
+        <activity android:name="com.vsis.drachenmobile.SensorManager_Activity" >
+            <intent-filter>
+            </intent-filter>
+        </activity>
         <activity android:name="com.vsis.drachenmobile.Login_Activity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensorState_array"><item>stopped</item><item>paused</item><item>running</item></string-array>
+</resources>

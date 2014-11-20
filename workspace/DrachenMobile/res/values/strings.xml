@@ -17,4 +17,6 @@
 	<string name="aborting_quest">Aborting Quest</string>
 	<string name="load_Quests">load Quests</string>
 	<string name="unknown">Unknown</string>
+	<string name="register">Register</string>
+	<string name="login">Login</string>
 </resources>
