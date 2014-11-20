@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -195,9 +196,10 @@ public class SensorManager_Activity extends Activity {
 	}
 
 	private void showDetails(SensorType item) {
-		// Intent intent = new Intent(this, Sensor_details_Activity.class);
-		// intent.putExtra("sensorType", item.ordinal());
-		// startActivity(intent);
+		Intent intent = new Intent(this, Sensor_details_Activity.class);
+		intent.putExtra(Sensor_details_Activity.EXTRA_SENSORTYPE,
+				item.ordinal());
+		startActivity(intent);
 	}
 
 	private class SensorTypeArrayAdapter extends ArrayAdapter<SensorType> {
