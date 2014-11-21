@@ -1,6 +1,7 @@
 package com.vsis.drachenmobile;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -157,8 +158,16 @@ public class Login_Activity extends Activity {
 						Main_Activity.class);
 
 				startActivity(intent);
+				ringProgressDialog.dismiss();
+			} else {
+				ringProgressDialog.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						Login_Activity.this);
+				builder.setTitle("Login failed.");
+				builder.setMessage("Please try again.");
+				builder.show();
 			}
-			ringProgressDialog.dismiss();
+
 		}
 	};
 

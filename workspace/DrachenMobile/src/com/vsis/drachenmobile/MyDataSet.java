@@ -59,15 +59,19 @@ public class MyDataSet {
 
 		// TODO: fix wrong username/password
 		User user = client.Login(username, password);
-		locationService = new LocationService(client);
-		questService = new QuestService(client);
-		sensorService = new SensorService(client);
+		if (user != null) {
+			locationService = new LocationService(client);
+			questService = new QuestService(client);
+			sensorService = new SensorService(client);
 
-		setUser(user);
+			setUser(user);
 
-		locationService.loadLocations();
+			locationService.loadLocations();
+			return true;
+		} else {
 
-		return true;
+			return false;
+		}
 	}
 
 	public User getUser() {

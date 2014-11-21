@@ -16,6 +16,7 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 	// private long _lastLocationReciev;
 	private Service _context;
 	private boolean _running;
+
 	private final SensorManager sensorService;
 	private float[] values;
 
@@ -108,13 +109,11 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 
 	@Override
 	public boolean isPaused() {
-		// TODO Auto-generated method stub
-		return false;
+		return !_running;
 	}
 
 	@Override
 	public boolean isStopped() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
