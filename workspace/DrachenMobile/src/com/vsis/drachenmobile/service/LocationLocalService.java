@@ -58,9 +58,10 @@ public class LocationLocalService extends Service {
 
 		sensorService.registerSensor(SensorType.Position, gpsSensor);
 		sensorService.registerSensor(SensorType.Location, locationSensor);
+		sensorService.registerSensor(SensorType.Accelaration, accelSensor);
+
 		sensorService.setDefaultSensor(SensorType.Position, gpsSensor);
 		sensorService.setDefaultSensor(SensorType.Location, locationSensor);
-		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
 		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
 
 		gpsSensor.start();
