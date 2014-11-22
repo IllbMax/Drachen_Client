@@ -117,6 +117,14 @@ public class QuestService {
 		return success;
 	}
 
+	public boolean finishQuest(int questId) {
+		Boolean success = client.FinishQuest(questId);
+		// TODO: check for success
+		// Quest quest = removeQuestFromMap(questId);
+		// user.finishQuest(quest);
+		return success;
+	}
+
 	public Quest getQuestFromId(int questId) {
 		return questIdMap.get(questId);
 	}

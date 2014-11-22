@@ -152,6 +152,25 @@ public class BlubClient {
 
 	}
 
+	public Boolean FinishQuest(int questId) {
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("questId", questId);
+
+			return loadFormGson("finishQuest", param, Boolean.class);
+		} catch (InterruptedException e) {
+			return false;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public Boolean UpdateQuestTarget(QuestTarget questTarget) {
 		try {
 

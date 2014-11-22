@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +23,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.model.quest.Quest;
@@ -48,8 +49,7 @@ public class Quest_overview_Activity extends Activity {
 						// showQuestdetails(null);
 						Object obj = arg0.getItemAtPosition(arg2);
 						if (obj instanceof Quest) {
-							Quest quest = (Quest) obj;
-							showQuestdetails(quest);
+							questMenu((Quest) obj);
 						} else {
 							// no quest (only detail)
 						}
@@ -75,13 +75,18 @@ public class Quest_overview_Activity extends Activity {
 				.getExpandableListAdapter();
 	}
 
+	private void finishQuest(Quest quest) {
+
+		QuestFinishTask task = new QuestFinishTask(quest);
+		task.execute();
+
+	}
+
 	private void abortQuest(Quest quest) {
 
 		QuestAbortTask task = new QuestAbortTask(quest);
 		task.execute();
 
-		Toast.makeText(this, "clicked " + quest.getId(), Toast.LENGTH_SHORT)
-				.show();
 	}
 
 	private void showQuestdetails(Quest quest) {
@@ -91,6 +96,47 @@ public class Quest_overview_Activity extends Activity {
 				Quest_details_Activity.class);
 		intent.putExtra(Quest_details_Activity.EXTRA_QUESTID, quest.getId());
 		startActivity(intent);
+	}
+
+	private void questMenu(final Quest quest) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		final List<String> items = new ArrayList<String>();
+		// action as work around for java's 1.6 lack of function points
+		final List<Integer> action = new ArrayList<Integer>();
+		if (!quest.getFinished()) {
+			if (quest.isFulfilled()) {
+				items.add(this.getResources().getString(R.string.finshQuest));
+				action.add(0);
+			}
+
+			items.add(this.getResources().getString(R.string.abortQuest));
+			action.add(1);
+		}
+
+		items.add(this.getResources().getString(R.string.details));
+		action.add(2);
+		builder.setTitle(quest.getName()).setItems(
+				items.toArray(new String[] {}),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						switch (action.get(which)) {
+						case 0:
+							finishQuest(quest);
+							break;
+						case 1:
+							abortQuest(quest);
+							break;
+						case 2:
+							showQuestdetails(quest);
+							break;
+						}
+
+					}
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
+
 	}
 
 	private class QuestExpListAdapter extends
@@ -257,6 +303,56 @@ public class Quest_overview_Activity extends Activity {
 
 			} else {
 				// TODO: error: no Quest aborted
+			}
+
+			ringProgressDialog.dismiss();
+		}
+	}
+
+	private class QuestFinishTask extends AsyncTask<Void, Void, Boolean> {
+
+		private ProgressDialog ringProgressDialog;
+		private Quest quest;
+
+		public QuestFinishTask(Quest quest) {
+			this.quest = quest;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			Context ctx = Quest_overview_Activity.this;
+			ringProgressDialog = ProgressDialog.show(
+					ctx,
+					ctx.getString(R.string.please_wait_),
+					ctx.getString(R.string.finishing_quest) + ": "
+							+ quest.getName(), true);
+			ringProgressDialog.setCancelable(true);
+
+		}
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			MyDataSet appData = ((DrachenApplication) getApplication())
+					.getAppData();
+			QuestService questService = appData.getQuestService();
+
+			boolean result = questService.finishQuest(quest.getId());
+
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+
+			if (result != null) {
+				_questAdapter.removeGroup(quest);
+				_questAdapter.notifyDataSetChanged();
+
+			} else {
+				// TODO: error: no Quest finished
 			}
 
 			ringProgressDialog.dismiss();
