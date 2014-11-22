@@ -143,7 +143,7 @@ public class QuestService {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// no resources, all done
 
 	}
 

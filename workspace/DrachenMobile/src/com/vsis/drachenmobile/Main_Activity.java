@@ -21,9 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.User;
@@ -175,22 +173,19 @@ public class Main_Activity extends Activity {
 
 	}
 
-	private void logout() {
-
-		String username = ((EditText) findViewById(R.id.editTextUsername))
-				.getText().toString();
-		String password = ((EditText) findViewById(R.id.editTextPassword))
-				.getText().toString();
-
-		Toast.makeText(this, username + "/" + password, Toast.LENGTH_LONG)
-				.show();
-
-		LogoutTask task = new LogoutTask();
-		task.execute(username, password);
-
+	@Override
+	public void onBackPressed() {
+		logout();
+		// the super call is in the logout task
+		// super.onBackPressed();
 	}
 
-	class LogoutTask extends AsyncTask<String, Void, Boolean> {
+	private void logout() {
+		LogoutTask task = new LogoutTask();
+		task.execute();
+	}
+
+	class LogoutTask extends AsyncTask<Void, Void, Boolean> {
 
 		private ProgressDialog ringProgressDialog;
 
@@ -213,10 +208,7 @@ public class Main_Activity extends Activity {
 		}
 
 		@Override
-		protected Boolean doInBackground(String... params) {
-			String username = params[0];
-			String password = params[1];
-
+		protected Boolean doInBackground(Void... params) {
 			DrachenApplication app = (DrachenApplication) getApplication();
 			MyDataSet client = app.getAppData();
 
@@ -234,22 +226,16 @@ public class Main_Activity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
 			if (result) {
-
-				DrachenApplication app = (DrachenApplication) getApplication();
-				User user = app.getAppData().getUser();
-
-				app.startDrachenServices();
-
-				Intent intent = new Intent(Main_Activity.this,
-						Login_Activity.class);
-
-				startActivity(intent);
 				ringProgressDialog.dismiss();
+
+				// Main_Activity.this.finish();
+				Main_Activity.super.onBackPressed();
+
 			} else {
 				ringProgressDialog.dismiss();
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						Login_Activity.this);
-				builder.setTitle("Login failed.");
+						Main_Activity.this);
+				builder.setTitle("Logout failed.");
 				builder.setMessage("Please try again.");
 				builder.show();
 			}

@@ -81,8 +81,9 @@ public class MyDataSet {
 			locationService.dispose();
 			sensorService.dispose();
 			questService.dispose();
+
 		}
-		return false;
+		return success;
 	}
 
 	public User getUser() {

@@ -72,6 +72,20 @@ public class SensorService {
 			_registeredSensors.remove(sensor);
 		}
 
+		public void dispose() {
+			unregisterDefaultListener();
+
+			for (ISensor sensor : _registeredSensors) {
+				if (sensor != null) {
+					try {
+						sensor.stop();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		}
+
 		public ISensor getDefaultSensor() {
 			return _defaultSensor;
 		}
@@ -91,11 +105,13 @@ public class SensorService {
 		}
 
 		private void registerDefaultListener() {
-			_defaultSensor.addListerner(this);
+			if (_defaultSensor != null)
+				_defaultSensor.addListerner(this);
 		}
 
 		private void unregisterDefaultListener() {
-			_defaultSensor.removeListerner(this);
+			if (_defaultSensor != null)
+				_defaultSensor.removeListerner(this);
 		}
 
 		@Override
@@ -269,7 +285,10 @@ public class SensorService {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// stop all sensors
+		for (SensorMapItem item : _map.values()) {
+			item.dispose();
+		}
 
 	}
 

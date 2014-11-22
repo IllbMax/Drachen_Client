@@ -155,7 +155,7 @@ public class LocationService {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// no resources, so all done
 
 	}
 }
