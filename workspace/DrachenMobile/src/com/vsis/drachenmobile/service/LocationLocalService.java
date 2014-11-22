@@ -43,6 +43,10 @@ public class LocationLocalService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		// initialize();
+	}
+
+	public void initialize() {
 		DrachenApplication app = (DrachenApplication) getApplication();
 		locationService = app.getAppData().getLocationService();
 
@@ -71,6 +75,7 @@ public class LocationLocalService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		initialize();
 		return START_STICKY;
 	}
 

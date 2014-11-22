@@ -11,14 +11,40 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/listview_abortButton"
+        android:layout_toStartOf="@+id/listview_status"
         android:gravity="left"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:text="asgashf  jsdh kjasf fdgf hgdgfdfgd hdghfgfh "
         android:textAlignment="gravity"
         android:textSize="15sp" />
-/>
 
+
+     <TextView
+        android:id="@+id/textview_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+
+        android:layout_centerVertical="true"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="6dp"
+        android:text="fin" 
+        />
+<!-- 
+     <TextView
+        android:id="@+id/listview_status2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="right|center_vertical"
+                android:layout_below="@+id/listview_status"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="6dp"
+        android:text="Beendet2" 
+        />
+    
     <Button
         android:id="@+id/listview_abortButton"
         android:layout_width="wrap_content"
@@ -40,8 +66,8 @@
         android:layout_gravity="right|center_vertical"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="6dp" 
-        />
+        android:visibility="invisible"/>
 
-  
+  --> 
 
 </RelativeLayout>

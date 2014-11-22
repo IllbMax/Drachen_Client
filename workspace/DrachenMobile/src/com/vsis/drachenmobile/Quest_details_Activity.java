@@ -22,6 +22,7 @@ import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
+import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class Quest_details_Activity extends Activity {
@@ -177,23 +178,34 @@ public class Quest_details_Activity extends Activity {
 			}
 			final TextView textViewName = (TextView) convertView
 					.findViewById(R.id.listview_label_Questname);
-			Button butttonAbort = (Button) convertView
-					.findViewById(R.id.listview_abortButton);
-			CheckBox checkBox = (CheckBox) convertView
-					.findViewById(R.id.listview_Quest_checkSonsorOn);
+			final TextView textViewStatus = (TextView) convertView
+					.findViewById(R.id.textview_status);
+
+			// Button buttonAbort = (Button) convertView
+			// .findViewById(R.id.listview_abortButton);
+			// CheckBox sensorOn = (CheckBox) convertView
+			// .findViewById(R.id.listview_Quest_checkSonsorOn);
 
 			textViewName.setText(questTarget.getName());
-			butttonAbort.setFocusable(false);
-			checkBox.setFocusable(false);
-			checkBox.setChecked(questTarget.isFulfilled());
-			butttonAbort.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO: start sensors
-				}
-
-			});
+			textViewStatus.setText(Helper.getProgressDisplayText(
+					Quest_details_Activity.this, questTarget.isFinished(),
+					questTarget.getProgress()));
+			textViewStatus.setTextColor(Helper.getProgressDisplayColor(
+					Quest_details_Activity.this, questTarget.isFinished(),
+					questTarget.getProgress()));
+			// buttonAbort.setFocusable(false);
+			// buttonAbort.setVisibility(View.VISIBLE);
+			// sensorOn.setFocusable(false);
+			// sensorOn.setVisibility(View.INVISIBLE);
+			//
+			// buttonAbort.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// abortQuest(quest);
+			// }
+			//
+			// });
 
 			return convertView;
 		}

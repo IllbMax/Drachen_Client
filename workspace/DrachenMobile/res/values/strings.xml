@@ -15,7 +15,7 @@
 	<string name="logging_in">Logging in ...</string>
 	<string name="abortQuest">Abort</string>
 	<string name="finshQuest">Finish</string>
-	<string name="details">Detials</string>
+	<string name="details">Details</string>
 	<string name="aborting_quest">Aborting Quest</string>
 	<string name="finishing_quest">Finishing Quest</string>
 	<string name="load_Quests">load Quests</string>
@@ -25,4 +25,8 @@
 	<string name="pref_serverBaseUrl">Server: Base URL</string>
 	<string name="pref_hostport">Host port</string>
 
+	<string name="status_ongoing">ongoing</string>
+    <string name="status_failed">failed</string>
+    <string name="status_succeeded">succeeded</string>
+    <string name="status_succeededFin">finished</string>
 </resources>

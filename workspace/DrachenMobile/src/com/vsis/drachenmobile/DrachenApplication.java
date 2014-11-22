@@ -2,6 +2,7 @@ package com.vsis.drachenmobile;
 
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
@@ -36,7 +37,7 @@ public class DrachenApplication extends Application {
 
 		Intent service = new Intent(this, LocationLocalService.class);
 		startService(service);
-		// bindService(service, serviceConnection, Context.BIND_AUTO_CREATE);
+		bindService(service, serviceConnection, Context.BIND_AUTO_CREATE);
 		// Intent intent = new Intent(this, StartServicesReciver.class);
 		// sendBroadcast(intent);
 	}

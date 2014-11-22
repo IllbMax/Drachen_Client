@@ -15,17 +15,15 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class Quest_overview_Activity extends Activity {
@@ -104,7 +102,7 @@ public class Quest_overview_Activity extends Activity {
 		final List<String> items = new ArrayList<String>();
 		// action as work around for java's 1.6 lack of function points
 		final List<Integer> action = new ArrayList<Integer>();
-		if (!quest.getFinished()) {
+		if (!quest.isFinished()) {
 			if (quest.isFulfilled()) {
 				items.add(this.getResources().getString(R.string.finshQuest));
 				action.add(0);
@@ -187,25 +185,34 @@ public class Quest_overview_Activity extends Activity {
 			}
 			final TextView textViewName = (TextView) convertView
 					.findViewById(R.id.listview_label_Questname);
-			Button buttonAbort = (Button) convertView
-					.findViewById(R.id.listview_abortButton);
-			CheckBox sensorOn = (CheckBox) convertView
-					.findViewById(R.id.listview_Quest_checkSonsorOn);
+			final TextView textViewStatus = (TextView) convertView
+					.findViewById(R.id.textview_status);
+
+			// Button buttonAbort = (Button) convertView
+			// .findViewById(R.id.listview_abortButton);
+			// CheckBox sensorOn = (CheckBox) convertView
+			// .findViewById(R.id.listview_Quest_checkSonsorOn);
 
 			textViewName.setText(quest.getName());
-			buttonAbort.setFocusable(false);
-			buttonAbort.setVisibility(View.VISIBLE);
-			sensorOn.setFocusable(false);
-			sensorOn.setVisibility(View.INVISIBLE);
-
-			buttonAbort.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					abortQuest(quest);
-				}
-
-			});
+			textViewStatus.setText(Helper.getProgressDisplayText(
+					Quest_overview_Activity.this, quest.isFinished(),
+					quest.getProgress()));
+			textViewStatus.setTextColor(Helper.getProgressDisplayColor(
+					Quest_overview_Activity.this, quest.isFinished(),
+					quest.getProgress()));
+			// buttonAbort.setFocusable(false);
+			// buttonAbort.setVisibility(View.VISIBLE);
+			// sensorOn.setFocusable(false);
+			// sensorOn.setVisibility(View.INVISIBLE);
+			//
+			// buttonAbort.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// abortQuest(quest);
+			// }
+			//
+			// });
 
 			return convertView;
 		}

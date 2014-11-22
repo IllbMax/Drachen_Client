@@ -36,7 +36,7 @@ public class Quest extends IdObject {
 		return getProgress() == QuestProgressStatus.Succeeded;
 	}
 
-	public boolean getFinished() {
+	public boolean isFinished() {
 		return finished;
 	}
 
