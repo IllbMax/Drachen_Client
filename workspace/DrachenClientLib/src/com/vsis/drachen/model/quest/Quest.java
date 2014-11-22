@@ -103,7 +103,7 @@ public class Quest extends IdObject {
 		for (QuestTarget qt : questTargets) {
 			if (qt.getProgress() == QuestProgressStatus.Failed)
 				return QuestProgressStatus.Failed;
-			else if (qt.getProgress() == QuestProgressStatus.Succeeded)
+			else if (qt.getProgress() != QuestProgressStatus.Succeeded)
 				succeeded = false;
 		}
 		if (succeeded)
