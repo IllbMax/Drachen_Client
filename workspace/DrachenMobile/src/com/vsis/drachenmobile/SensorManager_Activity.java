@@ -300,8 +300,10 @@ public class SensorManager_Activity extends Activity {
 				// TODO: use resources for Enum (SensorType) naming
 				// TODO: define resource for SensorStatus
 				String status = "";
+				textViewStatus.setVisibility(View.GONE);
 				if (!sensor.isAvailable()) {
 					status = "not available";
+					textViewStatus.setVisibility(View.VISIBLE);
 				} else if (sensor.isStopped()) {
 					status = "stopped";
 					stateButton.setValue(0);
