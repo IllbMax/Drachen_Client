@@ -4,16 +4,26 @@ import java.util.Date;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.User;
@@ -24,6 +34,26 @@ import com.vsis.drachenmobile.service.LocationLocalService;
 public class Main_Activity extends Activity {
 
 	private Date _lastLocationReciev;
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// action with ID action_refresh was selected
+		case R.id.action_logout:
+			logout();
+			break;
+		}
+
+		return true;
+	}
 
 	/** Called when the activity is first created. */
 	@Override
@@ -144,4 +174,87 @@ public class Main_Activity extends Activity {
 		locationView.setText(name);
 
 	}
+
+	private void logout() {
+
+		String username = ((EditText) findViewById(R.id.editTextUsername))
+				.getText().toString();
+		String password = ((EditText) findViewById(R.id.editTextPassword))
+				.getText().toString();
+
+		Toast.makeText(this, username + "/" + password, Toast.LENGTH_LONG)
+				.show();
+
+		LogoutTask task = new LogoutTask();
+		task.execute(username, password);
+
+	}
+
+	class LogoutTask extends AsyncTask<String, Void, Boolean> {
+
+		private ProgressDialog ringProgressDialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			Context ctx = Main_Activity.this;
+			ringProgressDialog = ProgressDialog.show(ctx,
+					ctx.getString(R.string.please_wait_),
+					ctx.getString(R.string.logging_out), true);
+			ringProgressDialog.setCancelable(true);
+			ringProgressDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					// actually could set running = false; right here, but I'll
+					// stick to contract.
+					boolean success = cancel(true);
+				}
+			});
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			String username = params[0];
+			String password = params[1];
+
+			DrachenApplication app = (DrachenApplication) getApplication();
+			MyDataSet client = app.getAppData();
+
+			boolean success = client.logout();
+			return success;
+		}
+
+		@Override
+		protected void onCancelled(Boolean result) {
+			super.onCancelled(result);
+			// TODO evtl clean up
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+			if (result) {
+
+				DrachenApplication app = (DrachenApplication) getApplication();
+				User user = app.getAppData().getUser();
+
+				app.startDrachenServices();
+
+				Intent intent = new Intent(Main_Activity.this,
+						Login_Activity.class);
+
+				startActivity(intent);
+				ringProgressDialog.dismiss();
+			} else {
+				ringProgressDialog.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						Login_Activity.this);
+				builder.setTitle("Login failed.");
+				builder.setMessage("Please try again.");
+				builder.show();
+			}
+
+		}
+	};
+
 }

@@ -153,4 +153,9 @@ public class LocationService {
 		// TODO: call client.changeLocation(bla)
 		return true;
 	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
 }

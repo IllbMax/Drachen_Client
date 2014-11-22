@@ -67,6 +67,27 @@ public class BlubClient {
 		return null;
 	}
 
+	public Boolean Logout() {
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+
+			Boolean output = loadFormGson("logout", param, Boolean.class);
+			return output;
+
+		} catch (InterruptedException e) {
+			return null;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public List<QuestPrototype> QuestsForLocation(int locationId) {
 
 		try {

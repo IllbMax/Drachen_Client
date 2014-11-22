@@ -74,6 +74,17 @@ public class MyDataSet {
 		}
 	}
 
+	public boolean logout() {
+		Boolean success = client.Logout();
+
+		if (success) {
+			locationService.dispose();
+			sensorService.dispose();
+			questService.dispose();
+		}
+		return false;
+	}
+
 	public User getUser() {
 		return user;
 	}

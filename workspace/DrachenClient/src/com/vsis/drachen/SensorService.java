@@ -268,4 +268,9 @@ public class SensorService {
 		}
 	}
 
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -142,4 +142,9 @@ public class QuestService {
 		return user.getQuests();
 	}
 
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

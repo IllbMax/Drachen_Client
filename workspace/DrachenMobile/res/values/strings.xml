@@ -13,6 +13,7 @@
 	<string name="your_location">Current Location</string>
 	<string name="greetings">Greetings %1$s</string>
 	<string name="logging_in">Logging in ...</string>
+	<string name="logging_out">Logging out ...</string>
 	<string name="abortQuest">Abort</string>
 	<string name="finshQuest">Finish</string>
 	<string name="details">Details</string>
@@ -29,4 +30,5 @@
     <string name="status_failed">failed</string>
     <string name="status_succeeded">succeeded</string>
     <string name="status_succeededFin">finished</string>
+    <string name="logout">Logout</string>
 </resources>
