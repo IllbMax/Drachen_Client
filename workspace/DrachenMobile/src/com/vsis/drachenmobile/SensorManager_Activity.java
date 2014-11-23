@@ -17,9 +17,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -33,7 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.visis.drachen.sensor.ISensor;
 import com.visis.drachen.sensor.SensorType;
@@ -41,32 +37,32 @@ import com.vsis.drachen.SensorService;
 
 public class SensorManager_Activity extends Activity {
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.sensormenu, menu);
-		return true;
-
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		// action with ID action_refresh was selected
-		case R.id.action_refresh:
-			Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT).show();
-			break;
-		// action with ID action_settings was selected
-		case R.id.action_settings:
-			Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		default:
-			break;
-		}
-
-		return true;
-	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// MenuInflater inflater = getMenuInflater();
+	// inflater.inflate(R.menu.sensormenu, menu);
+	// return true;
+	//
+	// }
+	//
+	// @Override
+	// public boolean onOptionsItemSelected(MenuItem item) {
+	// switch (item.getItemId()) {
+	// // action with ID action_refresh was selected
+	// case R.id.action_refresh:
+	// Toast.makeText(this, "Refresh selected", Toast.LENGTH_SHORT).show();
+	// break;
+	// // action with ID action_settings was selected
+	// case R.id.action_settings:
+	// Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
+	// .show();
+	// break;
+	// default:
+	// break;
+	// }
+	//
+	// return true;
+	// }
 
 	ListView listView;
 
