@@ -11,6 +11,7 @@ import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.User;
+import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class MyDataSet {
@@ -75,6 +76,9 @@ public class MyDataSet {
 			setUser(user);
 
 			locationService.loadLocations();
+
+			for (Quest q : questService.getUserQuests())
+				sensorService.trackQuest(q);
 			return true;
 		} else {
 			// eg wrong credentials

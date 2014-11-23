@@ -27,7 +27,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginLeft="4px"
             android:layout_marginRight="10px"
-            android:text="@string/abortQuest" 
+            android:text="@string/abortQuest"
+            android:visibility="invisible" 
             />
     </RelativeLayout>
 

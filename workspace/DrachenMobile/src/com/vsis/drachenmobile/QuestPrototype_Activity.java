@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
+import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;
@@ -380,9 +381,10 @@ public class QuestPrototype_Activity extends Activity {
 			MyDataSet appData = ((DrachenApplication) getApplication())
 					.getAppData();
 			QuestService questService = appData.getQuestService();
+			SensorService sensorService = appData.getSensorService();
 
 			Quest result = questService.startQuest(questPrototype.getId());
-
+			sensorService.trackQuest(result);
 			return result;
 		}
 

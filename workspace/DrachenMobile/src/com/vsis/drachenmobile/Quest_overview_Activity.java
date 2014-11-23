@@ -22,6 +22,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.vsis.drachen.QuestService;
+import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
@@ -294,9 +295,11 @@ public class Quest_overview_Activity extends Activity {
 			MyDataSet appData = ((DrachenApplication) getApplication())
 					.getAppData();
 			QuestService questService = appData.getQuestService();
+			SensorService sensorService = appData.getSensorService();
 
 			boolean result = questService.abortQuest(quest.getId());
-
+			if (result)
+				sensorService.untrackQuest(quest);
 			return result;
 		}
 

@@ -133,6 +133,10 @@ public class SensorService {
 			_questTargets.add(questTarget);
 		}
 
+		public boolean removeQuestTarget(QuestTarget questTarget) {
+			return _questTargets.remove(questTarget);
+		}
+
 	}
 
 	private BlubClient _client;
@@ -204,6 +208,9 @@ public class SensorService {
 	public void untrackQuestTarget(QuestTarget questTarget) {
 		questTarget.setTrackTarget(false);
 		_trackedQuests.remove(questTarget);
+		for (SensorType st : questTarget.requiredSensors())
+			_map.get(st).removeQuestTarget(questTarget);
+
 	}
 
 	public void trackQuest(Quest quest) {
