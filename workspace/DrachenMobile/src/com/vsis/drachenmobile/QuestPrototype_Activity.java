@@ -18,13 +18,15 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,27 @@ public class QuestPrototype_Activity extends Activity {
 	private Date _lastLocationReciev;
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.refreshmenu, menu);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// action with ID action_refresh was selected
+		case R.id.action_refresh:
+			refreshQuests();
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_questprototype);
@@ -62,17 +85,6 @@ public class QuestPrototype_Activity extends Activity {
 		_prototypeListView = (ExpandableListView) findViewById(R.id.expandableListView1);
 		_prototypeListView.setAdapter(_prototypeAdapter);
 
-		ImageButton imgButton = (ImageButton) findViewById(R.id.imageButton1);
-		imgButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				DrachenApplication app = (DrachenApplication) getApplication();
-				User user = app.getAppData().getUser();
-
-				setDisplayLocation(user.getLocation(), true);
-			}
-		});
 	}
 
 	@Override
@@ -162,6 +174,13 @@ public class QuestPrototype_Activity extends Activity {
 			_prototypeAdapter.clear();
 			_prototypeAdapter.notifyDataSetChanged();
 		}
+	}
+
+	private void refreshQuests() {
+		DrachenApplication app = (DrachenApplication) getApplication();
+		User user = app.getAppData().getUser();
+
+		setDisplayLocation(user.getLocation(), true);
 	}
 
 	private class QuestPrototypeExpListAdapter extends

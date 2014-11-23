@@ -33,4 +33,5 @@
     <string name="status_succeededFin">finished</string>
     <string name="logout">Logout</string>
     <string name="displayName">Display name</string>
+    <string name="refresh">Refresh</string>
 </resources>
