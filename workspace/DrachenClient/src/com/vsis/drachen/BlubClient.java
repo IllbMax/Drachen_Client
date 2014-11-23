@@ -41,6 +41,33 @@ public class BlubClient {
 	private CookieManager cookieManager;
 	private URL _base;
 
+	public boolean registerUser(String username, String password,
+			String displayName) {
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("username", username);
+			param.put("password", password);
+			param.put("displayName", displayName);
+
+			ResultWrapper<User> output = loadFormGson("createUser", param,
+					new TypeToken<ResultWrapper<User>>() {
+					}.getType());
+			return output.success;
+
+		} catch (InterruptedException e) {
+			return false;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
 	public User Login(String username, String password) {
 
 		try {

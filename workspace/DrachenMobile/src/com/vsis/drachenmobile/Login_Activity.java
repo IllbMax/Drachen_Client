@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.vsis.drachen.model.User;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
@@ -90,18 +89,19 @@ public class Login_Activity extends Activity {
 	boolean start = true;
 
 	private void login() {
-
 		String username = ((EditText) findViewById(R.id.editTextUsername))
 				.getText().toString();
 		String password = ((EditText) findViewById(R.id.editTextPassword))
 				.getText().toString();
 
-		Toast.makeText(this, username + "/" + password, Toast.LENGTH_LONG)
-				.show();
-
 		LoginTask task = new LoginTask();
 		task.execute(username, password);
+	}
 
+	private void signin() {
+		Intent intent = new Intent(this, Register_Activity.class);
+
+		startActivityForResult(intent, 1);
 	}
 
 	class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -171,11 +171,6 @@ public class Login_Activity extends Activity {
 		}
 	};
 
-	protected void signin() {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -184,4 +179,22 @@ public class Login_Activity extends Activity {
 			locationManager.removeUpdates(locationListener);
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == 1) {
+			if (resultCode == RESULT_OK) {
+				String username = data.getStringExtra("username");
+				String password = data.getStringExtra("password");
+
+				((EditText) findViewById(R.id.editTextUsername))
+						.setText(username);
+				((EditText) findViewById(R.id.editTextPassword))
+						.setText(password);
+			}
+			if (resultCode == RESULT_CANCELED) {
+
+			}
+		}
+	}
 }

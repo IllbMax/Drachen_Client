@@ -54,10 +54,18 @@ public class MyDataSet {
 		}
 	}
 
+	public boolean registerUser(String username, String password,
+			String displayName) {
+		initClient();
+
+		boolean success = client.registerUser(username, password, displayName);
+
+		return success;
+	}
+
 	public boolean login(String username, String password) {
 		initClient();
 
-		// TODO: fix wrong username/password
 		User user = client.Login(username, password);
 		if (user != null) {
 			locationService = new LocationService(client);
@@ -69,7 +77,7 @@ public class MyDataSet {
 			locationService.loadLocations();
 			return true;
 		} else {
-
+			// eg wrong credentials
 			return false;
 		}
 	}

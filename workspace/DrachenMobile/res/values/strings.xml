@@ -14,6 +14,7 @@
 	<string name="greetings">Greetings %1$s</string>
 	<string name="logging_in">Logging in ...</string>
 	<string name="logging_out">Logging out ...</string>
+	<string name="perform_register">Register ...</string>
 	<string name="abortQuest">Abort</string>
 	<string name="finshQuest">Finish</string>
 	<string name="details">Details</string>
@@ -31,4 +32,5 @@
     <string name="status_succeeded">succeeded</string>
     <string name="status_succeededFin">finished</string>
     <string name="logout">Logout</string>
+    <string name="displayName">Display name</string>
 </resources>
