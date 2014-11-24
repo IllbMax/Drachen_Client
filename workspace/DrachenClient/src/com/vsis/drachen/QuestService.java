@@ -119,6 +119,10 @@ public class QuestService {
 
 	public boolean finishQuest(int questId) {
 		Boolean success = client.FinishQuest(questId);
+		if (success) {
+			Quest quest = getQuestFromId(questId);
+			quest.finishQuest();
+		}
 		// TODO: check for success
 		// Quest quest = removeQuestFromMap(questId);
 		// user.finishQuest(quest);

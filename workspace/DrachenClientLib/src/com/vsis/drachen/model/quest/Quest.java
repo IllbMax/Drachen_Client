@@ -118,4 +118,11 @@ public class Quest extends IdObject {
 		}
 	}
 
+	public void finishQuest() {
+		for (QuestTarget qt : questTargets) {
+			qt.setFinished(true);
+		}
+		setFinished(true);
+	}
+
 }
