@@ -44,9 +44,17 @@ public class Register_Activity extends Activity {
 		String displayName = ((EditText) findViewById(R.id.editTextDisplayName))
 				.getText().toString();
 
-		RegisterTask task = new RegisterTask();
-		task.execute(username, password, displayName);
-
+		if (username.length() < 3 || password.length() < 3
+				|| displayName.length() < 3) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					Register_Activity.this);
+			builder.setTitle("Register failed.");
+			builder.setMessage("You need to insert at least 3 characters.");
+			builder.show();
+		} else {
+			RegisterTask task = new RegisterTask();
+			task.execute(username, password, displayName);
+		}
 	}
 
 	public void registerSuccess() {
