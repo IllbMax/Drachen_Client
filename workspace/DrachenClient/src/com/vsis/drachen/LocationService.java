@@ -47,13 +47,16 @@ public class LocationService {
 
 	public void loadLocations() {
 		// TODO load all locations
-		Location loc = client.LocationForId(3);
-		loc.updateReferences();
+		List<Location> locs = client.allLocationForest();
+
 		locationHierachy.clear();
 		locationIdMap.clear();
+		for (Location loc : locs) {
+			loc.updateReferences();
 
-		locationHierachy.add(loc);
-		addLocationToMap(loc);
+			locationHierachy.add(loc);
+			addLocationToMap(loc);
+		}
 		if (user.getLocation() != null
 				&& locationIdMap.containsKey(user.getLocation().getId())) {
 			user.setLocation(locationIdMap.get(user.getLocation().getId()));

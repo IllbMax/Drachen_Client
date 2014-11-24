@@ -161,6 +161,30 @@ public class BlubClient {
 		return null;
 	}
 
+	public List<Location> allLocationForest() {
+
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("locationId", "all");
+
+			return loadFormGson("locationtree", param,
+					new TypeToken<List<Location>>() {
+					}.getType());
+
+		} catch (InterruptedException e) {
+			return null;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public Quest StartQuest(int questPrototypeId) {
 		try {
 
