@@ -38,14 +38,16 @@
             android:layout_column="0"
             android:layout_gravity="left|center_vertical"
             android:layout_row="0"
-            android:text="@string/username" />
+            android:text="@string/username"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_column="0"
             android:layout_gravity="left|center_vertical"
             android:layout_row="1"
-            android:text="@string/password" />
+            android:text="@string/password"
+            android:textColor="@android:color/white" />
     </GridLayout>
 
     <LinearLayout
