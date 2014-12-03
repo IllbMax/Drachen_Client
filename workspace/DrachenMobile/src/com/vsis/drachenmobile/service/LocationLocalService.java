@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -17,6 +16,8 @@ import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.LocationService.LocationChanged;
 import com.vsis.drachen.SensorService;
+import com.vsis.drachen.SensorService.OnQuestTargetChangedListener;
+import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
 import com.vsis.drachenmobile.DrachenApplication;
@@ -25,9 +26,6 @@ import com.vsis.drachenmobile.sensor.GPSSensor;
 import com.vsis.drachenmobile.sensor.LocationSensor;
 
 public class LocationLocalService extends Service {
-
-	public static final String EXTRA_LOCATION_NEW = "location.new";
-	public static final String EXTRA_LOCATION_OLD = "location.old";
 
 	public class MyBinder extends Binder {
 		LocationLocalService getService() {
@@ -39,6 +37,7 @@ public class LocationLocalService extends Service {
 	private LocationService locationService;
 	private LocationListener locationListener;
 	private LocationChanged drachenLocationListener;
+	private OnQuestTargetChangedListener questTargetListener;
 
 	@Override
 	public void onCreate() {
@@ -55,6 +54,15 @@ public class LocationLocalService extends Service {
 		startLoctionListener();
 
 		SensorService sensorService = app.getAppData().getSensorService();
+		questTargetListener = new OnQuestTargetChangedListener() {
+
+			@Override
+			public void onQuestTargetChanged(QuestTarget qt) {
+
+			}
+		};
+		sensorService.registerQuestTargetChangedListener(questTargetListener);
+
 		GPSSensor gpsSensor = new GPSSensor("GPS Sensor", this);
 		LocationSensor locationSensor = new LocationSensor("GPS Sensor", this);
 		AccelarationSensor accelSensor = new AccelarationSensor(
@@ -137,8 +145,6 @@ public class LocationLocalService extends Service {
 	}
 
 	protected void makeUseOfNewLocation(android.location.Location location) {
-		Vibrator vib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-		vib.vibrate(500);
 
 		String data = String.format("Lat: %f, Lon: %f, Acc: %f \nAlt: %f",
 				location.getLatitude(), location.getLongitude(),
@@ -172,6 +178,22 @@ public class LocationLocalService extends Service {
 	}
 
 	/**
+	 * Starts a local broadcast to notify the QuestTargetChangeEvent
+	 * 
+	 * @param qt
+	 *            QuestTarget that has changed
+	 */
+	private void broadcastLocationChange(QuestTarget qt) {
+		Intent intent = new Intent(DrachenApplication.EVENT_QUESTTARGET_CHANGED);
+
+		intent.putExtra(DrachenApplication.EXTRA_QUEST_ID, qt.getQuest()
+				.getId());
+		intent.putExtra(DrachenApplication.EXTRA_QUESTTARGET_ID, qt.getId());
+
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+	}
+
+	/**
 	 * Starts a local broadcast to notify the LocationChangeEvent
 	 * 
 	 * @param old
@@ -182,8 +204,10 @@ public class LocationLocalService extends Service {
 	private void broadcastLocationChange(Location old, Location now) {
 		Intent intent = new Intent(DrachenApplication.EVENT_LOCATION_CHANGED);
 
-		intent.putExtra(EXTRA_LOCATION_OLD, old != null ? old.getId() : -1);
-		intent.putExtra(EXTRA_LOCATION_NEW, now != null ? now.getId() : -1);
+		intent.putExtra(DrachenApplication.EXTRA_LOCATION_OLD,
+				old != null ? old.getId() : -1);
+		intent.putExtra(DrachenApplication.EXTRA_LOCATION_NEW,
+				now != null ? now.getId() : -1);
 
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
@@ -197,7 +221,7 @@ public class LocationLocalService extends Service {
 	private void broadcastGPSChange(android.location.Location location) {
 		Intent intent = new Intent(DrachenApplication.EVENT_GPSPOSITION_CHANGED);
 
-		intent.putExtra(EXTRA_LOCATION_NEW, location);
+		intent.putExtra(DrachenApplication.EXTRA_LOCATION_NEW, location);
 
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}

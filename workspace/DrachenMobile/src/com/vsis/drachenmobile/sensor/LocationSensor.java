@@ -15,7 +15,6 @@ import com.visis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.DrachenApplication;
-import com.vsis.drachenmobile.service.LocationLocalService;
 
 public class LocationSensor extends AbstractSensor implements ISensor {
 
@@ -78,7 +77,7 @@ public class LocationSensor extends AbstractSensor implements ISensor {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int locId = intent.getIntExtra(
-					LocationLocalService.EXTRA_LOCATION_NEW, -1);
+					DrachenApplication.EXTRA_LOCATION_NEW, -1);
 			Location newLocation = ((DrachenApplication) _context
 					.getApplication()).getAppData().getLocationService()
 					.getLocationForId(locId);

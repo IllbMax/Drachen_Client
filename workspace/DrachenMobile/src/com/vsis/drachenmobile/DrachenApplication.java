@@ -13,8 +13,15 @@ import com.vsis.drachenmobile.service.LocationLocalService;
 
 public class DrachenApplication extends Application {
 
+	// constants : broadcast events
 	public final static String EVENT_LOCATION_CHANGED = "com.vsis.drachen.locationChanged";
 	public final static String EVENT_GPSPOSITION_CHANGED = "com.vsis.drachen.gpsPositionChanged";
+	public static final String EVENT_QUESTTARGET_CHANGED = "com.vsis.drachen.questTargetChanged";
+	// constants : (bundle) extra names
+	public static final String EXTRA_LOCATION_NEW = "location.new";
+	public static final String EXTRA_LOCATION_OLD = "location.old";
+	public static final String EXTRA_QUEST_ID = "quest.id";
+	public static final String EXTRA_QUESTTARGET_ID = "questTarget.id";
 
 	private static MyDataSet appdata;
 

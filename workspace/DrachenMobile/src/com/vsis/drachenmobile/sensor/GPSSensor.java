@@ -13,7 +13,6 @@ import com.visis.drachen.sensor.AbstractSensor;
 import com.visis.drachen.sensor.ISensor;
 import com.visis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
-import com.vsis.drachenmobile.service.LocationLocalService;
 
 public class GPSSensor extends AbstractSensor implements ISensor {
 
@@ -73,7 +72,7 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Location loc = intent
-					.getParcelableExtra(LocationLocalService.EXTRA_LOCATION_NEW);
+					.getParcelableExtra(DrachenApplication.EXTRA_LOCATION_NEW);
 			useData(loc);
 		}
 	};

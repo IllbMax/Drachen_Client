@@ -27,7 +27,6 @@ import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.helper.Helper;
-import com.vsis.drachenmobile.service.LocationLocalService;
 
 public class Main_Activity extends Activity {
 
@@ -130,7 +129,7 @@ public class Main_Activity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int locId = intent.getIntExtra(
-					LocationLocalService.EXTRA_LOCATION_NEW, -1);
+					DrachenApplication.EXTRA_LOCATION_NEW, -1);
 			final Location newLocation = ((DrachenApplication) getApplication())
 					.getAppData().getLocationService().getLocationForId(locId);
 			runOnUiThread(new Runnable() {

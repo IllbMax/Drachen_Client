@@ -38,7 +38,6 @@ import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.helper.Helper;
-import com.vsis.drachenmobile.service.LocationLocalService;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class QuestPrototype_Activity extends Activity {
@@ -107,15 +106,15 @@ public class QuestPrototype_Activity extends Activity {
 			setDisplayLocation(locationService.getCurrentLocation());
 		}
 		ActionBar actionBar = getActionBar();
-		actionBar.setSubtitle("mytest");
-		actionBar.setTitle("vogella.com");
+		actionBar.setSubtitle("available Quests");
+		actionBar.setTitle("Drachen!!!");
 	}
 
 	private BroadcastReceiver locationChangedReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int locId = intent.getIntExtra(
-					LocationLocalService.EXTRA_LOCATION_NEW, -1);
+					DrachenApplication.EXTRA_LOCATION_NEW, -1);
 			final Location newLocation = ((DrachenApplication) getApplication())
 					.getAppData().getLocationService().getLocationForId(locId);
 			runOnUiThread(new Runnable() {
