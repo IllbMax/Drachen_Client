@@ -45,6 +45,7 @@ public class BlubClient {
 
 	public boolean registerUser(String username, String password,
 			String displayName) {
+
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
@@ -57,15 +58,13 @@ public class BlubClient {
 					}.getType());
 			if (output.success)
 				return true;
-
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -82,10 +81,10 @@ public class BlubClient {
 					}.getType());
 			return output.resultObject;
 
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -101,10 +100,10 @@ public class BlubClient {
 			Boolean output = loadFormGson("logout", param, Boolean.class);
 			return output;
 
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -123,10 +122,10 @@ public class BlubClient {
 					new TypeToken<List<QuestPrototype>>() {
 					}.getType());
 
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -143,10 +142,10 @@ public class BlubClient {
 
 			return loadFormGson("locationtree", param, Location.class);
 
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -165,10 +164,10 @@ public class BlubClient {
 					new TypeToken<List<Location>>() {
 					}.getType());
 
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -183,10 +182,10 @@ public class BlubClient {
 			param.put("questPrototypeId", questPrototypeId);
 
 			return loadFormGson("startQuest", param, Quest.class);
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -200,10 +199,10 @@ public class BlubClient {
 			param.put("questId", questId);
 
 			return loadFormGson("abortQuest", param, Boolean.class);
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -218,10 +217,10 @@ public class BlubClient {
 			param.put("questId", questId);
 
 			return loadFormGson("finishQuest", param, Boolean.class);
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -238,10 +237,10 @@ public class BlubClient {
 					IQuestTargetUpdateState.class));
 
 			return loadFormGson("updateQuestTarget", param, Boolean.class);
-		} catch (MalformedURLException e) {
+		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InvalidResultException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -279,6 +278,7 @@ public class BlubClient {
 								// UnsupportedEncodingException |
 								// ProtocollException
 		{
+			e.printStackTrace();
 			throw new ConnectionException(e.getMessage(), e);
 		}
 
@@ -288,6 +288,7 @@ public class BlubClient {
 		try {
 			return (T) gson.fromJson(result, resultType);
 		} catch (Throwable cause) {
+			cause.printStackTrace();
 			throw new InvalidResultException(result, cause.getMessage(), cause);
 		}
 

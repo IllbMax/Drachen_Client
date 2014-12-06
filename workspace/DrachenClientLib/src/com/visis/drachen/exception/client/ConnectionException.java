@@ -1,7 +1,7 @@
 package com.visis.drachen.exception.client;
 
 /**
- * Representing errors with the connection
+ * Representing errors with the connection, or no access to the resource etc.
  * 
  */
 public class ConnectionException extends Exception {
