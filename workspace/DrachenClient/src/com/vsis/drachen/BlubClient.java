@@ -27,6 +27,8 @@ import javax.net.ssl.X509TrustManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.visis.drachen.exception.client.ConnectionException;
+import com.visis.drachen.exception.client.InvalidResultException;
 import com.vsis.drachen.adapter.AdapterProvider;
 import com.vsis.drachen.model.ResultWrapper;
 import com.vsis.drachen.model.User;
@@ -53,10 +55,9 @@ public class BlubClient {
 			ResultWrapper<User> output = loadFormGson("createUser", param,
 					new TypeToken<ResultWrapper<User>>() {
 					}.getType());
-			return output.success;
+			if (output.success)
+				return true;
 
-		} catch (InterruptedException e) {
-			return false;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,8 +82,6 @@ public class BlubClient {
 					}.getType());
 			return output.resultObject;
 
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,8 +101,6 @@ public class BlubClient {
 			Boolean output = loadFormGson("logout", param, Boolean.class);
 			return output;
 
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,8 +123,6 @@ public class BlubClient {
 					new TypeToken<List<QuestPrototype>>() {
 					}.getType());
 
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,8 +143,6 @@ public class BlubClient {
 
 			return loadFormGson("locationtree", param, Location.class);
 
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,8 +165,6 @@ public class BlubClient {
 					new TypeToken<List<Location>>() {
 					}.getType());
 
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -192,8 +183,6 @@ public class BlubClient {
 			param.put("questPrototypeId", questPrototypeId);
 
 			return loadFormGson("startQuest", param, Quest.class);
-		} catch (InterruptedException e) {
-			return null;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -211,8 +200,6 @@ public class BlubClient {
 			param.put("questId", questId);
 
 			return loadFormGson("abortQuest", param, Boolean.class);
-		} catch (InterruptedException e) {
-			return false;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -231,8 +218,6 @@ public class BlubClient {
 			param.put("questId", questId);
 
 			return loadFormGson("finishQuest", param, Boolean.class);
-		} catch (InterruptedException e) {
-			return false;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -253,8 +238,6 @@ public class BlubClient {
 					IQuestTargetUpdateState.class));
 
 			return loadFormGson("updateQuestTarget", param, Boolean.class);
-		} catch (InterruptedException e) {
-			return false;
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -280,20 +263,34 @@ public class BlubClient {
 	 * @throws UnsupportedEncodingException
 	 * @throws IOException
 	 * @throws ProtocolException
+	 * @throws InvalidResultException
 	 * @throws InterruptedException
 	 */
 	private <T> T loadFormGson(String scriptname, Map<String, Object> param,
-			Type resultType) throws MalformedURLException,
-			UnsupportedEncodingException, IOException, ProtocolException,
-			InterruptedException {
-		URL url = getURL(scriptname, param);
+			Type resultType) throws ConnectionException, InvalidResultException {
 
-		String result = connect(url, "GET", "");
+		URL url;
+		String result;
+
+		try {
+			url = getURL(scriptname, param);
+			result = connect(url, "GET", "");
+		} catch (IOException e) // includes MalformedURLException |
+								// UnsupportedEncodingException |
+								// ProtocollException
+		{
+			throw new ConnectionException(e.getMessage(), e);
+		}
 
 		Gson gson = getGson();
 
 		System.out.print(resultType);
-		return (T) gson.fromJson(result, resultType);
+		try {
+			return (T) gson.fromJson(result, resultType);
+		} catch (Throwable cause) {
+			throw new InvalidResultException(result, cause.getMessage(), cause);
+		}
+
 	}
 
 	private URL getURL(CharSequence scriptname, CharSequence queryPOST)
@@ -347,7 +344,7 @@ public class BlubClient {
 
 	private String connect(URL url, String requestMethod,
 			CharSequence requestParamString) throws IOException,
-			ProtocolException, InterruptedException {
+			ProtocolException {
 
 		HttpURLConnection urlConnection = (HttpURLConnection) url
 				.openConnection();
