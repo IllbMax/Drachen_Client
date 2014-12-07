@@ -164,7 +164,7 @@ public class Login_Activity extends Activity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Login_Activity.this);
 				builder.setTitle("Login failed.");
-				builder.setMessage("Please try again.");
+				builder.setMessage(R.string.please_try_again);
 				builder.show();
 			}
 

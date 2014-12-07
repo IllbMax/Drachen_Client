@@ -34,4 +34,14 @@
     <string name="logout">Logout</string>
     <string name="displayName">Display name</string>
     <string name="refresh">Refresh</string>
+    <string name="register_failed">Register failed.</string>
+    <string name="please_try_again">Please try again.</string>
+    <string name="internal_process_error">An internal server error has occurred:\n\'%1$s\'.</string>
+    <string name="missing_parameter_s">Missing Parameter \'%s\'.</string>
+    <string name="username_already_used">The username is already used.</string>
+    <string name="param_s_too_long">\'%s\' is too long.</string>
+    <string name="param_s_too_long_max_char">\'%1$s\' is too long (max %2$d character).</string>
+    <string name="param_s_too_short">\'%s\' is too short.</string>
+    <string name="param_s_too_short_min_char">\'%1$s\' is too short (min %2$d character).</string>
+    <string name="param_s_wrongformat">\'%s\' has an invalid format.</string>
 </resources>

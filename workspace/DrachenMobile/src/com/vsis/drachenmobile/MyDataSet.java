@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.BlubClient;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
@@ -56,7 +60,9 @@ public class MyDataSet {
 	}
 
 	public boolean registerUser(String username, String password,
-			String displayName) {
+			String displayName) throws InternalProcessException,
+			MissingParameterException, InvalidParameterException,
+			DrachenBaseException {
 		initClient();
 
 		boolean success = client.registerUser(username, password, displayName);

@@ -235,7 +235,7 @@ public class Main_Activity extends Activity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Main_Activity.this);
 				builder.setTitle("Logout failed.");
-				builder.setMessage("Please try again.");
+				builder.setMessage(R.string.please_try_again);
 				builder.show();
 			}
 

@@ -27,6 +27,10 @@ import javax.net.ssl.X509TrustManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.client.ConnectionException;
 import com.visis.drachen.exception.client.InvalidResultException;
 import com.vsis.drachen.adapter.AdapterProvider;
@@ -44,7 +48,9 @@ public class BlubClient {
 	private URL _base;
 
 	public boolean registerUser(String username, String password,
-			String displayName) {
+			String displayName) throws DrachenBaseException,
+			InternalProcessException, MissingParameterException,
+			InvalidParameterException {
 
 		try {
 
@@ -56,8 +62,19 @@ public class BlubClient {
 			ResultWrapper<User> output = loadFormGson("createUser", param,
 					new TypeToken<ResultWrapper<User>>() {
 					}.getType());
-			if (output.success)
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
 				return true;
+			else if (output.expection == null)
+				return false;
+			else // there is a exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
+
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -256,7 +273,8 @@ public class BlubClient {
 	 * @param scriptname
 	 * @param param
 	 * @param resultType
-	 *            work around for java's f***ing implementation of Generics
+	 *            work around for java's - let's call it 'bad' - implementation
+	 *            of Generics
 	 * @return
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
@@ -374,11 +392,11 @@ public class BlubClient {
 			InputStream in = new BufferedInputStream(
 					urlConnection.getInputStream());
 
+			StringBuilder sb = new StringBuilder();
 			InputStreamReader isr = new InputStreamReader(in, "UTF-8");
 			BufferedReader br = new BufferedReader(isr);
 
 			String read;
-			StringBuilder sb = new StringBuilder();
 			while ((read = br.readLine()) != null) {
 				sb.append(read);
 			}
@@ -392,20 +410,91 @@ public class BlubClient {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return "";
+			throw ex;
 		} finally {
 			urlConnection.disconnect();
 		}
 
 	}
 
-	// public void initConnection() throws Exception {
-	// String host
-	// // = "rzssh1";
-	// = "localhost";
-	// int port = 8443;
-	// initConnection(host, port);
-	// }
+	private String connect_withAbort(URL url, String requestMethod,
+			CharSequence requestParamString) throws IOException,
+			ProtocolException {
+
+		HttpURLConnection urlConnection = (HttpURLConnection) url
+				.openConnection();
+
+		System.out.println(url.toString());
+
+		if (this.cookieManager != null)
+			this.cookieManager.setCookies(urlConnection);
+
+		if (requestParamString.length() > 0) {
+			byte[] postDataBytes = requestParamString.toString().getBytes(
+					"UTF-8");
+
+			urlConnection.setRequestMethod(requestMethod);
+			urlConnection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			urlConnection.setRequestProperty("Content-Length",
+					String.valueOf(postDataBytes.length));
+			urlConnection.setDoOutput(true);
+			urlConnection.getOutputStream().write(postDataBytes);
+		}
+		// urlConnection.setRequestProperty(
+		// "Cookie","JSESSIONID=" + your_session_id);
+		urlConnection.connect();
+		try {
+			InputStream in = new BufferedInputStream(
+					urlConnection.getInputStream());
+
+			final StringBuilder sb = new StringBuilder();
+			InputStreamReader isr = new InputStreamReader(in, "UTF-8");
+			final BufferedReader br = new BufferedReader(isr);
+
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String read;
+						while ((read = br.readLine()) != null) {
+							sb.append(read);
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});
+
+			if (this.cookieManager != null)
+				this.cookieManager.storeCookies(urlConnection);
+
+			// TODO: make isCanceled accessible
+			boolean isCanceled = false;
+			final long sleepTime = 100; // 100ms
+
+			t.start();
+
+			// check every <sleepTime> ms if this should be canceled
+			while (!isCanceled && t.isAlive())
+				Thread.sleep(sleepTime);
+
+			if (isCanceled) {
+				// TODO: handle cancel result, maybe throw exception ...
+				return null;
+			} else {
+				String result = sb.toString();
+				System.out.println(result);
+				return result;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return "";
+		} finally {
+			urlConnection.disconnect();
+		}
+
+	}
 
 	/**
 	 * Initializes the client (enables cookies und sets the base url)

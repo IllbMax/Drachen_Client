@@ -14,6 +14,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.InvalidParameterException.InvalidType;
+import com.visis.drachen.exception.MissingParameterException;
+
 public class Register_Activity extends Activity {
 
 	private Button btnSignin;
@@ -48,7 +54,7 @@ public class Register_Activity extends Activity {
 				|| displayName.length() < 3) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					Register_Activity.this);
-			builder.setTitle("Register failed.");
+			builder.setTitle(R.string.register_failed);
 			builder.setMessage("You need to insert at least 3 characters.");
 			builder.show();
 		} else {
@@ -73,6 +79,7 @@ public class Register_Activity extends Activity {
 	class RegisterTask extends AsyncTask<String, Void, Boolean> {
 
 		private ProgressDialog ringProgressDialog;
+		private DrachenBaseException _exception = null;
 
 		@Override
 		protected void onPreExecute() {
@@ -101,9 +108,14 @@ public class Register_Activity extends Activity {
 			DrachenApplication app = (DrachenApplication) getApplication();
 			MyDataSet client = app.getAppData();
 
-			boolean success = client.registerUser(username, password,
-					displayName);
-			return success;
+			try {
+				boolean success = client.registerUser(username, password,
+						displayName);
+				return success;
+			} catch (DrachenBaseException e) {
+				_exception = e;
+			}
+			return null;
 		}
 
 		@Override
@@ -115,21 +127,90 @@ public class Register_Activity extends Activity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
-			if (result) {
+
+			if (result != null && result) {
 
 				ringProgressDialog.dismiss();
 
 				registerSuccess();
 
 			} else {
+				String message = getErrorString();
+
 				ringProgressDialog.dismiss();
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Register_Activity.this);
-				builder.setTitle("Register failed.");
-				builder.setMessage("Please try again.");
+				builder.setTitle(R.string.register_failed);
+				builder.setMessage(message);
 				builder.show();
 			}
 
+		}
+
+		private String getErrorString() {
+			Context ctx = Register_Activity.this;
+			String message = ctx.getString(R.string.please_try_again);
+
+			if (_exception != null) {
+				if (_exception instanceof MissingParameterException) {
+					MissingParameterException e = (MissingParameterException) _exception;
+					message = ctx.getString(R.string.missing_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof InvalidParameterException) {
+					message = getErrorStringForInvalidParameter(ctx);
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
+		}
+
+		private String getErrorStringForInvalidParameter(Context ctx) {
+			String message = "";
+			InvalidParameterException e = (InvalidParameterException) _exception;
+			Integer number = null;
+			if (e.getType() == InvalidType.TooLong
+					|| e.getType() == InvalidType.TooShort)
+				try {
+					number = Integer.parseInt(e.getExtraInfo());
+				} catch (Exception e2) {
+				}
+
+			switch (e.getType()) {
+			case TooLong:
+				if (number == null)
+					message = ctx.getString(R.string.param_s_too_long,
+							e.getParameter());
+				else
+					message = ctx.getString(R.string.param_s_too_long_max_char,
+							e.getParameter(), number);
+				break;
+			case TooShort:
+				if (number == null)
+					message = ctx.getString(R.string.param_s_too_short,
+							e.getParameter());
+				else
+					message = ctx.getString(
+							R.string.param_s_too_short_min_char,
+							e.getParameter(), number);
+
+				break;
+			case WrongFormat:
+				message = ctx.getString(R.string.param_s_wrongformat,
+						e.getParameter());
+				break;
+			case NotUnique:
+				message = ctx.getString(R.string.username_already_used);
+				break;
+
+			default:
+				message = e.getMessage();
+				break;
+
+			}
+			return message;
 		}
 	};
 
