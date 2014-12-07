@@ -2,6 +2,11 @@ package com.vsis.drachen.adapter;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapter;
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.quest.AccelerationQuestTarget;
 import com.vsis.drachen.model.quest.GPSQuestTarget;
 import com.vsis.drachen.model.quest.IQuestTargetUpdateState;
@@ -33,6 +38,17 @@ public class AdapterProvider {
 		return adapter;
 	}
 
+	public static RuntimeTypeAdapter<DrachenBaseException> getDrachenExceptionAdapter() {
+		RuntimeTypeAdapter<DrachenBaseException> adapter = RuntimeTypeAdapter
+				.create(DrachenBaseException.class, "type");
+		adapter.registerSubtype(InternalProcessException.class);
+		adapter.registerSubtype(InvalidParameterException.class);
+		adapter.registerSubtype(MissingParameterException.class);
+		adapter.registerSubtype(RestrictionException.class);
+
+		return adapter;
+	}
+
 	public static GsonBuilder installAllAdapter(GsonBuilder builder) {
 
 		return builder
@@ -41,6 +57,8 @@ public class AdapterProvider {
 				.registerTypeAdapter(Quest.class, getQuestAdapter())
 				.registerTypeAdapter(IQuestTargetUpdateState.class,
 						getQuestTargetUpdateStateAdapter()) //
+				.registerTypeAdapter(DrachenBaseException.class,
+						getDrachenExceptionAdapter()) //
 		// .registerTypeAdapter(QuestTarget.class, getQuestTargetAdapter())
 		// .registerTypeAdapter(QuestTarget.class, getQuestTargetAdapter())
 
