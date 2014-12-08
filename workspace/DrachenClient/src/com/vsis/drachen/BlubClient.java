@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.visis.drachen.exception.CredentialException;
 import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
@@ -172,7 +173,7 @@ public class BlubClient {
 	 * @throws InternalProcessException
 	 *             if something went wrong at the server
 	 * @throws RestrictionException
-	 *             if there was no logged in user
+	 *             if the user wasn't logged in
 	 */
 	public boolean Logout() throws DrachenBaseException,
 			InternalProcessException, RestrictionException {
@@ -206,16 +207,47 @@ public class BlubClient {
 		return false;
 	}
 
-	public List<QuestPrototype> QuestsForLocation(int locationId) {
+	/**
+	 * Load the available Quests for the location with the locationId
+	 * 
+	 * @param locationId
+	 *            Id of the location with the desired QuestPrototypes
+	 * @return available Quests for the location
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws IdNotFoundException
+	 *             if there is no location with locationId
+	 */
+	public List<QuestPrototype> QuestsForLocation(int locationId)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, IdNotFoundException {
 
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("locationId", locationId);
 
-			return loadFormGson("showQuestsForLocation", param,
-					new TypeToken<List<QuestPrototype>>() {
+			ResultWrapper<List<QuestPrototype>> output = loadFormGson(
+					"showQuestsForLocation", param,
+					new TypeToken<ResultWrapper<List<QuestPrototype>>>() {
 					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block

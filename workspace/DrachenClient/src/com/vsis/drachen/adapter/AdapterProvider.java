@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapter;
 import com.visis.drachen.exception.CredentialException;
 import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
@@ -47,6 +48,7 @@ public class AdapterProvider {
 		adapter.registerSubtype(MissingParameterException.class);
 		adapter.registerSubtype(RestrictionException.class);
 		adapter.registerSubtype(CredentialException.class);
+		adapter.registerSubtype(IdNotFoundException.class);
 
 		return adapter;
 	}

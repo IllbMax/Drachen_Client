@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.IdNotFoundException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;
@@ -75,7 +79,9 @@ public class QuestService {
 	}
 
 	public synchronized Collection<QuestPrototype> getAvailableQuestForLocation(
-			int locationId, boolean forceReload) {
+			int locationId, boolean forceReload)
+			throws InternalProcessException, RestrictionException,
+			IdNotFoundException, DrachenBaseException {
 		LocationQuests locationQuests;
 		if (!forceReload
 				&& locationIdPrototypeMap.containsKey(locationId)
@@ -96,7 +102,8 @@ public class QuestService {
 	}
 
 	public synchronized Collection<QuestPrototype> getAvailableQuestForLocation(
-			int locationId) {
+			int locationId) throws InternalProcessException,
+			RestrictionException, IdNotFoundException, DrachenBaseException {
 		return getAvailableQuestForLocation(locationId, false);
 	}
 
