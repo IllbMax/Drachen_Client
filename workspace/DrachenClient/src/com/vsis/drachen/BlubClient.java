@@ -260,14 +260,45 @@ public class BlubClient {
 		return null;
 	}
 
-	public Location LocationForId(int locationId) {
+	/**
+	 * load location object for specific id
+	 * 
+	 * @param locationId
+	 *            id of the requesterd location
+	 * @return location object with id
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws IdNotFoundException
+	 *             if there is no location with locationId
+	 */
+	public Location locationForId(int locationId) throws DrachenBaseException,
+			InternalProcessException, RestrictionException, IdNotFoundException {
 
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("locationId", locationId);
 
-			return loadFormGson("locationtree", param, Location.class);
+			ResultWrapper<Location> output = loadFormGson("locationtree",
+					param, new TypeToken<ResultWrapper<Location>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block

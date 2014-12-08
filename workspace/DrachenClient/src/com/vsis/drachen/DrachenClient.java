@@ -26,7 +26,7 @@ public class DrachenClient {
 
 		List<QuestPrototype> questPrototypes = blub.QuestsForLocation(1);
 
-		Location location = blub.LocationForId(3);
+		Location location = blub.locationForId(3);
 
 		System.out.println("Moin moin " + user.getDisplayName());
 		System.out.println("Derzeit hast du " + user.getQuests().size()
