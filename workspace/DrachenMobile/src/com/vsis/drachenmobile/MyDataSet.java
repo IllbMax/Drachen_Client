@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.visis.drachen.exception.CredentialException;
 import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
@@ -70,10 +71,18 @@ public class MyDataSet {
 		return success;
 	}
 
-	public boolean login(String username, String password) {
+	public boolean login(String username, String password)
+			throws InternalProcessException, MissingParameterException,
+			DrachenBaseException {
 		initClient();
 
-		User user = client.Login(username, password);
+		User user = null;
+		try {
+			user = client.Login(username, password);
+		} catch (CredentialException e) {
+			// if wrong username then result = false
+			e.printStackTrace();
+		}
 		if (user != null) {
 			locationService = new LocationService(client);
 			questService = new QuestService(client);

@@ -19,6 +19,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
@@ -107,6 +110,7 @@ public class Login_Activity extends Activity {
 	class LoginTask extends AsyncTask<String, Void, Boolean> {
 
 		private ProgressDialog ringProgressDialog;
+		private DrachenBaseException _exception = null;
 
 		@Override
 		protected void onPreExecute() {
@@ -134,8 +138,14 @@ public class Login_Activity extends Activity {
 			DrachenApplication app = (DrachenApplication) getApplication();
 			MyDataSet client = app.getAppData();
 
-			boolean success = client.login(username, password);
-			return success;
+			try {
+				boolean success = client.login(username, password);
+				return success;
+			} catch (DrachenBaseException e) {
+				_exception = e;
+				return null;
+			}
+
 		}
 
 		@Override
@@ -147,7 +157,8 @@ public class Login_Activity extends Activity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
-			if (result) {
+
+			if (result != null && result) {
 
 				DrachenApplication app = (DrachenApplication) getApplication();
 				User user = app.getAppData().getUser();
@@ -160,15 +171,36 @@ public class Login_Activity extends Activity {
 				startActivity(intent);
 				ringProgressDialog.dismiss();
 			} else {
+
+				String message = getErrorString();
+
 				ringProgressDialog.dismiss();
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Login_Activity.this);
-				builder.setTitle("Login failed.");
-				builder.setMessage(R.string.please_try_again);
+				builder.setTitle(R.string.login_failed);
+				builder.setMessage(message);
 				builder.show();
 			}
-
 		}
+
+		private String getErrorString() {
+			Context ctx = Login_Activity.this;
+			String message = ctx.getString(R.string.wrong_password);
+
+			if (_exception != null) {
+				if (_exception instanceof MissingParameterException) {
+					MissingParameterException e = (MissingParameterException) _exception;
+					message = ctx.getString(R.string.missing_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
+		}
+
 	};
 
 	@Override

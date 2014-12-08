@@ -11,7 +11,7 @@ import com.vsis.drachen.model.world.Location;
 
 public class DrachenClient {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		// to enable all the coockies
 		BlubClient blub = new BlubClient();

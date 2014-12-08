@@ -27,6 +27,7 @@ import javax.net.ssl.X509TrustManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.visis.drachen.exception.CredentialException;
 import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
@@ -68,7 +69,7 @@ public class BlubClient {
 				return true;
 			else if (output.expection == null)
 				return false;
-			else // there is a exception provided by the server
+			else // there is an exception provided by the server
 			{
 				DrachenBaseException e = output.expection;
 				e.fillInStackTrace();
@@ -85,7 +86,9 @@ public class BlubClient {
 		return false;
 	}
 
-	public User Login(String username, String password) {
+	public User Login(String username, String password)
+			throws DrachenBaseException, InternalProcessException,
+			MissingParameterException, CredentialException {
 
 		try {
 
@@ -96,7 +99,18 @@ public class BlubClient {
 			ResultWrapper<User> output = loadFormGson("login", param,
 					new TypeToken<ResultWrapper<User>>() {
 					}.getType());
-			return output.resultObject;
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				throw new CredentialException("wrong password");
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
