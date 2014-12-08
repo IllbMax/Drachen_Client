@@ -6,7 +6,7 @@ package com.visis.drachen.exception;
  * If a parameter has an invalid format
  * 
  */
-public class InvalidParameterException extends DrachenBaseException {
+public class InvalidParameterException extends ParameterException {
 
 	/**
 	 * Enum of possible reasons for invalidation
@@ -53,10 +53,6 @@ public class InvalidParameterException extends DrachenBaseException {
 	}
 
 	/**
-	 * Name/Identifier for the invalid parameter
-	 */
-	private String parameter;
-	/**
 	 * Reason for invalid Exception
 	 */
 	private InvalidType invalidType;
@@ -64,10 +60,6 @@ public class InvalidParameterException extends DrachenBaseException {
 	 * short extra information extending the type info
 	 */
 	private String extraInfo;
-
-	public String getParameter() {
-		return parameter;
-	}
 
 	public InvalidType getType() {
 		return invalidType;
@@ -79,18 +71,16 @@ public class InvalidParameterException extends DrachenBaseException {
 
 	public InvalidParameterException(String parameter, InvalidType type,
 			String extraInfo, String message) {
-		super(message);
+		super(parameter, message);
 
-		this.parameter = parameter;
 		this.invalidType = type;
 		this.extraInfo = extraInfo;
 	}
 
 	public InvalidParameterException(String parameter, InvalidType type,
 			String extraInfo, String message, Throwable cause) {
-		super(message, cause);
+		super(parameter, message, cause);
 
-		this.parameter = parameter;
 		this.invalidType = type;
 		this.extraInfo = extraInfo;
 	}
