@@ -19,6 +19,7 @@ import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.InvalidParameterException.InvalidType;
 import com.visis.drachen.exception.MissingParameterException;
+import com.vsis.drachenmobile.helper.Helper;
 
 public class Register_Activity extends Activity {
 
@@ -168,50 +169,14 @@ public class Register_Activity extends Activity {
 		}
 
 		private String getErrorStringForInvalidParameter(Context ctx) {
-			String message = "";
 			InvalidParameterException e = (InvalidParameterException) _exception;
-			Integer number = null;
-			if (e.getType() == InvalidType.TooLong
-					|| e.getType() == InvalidType.TooShort)
-				try {
-					number = Integer.parseInt(e.getExtraInfo());
-				} catch (Exception e2) {
-				}
+			if (e.getType() == InvalidType.NotUnique)
+				return ctx.getString(R.string.username_already_used);
+			else
+				return Helper.getErrorStringForInvalidParameter(ctx, e);
 
-			switch (e.getType()) {
-			case TooLong:
-				if (number == null)
-					message = ctx.getString(R.string.param_s_too_long,
-							e.getParameter());
-				else
-					message = ctx.getString(R.string.param_s_too_long_max_char,
-							e.getParameter(), number);
-				break;
-			case TooShort:
-				if (number == null)
-					message = ctx.getString(R.string.param_s_too_short,
-							e.getParameter());
-				else
-					message = ctx.getString(
-							R.string.param_s_too_short_min_char,
-							e.getParameter(), number);
-
-				break;
-			case WrongFormat:
-				message = ctx.getString(R.string.param_s_wrongformat,
-						e.getParameter());
-				break;
-			case NotUnique:
-				message = ctx.getString(R.string.username_already_used);
-				break;
-
-			default:
-				message = e.getMessage();
-				break;
-
-			}
-			return message;
 		}
+
 	};
 
 }

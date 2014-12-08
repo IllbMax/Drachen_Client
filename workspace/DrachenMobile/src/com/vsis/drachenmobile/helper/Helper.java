@@ -2,6 +2,8 @@ package com.vsis.drachenmobile.helper;
 
 import android.content.Context;
 
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.InvalidParameterException.InvalidType;
 import com.vsis.drachen.model.quest.QuestProgressStatus;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.R;
@@ -85,5 +87,60 @@ public final class Helper {
 
 		}
 		return ctx.getResources().getColor(id);
+	}
+
+	/**
+	 * Returns for an {@link InvalidParameterException} a human readable string
+	 * 
+	 * @param ctx
+	 *            the context
+	 * @param e
+	 *            the Exception
+	 * @return localized string describing the exception
+	 */
+	public static String getErrorStringForInvalidParameter(Context ctx,
+			InvalidParameterException e) {
+		String message = "";
+		Integer number = null;
+		if (e.getType() == InvalidType.TooLong
+				|| e.getType() == InvalidType.TooShort)
+			try {
+				number = Integer.parseInt(e.getExtraInfo());
+			} catch (Exception e2) {
+			}
+
+		switch (e.getType()) {
+		case TooLong:
+			if (number == null)
+				message = ctx.getString(R.string.param_s_too_long,
+						e.getParameter());
+			else
+				message = ctx.getString(R.string.param_s_too_long_max_char,
+						e.getParameter(), number);
+			break;
+		case TooShort:
+			if (number == null)
+				message = ctx.getString(R.string.param_s_too_short,
+						e.getParameter());
+			else
+				message = ctx.getString(R.string.param_s_too_short_min_char,
+						e.getParameter(), number);
+
+			break;
+		case WrongFormat:
+			message = ctx.getString(R.string.param_s_wrongformat,
+					e.getParameter());
+			break;
+		case NotUnique:
+			message = ctx.getString(R.string.param_s_not_unique,
+					e.getParameter());
+			break;
+
+		default:
+			message = e.getMessage();
+			break;
+
+		}
+		return message;
 	}
 }

@@ -46,6 +46,7 @@
     <string name="missing_parameter_s">Missing Parameter \'%s\'.</string>
     <string name="id_not_found_parameter_s">Id of \'%s\' was not found.</string>
     <string name="username_already_used">The username is already used.</string>
+    <string name="param_s_not_unique">\'%s\' is not unique.</string>
     <string name="param_s_too_long">\'%s\' is too long.</string>
     <string name="param_s_too_long_max_char">\'%1$s\' is too long (max %2$d character).</string>
     <string name="param_s_too_short">\'%s\' is too short.</string>
@@ -53,5 +54,7 @@
     <string name="param_s_wrongformat">\'%s\' has an invalid format.</string>
     <string name="wrong_password">Wrong password</string>
     <string name="access_denied_logged_out">Access denied, maybe you\'re already logged out.</string>
+    <string name="grats_bug">congratulations you found a strange bug.</string>
+    <string name="logged_in_no_access">Logged in but no access to resource.\nPlease Try again</string>
     
 </resources>

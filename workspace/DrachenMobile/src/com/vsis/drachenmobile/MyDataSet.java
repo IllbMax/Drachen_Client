@@ -72,8 +72,31 @@ public class MyDataSet {
 		return success;
 	}
 
+	/**
+	 * try to login the user using the username and password for authentication
+	 * 
+	 * @param username
+	 *            username for login
+	 * @param password
+	 *            password for login
+	 * @return true if login was successful
+	 * 
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws MissingParameterException
+	 *             if a parameter (username, password, etc.) was missing
+	 * @throws InvalidParameterException
+	 *             if a parameter of other requests were invalid (no login
+	 *             exception)
+	 * @throws RestrictionException
+	 *             if the login signals true, but server denies access to other
+	 *             requests (no login exception)
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 */
 	public boolean login(String username, String password)
 			throws InternalProcessException, MissingParameterException,
+			InvalidParameterException, RestrictionException,
 			DrachenBaseException {
 		initClient();
 
@@ -91,7 +114,24 @@ public class MyDataSet {
 
 			setUser(user);
 
-			locationService.loadLocations();
+			try {
+				locationService.loadLocations();
+			} catch (DrachenBaseException e) {
+				// some thing strange happened:
+				// the user successful logged in but has no rights to access the
+				// locations
+				if (e instanceof RestrictionException)
+					System.err
+							.println("Error: no access to locations after login!");
+				e.printStackTrace();
+				try {
+					if (!logout())
+						disposeComponents();
+				} catch (Exception ex) {
+					disposeComponents();
+				}
+				throw e;
+			}
 
 			for (Quest q : questService.getUserQuests())
 				sensorService.trackQuest(q);

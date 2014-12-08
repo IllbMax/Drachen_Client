@@ -261,7 +261,7 @@ public class BlubClient {
 	}
 
 	/**
-	 * load location object for specific id
+	 * Load location object for specific id
 	 * 
 	 * @param locationId
 	 *            id of the requesterd location
@@ -275,9 +275,12 @@ public class BlubClient {
 	 *             if the user wasn't logged in
 	 * @throws IdNotFoundException
 	 *             if there is no location with locationId
+	 * @throws MissingParameterException
+	 *             if the location parameter is missing (should not happen)
 	 */
 	public Location locationForId(int locationId) throws DrachenBaseException,
-			InternalProcessException, RestrictionException, IdNotFoundException {
+			InternalProcessException, RestrictionException,
+			MissingParameterException, IdNotFoundException {
 
 		try {
 
@@ -311,17 +314,46 @@ public class BlubClient {
 		return null;
 	}
 
-	public List<Location> allLocationForest() {
+	/**
+	 * Load the whole location-map (list of trees => forest)
+	 * 
+	 * @return List of all locations
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the location parameter is missing (should not happen)
+	 * @throws InvalidParameterException
+	 *             if the (internal) locationId parameter has the wrong format
+	 */
+	public List<Location> allLocationForest() throws DrachenBaseException,
+			InternalProcessException, RestrictionException,
+			MissingParameterException, InvalidParameterException {
 
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("locationId", "all");
 
-			return loadFormGson("locationtree", param,
-					new TypeToken<List<Location>>() {
+			ResultWrapper<List<Location>> output = loadFormGson("locationtree",
+					param, new TypeToken<ResultWrapper<List<Location>>>() {
 					}.getType());
-
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

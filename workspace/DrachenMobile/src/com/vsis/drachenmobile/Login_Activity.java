@@ -21,8 +21,11 @@ import android.widget.EditText;
 
 import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
+import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class Login_Activity extends Activity {
@@ -196,6 +199,19 @@ public class Login_Activity extends Activity {
 					InternalProcessException e = (InternalProcessException) _exception;
 					message = ctx.getString(R.string.internal_process_error,
 							e.getMessage());
+
+					// the following Exceptions doesn't occur while logging in
+					// but at later requests
+				} else if (_exception instanceof InvalidParameterException) {
+					message = ctx.getString(R.string.grats_bug);
+					message += "\n";
+					message = Helper.getErrorStringForInvalidParameter(ctx,
+							(InvalidParameterException) _exception);
+				} else if (_exception instanceof RestrictionException) {
+					// a strange exception:
+					message = ctx.getString(R.string.grats_bug);
+					message += "\n";
+					message += ctx.getString(R.string.logged_in_no_access);
 				}
 			}
 			return message;

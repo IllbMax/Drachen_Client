@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.InvalidParameterException;
+import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
@@ -45,10 +50,23 @@ public class LocationService {
 		this.client = client;
 	}
 
-	public void loadLocations() {
-		// TODO load all locations
-		List<Location> locs = client.allLocationForest();
+	/**
+	 * Load all locations from the server and builds the map for positioning
+	 * system.
+	 * 
+	 * @throws DrachenBaseException
+	 * @throws RestrictionException
+	 * @throws InternalProcessException
+	 * @throws InvalidParameterException
+	 * @throws MissingParameterException
+	 */
+	public void loadLocations() throws MissingParameterException,
+			InvalidParameterException, InternalProcessException,
+			RestrictionException, DrachenBaseException {
 
+		List<Location> locs = client.allLocationForest();
+		if (locs == null)
+			throw new InternalProcessException(new NullPointerException());
 		locationHierachy.clear();
 		locationIdMap.clear();
 		for (Location loc : locs) {
