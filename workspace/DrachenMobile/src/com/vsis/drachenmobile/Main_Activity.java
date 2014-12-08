@@ -23,6 +23,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
@@ -187,6 +190,7 @@ public class Main_Activity extends Activity {
 	class LogoutTask extends AsyncTask<Void, Void, Boolean> {
 
 		private ProgressDialog ringProgressDialog;
+		private DrachenBaseException _exception = null;
 
 		@Override
 		protected void onPreExecute() {
@@ -211,8 +215,20 @@ public class Main_Activity extends Activity {
 			DrachenApplication app = (DrachenApplication) getApplication();
 			MyDataSet client = app.getAppData();
 
-			boolean success = client.logout();
-			return success;
+			try {
+				boolean success = client.logout();
+				return success;
+			} catch (DrachenBaseException e) {
+				_exception = e;
+				return false;
+			}
+		}
+
+		private void cleanUp(boolean all) {
+			DrachenApplication app = (DrachenApplication) getApplication();
+			if (all)
+				app.getAppData().disposeComponents();
+			app.stopDrachenServices();
 		}
 
 		@Override
@@ -224,22 +240,57 @@ public class Main_Activity extends Activity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
-			if (result) {
+			if (result != null && result) {
 				ringProgressDialog.dismiss();
-
-				// Main_Activity.this.finish();
+				cleanUp(false);
 				Main_Activity.super.onBackPressed();
 
 			} else {
+				String message = getErrorString();
+
 				ringProgressDialog.dismiss();
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Main_Activity.this);
-				builder.setTitle("Logout failed.");
-				builder.setMessage(R.string.please_try_again);
+				builder.setTitle(R.string.logout_failed);
+				builder.setMessage(message);
+				builder.setPositiveButton(R.string.force_logout,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								cleanUp(true);
+								Main_Activity.super.onBackPressed();
+
+							}
+						});
+				builder.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
 				builder.show();
 			}
 
 		}
+
+		private String getErrorString() {
+			Context ctx = Main_Activity.this;
+			String message = ctx.getString(R.string.please_try_again);
+
+			if (_exception != null) {
+				if (_exception instanceof RestrictionException) {
+					// RestrictionException e = (RestrictionException)
+					// _exception;
+					message = ctx.getString(R.string.access_denied_logged_out);
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
+		}
+
 	};
 
 }

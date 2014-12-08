@@ -11,6 +11,7 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.BlubClient;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
@@ -101,16 +102,21 @@ public class MyDataSet {
 		}
 	}
 
-	public boolean logout() {
-		Boolean success = client.Logout();
+	public boolean logout() throws InternalProcessException,
+			RestrictionException, DrachenBaseException {
+		boolean success = client.Logout();
 
 		if (success) {
-			locationService.dispose();
-			sensorService.dispose();
-			questService.dispose();
-
+			disposeComponents();
 		}
 		return success;
+	}
+
+	public void disposeComponents() {
+		locationService.dispose();
+		sensorService.dispose();
+		questService.dispose();
+
 	}
 
 	public User getUser() {
@@ -126,10 +132,6 @@ public class MyDataSet {
 	public BlubClient getClient() {
 		return client;
 	}
-
-	// public void setClient(BlubClient client) {
-	// this.client = client;
-	// }
 
 	public LocationService getLocationService() {
 		return locationService;

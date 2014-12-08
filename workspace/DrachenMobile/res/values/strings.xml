@@ -34,9 +34,12 @@
     <string name="logout">Logout</string>
     <string name="displayName">Display name</string>
     <string name="refresh">Refresh</string>
+    <string name="force_logout">Force logout</string>
+    <string name="cancel">Cancel</string>
     
     <string name="register_failed">Register failed.</string>
     <string name="login_failed">Login failed.</string>
+    <string name="logout_failed">Logout failed.</string>
     <string name="please_try_again">Please try again.</string>
     
     <string name="internal_process_error">An internal server error has occurred:\n\'%1$s\'.</string>
@@ -48,5 +51,6 @@
     <string name="param_s_too_short_min_char">\'%1$s\' is too short (min %2$d character).</string>
     <string name="param_s_wrongformat">\'%s\' has an invalid format.</string>
     <string name="wrong_password">Wrong password</string>
+    <string name="access_denied_logged_out">Access denied, maybe you\'re already logged out.</string>
     
 </resources>

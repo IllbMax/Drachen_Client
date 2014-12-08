@@ -49,14 +49,12 @@ public class DrachenApplication extends Application {
 		// sendBroadcast(intent);
 	}
 
-	public boolean logout() {
-		if (appdata.logout()) {
-
-			Intent service = new Intent(this, LocationLocalService.class);
-			stopService(service);
-			return true;
-		}
-		return false;
+	/**
+	 * stops all Services started by the application
+	 */
+	public void stopDrachenServices() {
+		Intent service = new Intent(this, LocationLocalService.class);
+		stopService(service);
 	}
 
 	ServiceConnection serviceConnection = new ServiceConnection() {

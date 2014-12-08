@@ -32,6 +32,7 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.RestrictionException;
 import com.visis.drachen.exception.client.ConnectionException;
 import com.visis.drachen.exception.client.InvalidResultException;
 import com.vsis.drachen.adapter.AdapterProvider;
@@ -114,6 +115,7 @@ public class BlubClient {
 	 * @param password
 	 *            login password
 	 * @return the User object if login was successful (or null)
+	 * 
 	 * @throws DrachenBaseException
 	 *             if other exceptions occurred
 	 * @throws InternalProcessException
@@ -160,13 +162,39 @@ public class BlubClient {
 		return null;
 	}
 
-	public Boolean Logout() {
+	/**
+	 * Try to logout the current logged in user
+	 * 
+	 * @return true if logout was successful
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if there was no logged in user
+	 */
+	public boolean Logout() throws DrachenBaseException,
+			InternalProcessException, RestrictionException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 
-			Boolean output = loadFormGson("logout", param, Boolean.class);
-			return output;
+			ResultWrapper<Boolean> output = loadFormGson("logout", param,
+					new TypeToken<ResultWrapper<Boolean>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return false;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
@@ -175,8 +203,7 @@ public class BlubClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return null;
+		return false;
 	}
 
 	public List<QuestPrototype> QuestsForLocation(int locationId) {
