@@ -48,6 +48,26 @@ public class BlubClient {
 	private CookieManager cookieManager;
 	private URL _base;
 
+	/**
+	 * Try to register new user
+	 * 
+	 * @param username
+	 *            name for login
+	 * @param password
+	 *            password for login
+	 * @param displayName
+	 *            ingame name (that is shown to other user)
+	 * @return true if register was successful
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws MissingParameterException
+	 *             if a parameter is missing (should not happen)
+	 * @throws InvalidParameterException
+	 *             if username or displayName had a wrong format (eg. too short)
+	 */
 	public boolean registerUser(String username, String password,
 			String displayName) throws DrachenBaseException,
 			InternalProcessException, MissingParameterException,
@@ -86,6 +106,23 @@ public class BlubClient {
 		return false;
 	}
 
+	/**
+	 * Try to login the user
+	 * 
+	 * @param username
+	 *            login name
+	 * @param password
+	 *            login password
+	 * @return the User object if login was successful (or null)
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws MissingParameterException
+	 *             if a parameter is missing (should not happen)
+	 * @throws CredentialException
+	 *             if wrong username/password were used
+	 */
 	public User Login(String username, String password)
 			throws DrachenBaseException, InternalProcessException,
 			MissingParameterException, CredentialException {
