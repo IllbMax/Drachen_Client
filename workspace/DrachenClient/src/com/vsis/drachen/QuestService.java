@@ -10,6 +10,8 @@ import java.util.Map;
 import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
@@ -107,7 +109,10 @@ public class QuestService {
 		return getAvailableQuestForLocation(locationId, false);
 	}
 
-	public Quest startQuest(int questPrototypeId) {
+	public Quest startQuest(int questPrototypeId)
+			throws MissingParameterException, IdNotFoundException,
+			QuestStartException, InternalProcessException,
+			RestrictionException, DrachenBaseException {
 		Quest quest = client.StartQuest(questPrototypeId);
 		// remove Prototype Quest form Location
 		// TODO: check for success

@@ -33,6 +33,7 @@ import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
 import com.visis.drachen.exception.client.ConnectionException;
 import com.visis.drachen.exception.client.InvalidResultException;
@@ -365,13 +366,51 @@ public class BlubClient {
 		return null;
 	}
 
-	public Quest StartQuest(int questPrototypeId) {
+	/**
+	 * Start the {@link QuestPrototype} with the id questPrototypeId
+	 * 
+	 * @param questPrototypeId
+	 *            if of the {@link QuestPrototype} which you want to start
+	 * @return the started {@link Quest} from the prototype
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the questPrototypeId parameter is missing (should not
+	 *             happen)
+	 * @throws IdNotFoundException
+	 *             if there is no {@link QuestPrototype} with the id
+	 *             questPrototypeId
+	 * @throws QuestStartException
+	 *             if the user cannot start the Quest
+	 */
+	public Quest StartQuest(int questPrototypeId) throws DrachenBaseException,
+			InternalProcessException, RestrictionException,
+			MissingParameterException, IdNotFoundException, QuestStartException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("questPrototypeId", questPrototypeId);
 
-			return loadFormGson("startQuest", param, Quest.class);
+			ResultWrapper<Quest> output = loadFormGson("startQuest", param,
+					new TypeToken<ResultWrapper<Quest>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

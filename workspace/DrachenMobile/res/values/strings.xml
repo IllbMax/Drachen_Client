@@ -55,6 +55,11 @@
     <string name="wrong_password">Wrong password</string>
     <string name="access_denied_logged_out">Access denied, maybe you\'re already logged out.</string>
     <string name="grats_bug">congratulations you found a strange bug.</string>
-    <string name="logged_in_no_access">Logged in but no access to resource.\nPlease Try again</string>
+    <string name="logged_in_no_access">Logged in but no access to resource.\nPlease Try again</string>
+    <string name="access_denied">Access to resource/request denied.</string>
+    <string name="start_quest_failed">Failed to start Quest</string>
+    <string name="quest_not_qualified">You are not qualified for this quest.</string>
+    <string name="quest_cannot_repeated">You cannot repeat this quest.</string>
+    <string name="quest_still_ongoing">You are already on this quest.</string>
     
 </resources>

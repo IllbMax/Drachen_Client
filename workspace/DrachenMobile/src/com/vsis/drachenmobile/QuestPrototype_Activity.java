@@ -35,6 +35,8 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.QuestStartException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
@@ -422,6 +424,7 @@ public class QuestPrototype_Activity extends Activity {
 
 		private ProgressDialog ringProgressDialog;
 		private QuestPrototype questPrototype;
+		private DrachenBaseException _exception;
 
 		public QuestStartTask(QuestPrototype questPrototype) {
 			this.questPrototype = questPrototype;
@@ -448,9 +451,16 @@ public class QuestPrototype_Activity extends Activity {
 			QuestService questService = appData.getQuestService();
 			SensorService sensorService = appData.getSensorService();
 
-			Quest result = questService.startQuest(questPrototype.getId());
-			sensorService.trackQuest(result);
-			return result;
+			try {
+				Quest result = questService.startQuest(questPrototype.getId());
+				sensorService.trackQuest(result);
+				return result;
+
+			} catch (DrachenBaseException e) {
+				_exception = e;
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		@Override
@@ -462,11 +472,61 @@ public class QuestPrototype_Activity extends Activity {
 				_prototypeAdapter.notifyDataSetChanged();
 
 			} else {
-				// TODO: error: no Quest stared
+				String message = getErrorString();
+
+				ringProgressDialog.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						QuestPrototype_Activity.this);
+				builder.setTitle(R.string.start_quest_failed);
+				builder.setMessage(message);
+				builder.show();
 			}
 
 			ringProgressDialog.dismiss();
 		}
+
+		private String getErrorString() {
+			Context ctx = QuestPrototype_Activity.this;
+			String message = ctx.getString(R.string.please_try_again);
+
+			if (_exception != null) {
+
+				if (_exception instanceof QuestStartException) {
+					QuestStartException e = (QuestStartException) _exception;
+					switch (e.getType()) {
+					case NotQualified:
+						message = ctx.getString(R.string.quest_not_qualified);
+						break;
+					case NotRepeatable:
+						message = ctx.getString(R.string.quest_cannot_repeated);
+						break;
+					case StillOnGoing:
+						message = ctx.getString(R.string.quest_still_ongoing);
+						break;
+					default:
+						break;
+
+					}
+				} else if (_exception instanceof MissingParameterException) {
+					MissingParameterException e = (MissingParameterException) _exception;
+					message = ctx.getString(R.string.missing_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof IdNotFoundException) {
+					IdNotFoundException e = (IdNotFoundException) _exception;
+					message = ctx.getString(R.string.id_not_found_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof RestrictionException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.access_denied);
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
+		}
+
 	}
 
 }

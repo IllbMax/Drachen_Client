@@ -9,6 +9,8 @@ import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ParameterException;
+import com.visis.drachen.exception.QuestException;
+import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.quest.AccelerationQuestTarget;
 import com.vsis.drachen.model.quest.GPSQuestTarget;
@@ -52,6 +54,9 @@ public class AdapterProvider {
 		adapter.registerSubtype(RestrictionException.class);
 		adapter.registerSubtype(MissingParameterException.class);
 		adapter.registerSubtype(IdNotFoundException.class);
+		// quest exceptions
+		adapter.registerSubtype(QuestException.class);
+		adapter.registerSubtype(QuestStartException.class);
 
 		return adapter;
 	}
