@@ -22,9 +22,9 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.vsis.drachen.QuestService;
-import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachenmobile.helper.Helper;
+import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class Quest_overview_Activity extends Activity {
@@ -267,40 +267,17 @@ public class Quest_overview_Activity extends Activity {
 		}
 	}
 
-	private class QuestAbortTask extends AsyncTask<Void, Void, Boolean> {
-
-		private ProgressDialog ringProgressDialog;
-		private Quest quest;
+	private class QuestAbortTask extends QuestAbortTaskTemplate {
 
 		public QuestAbortTask(Quest quest) {
-			this.quest = quest;
+			super(Quest_overview_Activity.this, quest,
+					((DrachenApplication) getApplication()).getAppData());
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-
-			Context ctx = Quest_overview_Activity.this;
-			ringProgressDialog = ProgressDialog.show(
-					ctx,
-					ctx.getString(R.string.please_wait_),
-					ctx.getString(R.string.aborting_quest) + ": "
-							+ quest.getName(), true);
-			ringProgressDialog.setCancelable(true);
-
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			MyDataSet appData = ((DrachenApplication) getApplication())
-					.getAppData();
-			QuestService questService = appData.getQuestService();
-			SensorService sensorService = appData.getSensorService();
-
-			boolean result = questService.abortQuest(quest.getId());
-			if (result)
-				sensorService.untrackQuest(quest);
-			return result;
+			// nothing more to do
 		}
 
 		@Override
@@ -312,10 +289,8 @@ public class Quest_overview_Activity extends Activity {
 				_questAdapter.notifyDataSetChanged();
 
 			} else {
-				// TODO: error: no Quest aborted
+				this.showAlertExceptionDialog();
 			}
-
-			ringProgressDialog.dismiss();
 		}
 	}
 

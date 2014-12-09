@@ -3,9 +3,7 @@ package com.vsis.drachenmobile;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -23,6 +20,7 @@ import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachenmobile.helper.Helper;
+import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class Quest_details_Activity extends Activity {
@@ -229,38 +227,17 @@ public class Quest_details_Activity extends Activity {
 		}
 	}
 
-	private class QuestAbortTask extends AsyncTask<Void, Void, Boolean> {
-
-		private ProgressDialog ringProgressDialog;
-		private Quest quest;
+	private class QuestAbortTask extends QuestAbortTaskTemplate {
 
 		public QuestAbortTask(Quest quest) {
-			this.quest = quest;
+			super(Quest_details_Activity.this, quest,
+					((DrachenApplication) getApplication()).getAppData());
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-
-			Context ctx = Quest_details_Activity.this;
-			ringProgressDialog = ProgressDialog.show(
-					ctx,
-					ctx.getString(R.string.please_wait_),
-					ctx.getString(R.string.aborting_quest) + ": "
-							+ quest.getName(), true);
-			ringProgressDialog.setCancelable(true);
-
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			MyDataSet appData = ((DrachenApplication) getApplication())
-					.getAppData();
-			QuestService questService = appData.getQuestService();
-
-			boolean result = questService.abortQuest(quest.getId());
-
-			return result;
+			// nothing more to do
 		}
 
 		@Override
@@ -268,13 +245,12 @@ public class Quest_details_Activity extends Activity {
 			super.onPostExecute(result);
 
 			if (result != null) {
-				// TODO: close this activity after quest abortion
+				// close this activity
+				Quest_details_Activity.this.onBackPressed();
 
 			} else {
-				// TODO: error: no Quest aborted
+				this.showAlertExceptionDialog();
 			}
-
-			ringProgressDialog.dismiss();
 		}
 	}
 

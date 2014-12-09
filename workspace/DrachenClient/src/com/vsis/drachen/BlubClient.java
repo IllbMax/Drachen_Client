@@ -33,6 +33,7 @@ import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
 import com.visis.drachen.exception.client.ConnectionException;
@@ -421,13 +422,49 @@ public class BlubClient {
 		return null;
 	}
 
-	public Boolean AbortQuest(int questId) {
+	/**
+	 * Try to abort the {@link Quest} with the id questId
+	 * 
+	 * @param questId
+	 *            id of the Quest, which should be aborted
+	 * @return true if abortion was successful
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the questId parameter is missing (should not happen)
+	 * @throws IdNotFoundException
+	 *             if there is no {@link Quest} with the id questId
+	 * @throws QuestAbortException
+	 *             if the user isn't on this quest
+	 */
+	public Boolean AbortQuest(int questId) throws DrachenBaseException,
+			InternalProcessException, RestrictionException,
+			MissingParameterException, IdNotFoundException, QuestAbortException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("questId", questId);
 
-			return loadFormGson("abortQuest", param, Boolean.class);
+			ResultWrapper<Boolean> output = loadFormGson("abortQuest", param,
+					new TypeToken<ResultWrapper<Boolean>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

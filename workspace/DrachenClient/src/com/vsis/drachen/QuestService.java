@@ -11,6 +11,7 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
@@ -113,20 +114,29 @@ public class QuestService {
 			throws MissingParameterException, IdNotFoundException,
 			QuestStartException, InternalProcessException,
 			RestrictionException, DrachenBaseException {
+
 		Quest quest = client.StartQuest(questPrototypeId);
-		// remove Prototype Quest form Location
-		// TODO: check for success
-		user.startQuest(quest);
-		addQuestToMap(quest);
+
+		// TODO: remove Prototype Quest form Location
+		if (quest != null) {
+			user.startQuest(quest);
+			addQuestToMap(quest);
+		}
 		return quest;
 	}
 
-	public boolean abortQuest(int questId) {
+	public boolean abortQuest(int questId) throws MissingParameterException,
+			IdNotFoundException, QuestAbortException, InternalProcessException,
+			RestrictionException, DrachenBaseException {
+
 		Boolean success = client.AbortQuest(questId);
-		// TODO: check for success
-		Quest quest = removeQuestFromMap(questId);
-		user.abortQuest(quest);
-		return success;
+
+		if (success != null && success) {
+			Quest quest = removeQuestFromMap(questId);
+			user.abortQuest(quest);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean finishQuest(int questId) {

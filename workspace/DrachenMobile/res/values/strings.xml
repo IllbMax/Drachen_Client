@@ -61,5 +61,8 @@
     <string name="quest_not_qualified">You are not qualified for this quest.</string>
     <string name="quest_cannot_repeated">You cannot repeat this quest.</string>
     <string name="quest_still_ongoing">You are already on this quest.</string>
+    <string name="quest_abortion_failed">Quest abortion failed</string>
+    <string name="quest_not_yours">This is not your quest!</string>
+    <string name="quest_already_finished">This quest is already finished.</string>
     
 </resources>
