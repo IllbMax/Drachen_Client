@@ -8,6 +8,7 @@ import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.ParameterException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestException;
@@ -48,11 +49,12 @@ public class AdapterProvider {
 		RuntimeTypeAdapter<DrachenBaseException> adapter = RuntimeTypeAdapter
 				.create(DrachenBaseException.class, "type");
 		adapter.registerSubtype(InternalProcessException.class);
-		adapter.registerSubtype(InvalidParameterException.class);
 		adapter.registerSubtype(CredentialException.class);
+		adapter.registerSubtype(ObjectRestrictionException.class);
+		adapter.registerSubtype(RestrictionException.class);
 		// parameter exceptions:
 		adapter.registerSubtype(ParameterException.class);
-		adapter.registerSubtype(RestrictionException.class);
+		adapter.registerSubtype(InvalidParameterException.class);
 		adapter.registerSubtype(MissingParameterException.class);
 		adapter.registerSubtype(IdNotFoundException.class);
 		// quest exceptions

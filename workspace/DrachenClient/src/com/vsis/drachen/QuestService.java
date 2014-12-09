@@ -11,6 +11,7 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.RestrictionException;
@@ -126,7 +127,8 @@ public class QuestService {
 	}
 
 	public boolean abortQuest(int questId) throws MissingParameterException,
-			IdNotFoundException, QuestAbortException, InternalProcessException,
+			IdNotFoundException, ObjectRestrictionException,
+			QuestAbortException, InternalProcessException,
 			RestrictionException, DrachenBaseException {
 
 		Boolean success = client.AbortQuest(questId);

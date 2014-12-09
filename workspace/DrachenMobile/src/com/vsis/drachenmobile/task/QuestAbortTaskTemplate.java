@@ -9,6 +9,7 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.QuestService;
@@ -99,19 +100,13 @@ public class QuestAbortTaskTemplate extends AsyncTask<Void, Void, Boolean> {
 		if (_exception != null) {
 
 			if (_exception instanceof QuestAbortException) {
-				QuestAbortException e = (QuestAbortException) _exception;
-				switch (e.getType()) {
-
-				case NotOwn:
-					message = ctx.getString(R.string.quest_not_yours);
-					break;
-				case NotRunning:
-					message = ctx.getString(R.string.quest_already_finished);
-					break;
-				default:
-					break;
-
-				}
+				// QuestAbortException e = (QuestAbortException) _exception;
+				message = ctx.getString(R.string.quest_already_finished);
+			} else if (_exception instanceof ObjectRestrictionException) {
+				// ObjectRestrictionException e = (ObjectRestrictionException)
+				// _exception;
+				message = ctx.getString(R.string.quest_not_yours);
+			} else if (_exception instanceof IdNotFoundException) {
 			} else if (_exception instanceof MissingParameterException) {
 				MissingParameterException e = (MissingParameterException) _exception;
 				message = ctx.getString(R.string.missing_parameter_s,
