@@ -34,7 +34,6 @@ import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
-import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestFinishedException;
 import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.QuestTargetException;
@@ -442,7 +441,7 @@ public class BlubClient {
 	 *             if the questId parameter is missing (should not happen)
 	 * @throws IdNotFoundException
 	 *             if there is no {@link Quest} with the id questId
-	 * @throws QuestAbortException
+	 * @throws QuestFinishedException
 	 *             if the user isn't on this quest
 	 * @throws ObjectRestrictionException
 	 *             if the quest belongs to an other user
@@ -450,7 +449,7 @@ public class BlubClient {
 	public Boolean AbortQuest(int questId) throws DrachenBaseException,
 			InternalProcessException, RestrictionException,
 			MissingParameterException, IdNotFoundException,
-			ObjectRestrictionException, QuestAbortException {
+			ObjectRestrictionException, QuestFinishedException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();

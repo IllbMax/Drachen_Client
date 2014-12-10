@@ -12,7 +12,6 @@ import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
-import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestFinishedException;
 import com.visis.drachen.exception.QuestStartException;
 import com.visis.drachen.exception.QuestTargetException;
@@ -130,7 +129,7 @@ public class QuestService {
 
 	public boolean abortQuest(int questId) throws MissingParameterException,
 			IdNotFoundException, ObjectRestrictionException,
-			QuestAbortException, InternalProcessException,
+			QuestFinishedException, InternalProcessException,
 			RestrictionException, DrachenBaseException {
 
 		Quest quest = removeQuestFromMap(questId);

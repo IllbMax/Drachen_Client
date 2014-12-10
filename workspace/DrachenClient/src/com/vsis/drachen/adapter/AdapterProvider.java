@@ -10,7 +10,6 @@ import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.ParameterException;
-import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestException;
 import com.visis.drachen.exception.QuestFinishedException;
 import com.visis.drachen.exception.QuestStartException;
@@ -62,7 +61,6 @@ public class AdapterProvider {
 		// quest exceptions
 		adapter.registerSubtype(QuestException.class);
 		adapter.registerSubtype(QuestStartException.class);
-		adapter.registerSubtype(QuestAbortException.class);
 		adapter.registerSubtype(QuestFinishedException.class);
 		adapter.registerSubtype(QuestTargetException.class);
 
