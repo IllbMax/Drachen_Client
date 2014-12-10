@@ -566,17 +566,28 @@ public class BlubClient {
 	 * the Type for Generics and {@code MyClass.class} for non-generic Classes
 	 * 
 	 * @param scriptname
+	 *            name of the script at the server
 	 * @param param
+	 *            Map with name=value for parameter
 	 * @param resultType
 	 *            work around for java's - let's call it 'bad' - implementation
-	 *            of Generics
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 * @throws ProtocolException
+	 *            of Generics, use
+	 *            {@code new TypeToken<MyClass<YourClass>>().getType()} for
+	 *            generic classes
+	 * @return instance of T parsed with Gson from server response
 	 * @throws InvalidResultException
-	 * @throws InterruptedException
+	 *             if the result string from server is not a json string
+	 * @throws ConnectionException
+	 *             if something happens to the connection
+	 * @throws MalformedURLException
+	 *             if the {@link URL} generated from base, scriptname and param
+	 * @throws UnsupportedEncodingException
+	 *             if UTF-8 is not supported (now we are all DOOMED, DOOMED)
+	 * @throws IOException
+	 *             if something happens with the connection
+	 * @throws ProtocolException
+	 *             if something went wrong within the protocol (eg. use wrong
+	 *             protocol)
 	 */
 	private <T> T loadFormGson(String scriptname, Map<String, Object> param,
 			Type resultType) throws ConnectionException, InvalidResultException {
@@ -607,23 +618,66 @@ public class BlubClient {
 
 	}
 
-	private URL getURL(CharSequence scriptname, CharSequence queryPOST)
+	/**
+	 * generates the URL for a script name and get parameter
+	 * 
+	 * @param scriptname
+	 *            name of the script at the server
+	 * @param queryGET
+	 *            string with get parameters
+	 * @return {@link URL} generated from name and parameter
+	 * @throws MalformedURLException
+	 *             if the base, scriptname or queryGET are malformated
+	 */
+	private URL getURL(CharSequence scriptname, CharSequence queryGET)
 			throws MalformedURLException {
-		String paramString = queryPOST.length() == 0 ? "" : ("?" + queryPOST);
+		String paramString = queryGET.length() == 0 ? "" : ("?" + queryGET);
 		return new URL(_base, scriptname + paramString);
 		// new URL(_protocol, _host, _port, "/" + scriptname + paramString);
 	}
 
+	/**
+	 * generates the URL for a script name and get parameter {@link Map}
+	 * 
+	 * @param scriptname
+	 *            name of the script at the server
+	 * @param requestParams
+	 *            map with name=value of the parameter
+	 * @return {@link URL} generated from name and parameter
+	 * @throws MalformedURLException
+	 *             if the base or scriptname are malformated
+	 */
 	private URL getURL(CharSequence scriptname,
 			Map<String, Object> requestParams) throws MalformedURLException,
 			UnsupportedEncodingException {
 		return getURL(scriptname, MapToUrlParamString(requestParams));
 	}
 
+	/**
+	 * return a {@link Gson} instance prepared for drachen!!! usage
+	 * 
+	 * @return
+	 */
 	private Gson getGson() {
 		return AdapterProvider.installAllAdapter(new GsonBuilder()).create();
 	}
 
+	/**
+	 * Loads the {@link String} result from a webrequest
+	 * 
+	 * @param url
+	 *            target {@link URL}
+	 * @param requestMethod
+	 *            'POST' or 'GET'
+	 * @param requestParams
+	 *            Map with name=value of the request data for the defined method
+	 * @return the string result (UTF-8) of the response
+	 * 
+	 * @throws IOException
+	 *             if something happens with the connection
+	 * @throws ProtocolException
+	 *             if something went wrong within the protocol
+	 */
 	private String connect(URL url, String requestMethod,
 			Map<String, Object> requestParams) throws IOException,
 			ProtocolException, InterruptedException {
@@ -639,6 +693,7 @@ public class BlubClient {
 	 *            Map to convert, the objects are converted to Strings by
 	 *            String.valueOf
 	 * @return String for urls
+	 * 
 	 * @throws UnsupportedEncodingException
 	 */
 	private static StringBuilder MapToUrlParamString(
@@ -656,6 +711,21 @@ public class BlubClient {
 		return postData;
 	}
 
+	/**
+	 * Loads the {@link String} result from a webrequest
+	 * 
+	 * @param url
+	 *            target {@link URL}
+	 * @param requestMethod
+	 *            'POST' or 'GET'
+	 * @param requestParamString
+	 *            String with request data for the defined method
+	 * @return the string result (UTF-8) of the response
+	 * @throws IOException
+	 *             if something happens with the connection
+	 * @throws ProtocolException
+	 *             if something went wrong within the protocol
+	 */
 	private String connect(URL url, String requestMethod,
 			CharSequence requestParamString) throws IOException,
 			ProtocolException {
