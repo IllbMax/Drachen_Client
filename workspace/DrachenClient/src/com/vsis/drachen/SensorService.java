@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.sensor.ISensor;
 import com.visis.drachen.sensor.SensorListener;
 import com.visis.drachen.sensor.SensorType;
@@ -278,12 +279,21 @@ public class SensorService {
 				boolean update = qt.receiveSensordata(type, data);
 				System.out.println(qt.getName() + ": " + update);
 				if (update) {
-					Boolean su = _client.UpdateQuestTarget(qt);
-					// TODO: if false return qt to previous state
+					Boolean su;
+					try {
+						su = _client.UpdateQuestTarget(qt);
+					} catch (DrachenBaseException e) {
+						// TODO: handle the other exceptions
+						e.printStackTrace();
+						su = false;
+					}
+					// TODO: if false return qt to previous state or try to send
+					// the change later, depending on the exception (eg.
+					// QuestFinishedException -> update the local quest/target)
 					System.out.println(qt.getName() + ", Server: " + su);
 
 					// TODO: if true notify System that there is a change
-					if (su)
+					if (su != null && su)
 						CallOnQuestTargetChangedListerns(qt);
 				}
 			}

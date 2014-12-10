@@ -35,8 +35,9 @@ import com.visis.drachen.exception.InvalidParameterException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
+import com.visis.drachen.exception.QuestFinishedException;
 import com.visis.drachen.exception.QuestStartException;
-import com.visis.drachen.exception.QuestTargetNotFinishedException;
+import com.visis.drachen.exception.QuestTargetException;
 import com.visis.drachen.exception.RestrictionException;
 import com.visis.drachen.exception.client.ConnectionException;
 import com.visis.drachen.exception.client.InvalidResultException;
@@ -499,7 +500,9 @@ public class BlubClient {
 	 *             if the questId parameter is missing (should not happen)
 	 * @throws IdNotFoundException
 	 *             if there is no {@link Quest} with the id questId
-	 * @throws QuestTargetNotFinishedException
+	 * @throws QuestFinishedException
+	 *             if the quest is already finished
+	 * @throws QuestTargetException
 	 *             if not all {@link QuestTarget}s are succeeded (contains the
 	 *             first target that isn't succeeded)
 	 * @throws ObjectRestrictionException
@@ -509,14 +512,16 @@ public class BlubClient {
 	public Boolean FinishQuest(int questId) throws DrachenBaseException,
 			InternalProcessException, RestrictionException,
 			MissingParameterException, IdNotFoundException,
-			ObjectRestrictionException, QuestTargetNotFinishedException {
+			ObjectRestrictionException, QuestTargetException,
+			QuestFinishedException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("questId", questId);
 
 			ResultWrapper<Boolean> output = loadFormGson("finishQuest", param,
-					Boolean.class);
+					new TypeToken<ResultWrapper<Boolean>>() {
+					}.getType());
 			if (output == null)
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
@@ -539,7 +544,43 @@ public class BlubClient {
 		return false;
 	}
 
-	public Boolean UpdateQuestTarget(QuestTarget questTarget) {
+	/**
+	 * Update a {@link QuestTarget} by sending the state (via
+	 * state-design-pattern) to the server and updates the changes happened
+	 * locally
+	 * 
+	 * @param questTarget
+	 *            the questTarget that send it's state
+	 * @return true if the update process was successful
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the questId, questTargetId or state parameter is missing
+	 *             (should not happen)
+	 * @throws IdNotFoundException
+	 *             if there is no {@link Quest} with the id questId or no
+	 *             {@link QuestTarget} with the id questTragetId
+	 * @throws QuestFinishedException
+	 *             if the quest is already finished, so the questTargets cannot
+	 *             change anymore
+	 * @throws QuestTargetException
+	 *             id the quest target is already finished so it can't be
+	 *             changed any more
+	 * @throws ObjectRestrictionException
+	 *             if the quest or questTarget belong to an other user
+	 * 
+	 */
+	public Boolean UpdateQuestTarget(QuestTarget questTarget)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, MissingParameterException,
+			InvalidParameterException, IdNotFoundException,
+			ObjectRestrictionException, QuestFinishedException,
+			QuestTargetException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
@@ -548,7 +589,21 @@ public class BlubClient {
 			param.put("data", getGson().toJson(questTarget.getUpdateState(), //
 					IQuestTargetUpdateState.class));
 
-			return loadFormGson("updateQuestTarget", param, Boolean.class);
+			ResultWrapper<Boolean> output = loadFormGson("updateQuestTarget",
+					param, new TypeToken<ResultWrapper<Boolean>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

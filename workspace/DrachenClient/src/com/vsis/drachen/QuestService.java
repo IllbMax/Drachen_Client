@@ -13,8 +13,9 @@ import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
+import com.visis.drachen.exception.QuestFinishedException;
 import com.visis.drachen.exception.QuestStartException;
-import com.visis.drachen.exception.QuestTargetNotFinishedException;
+import com.visis.drachen.exception.QuestTargetException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
@@ -146,7 +147,7 @@ public class QuestService {
 	}
 
 	public boolean finishQuest(int questId) throws MissingParameterException,
-			IdNotFoundException, QuestTargetNotFinishedException,
+			IdNotFoundException, QuestTargetException, QuestFinishedException,
 			InternalProcessException, RestrictionException,
 			ObjectRestrictionException, DrachenBaseException {
 

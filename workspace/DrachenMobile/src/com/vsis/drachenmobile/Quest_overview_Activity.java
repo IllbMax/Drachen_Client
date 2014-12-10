@@ -26,7 +26,8 @@ import com.visis.drachen.exception.IdNotFoundException;
 import com.visis.drachen.exception.InternalProcessException;
 import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
-import com.visis.drachen.exception.QuestTargetNotFinishedException;
+import com.visis.drachen.exception.QuestFinishedException;
+import com.visis.drachen.exception.QuestTargetException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.model.quest.Quest;
@@ -377,8 +378,8 @@ public class Quest_overview_Activity extends Activity {
 
 			if (_exception != null) {
 
-				if (_exception instanceof QuestTargetNotFinishedException) {
-					QuestTargetNotFinishedException e = (QuestTargetNotFinishedException) _exception;
+				if (_exception instanceof QuestTargetException) {
+					QuestTargetException e = (QuestTargetException) _exception;
 					MyDataSet appData = ((DrachenApplication) getApplication())
 							.getAppData();
 					QuestService questService = appData.getQuestService();
@@ -396,6 +397,10 @@ public class Quest_overview_Activity extends Activity {
 						message = ctx
 								.getString(R.string.questtarget_d_not_suc_not_found);
 					}
+				} else if (_exception instanceof QuestFinishedException) {
+					// QuestFinishedException e = (QuestFinishedException)
+					// _exception;
+					message = ctx.getString(R.string.quest_already_finished);
 				} else if (_exception instanceof ObjectRestrictionException) {
 					// ObjectRestrictionException e =
 					// (ObjectRestrictionException) _exception;
