@@ -7,8 +7,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.visis.drachen.sensor.AbstractSensor;
-import com.visis.drachen.sensor.ISensor;
+import com.vsis.drachen.sensor.AbstractSensor;
+import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.AccelarationSensorData;
 
 public class AccelarationSensor extends AbstractSensor implements ISensor {

@@ -9,8 +9,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.visis.drachen.sensor.AbstractSensor;
-import com.visis.drachen.sensor.ISensor;
+import com.vsis.drachen.sensor.AbstractSensor;
+import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 

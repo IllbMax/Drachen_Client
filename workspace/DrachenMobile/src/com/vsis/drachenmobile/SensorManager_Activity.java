@@ -31,9 +31,9 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.visis.drachen.sensor.ISensor;
-import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.SensorService;
+import com.vsis.drachen.sensor.ISensor;
+import com.vsis.drachen.sensor.SensorType;
 
 public class SensorManager_Activity extends Activity {
 

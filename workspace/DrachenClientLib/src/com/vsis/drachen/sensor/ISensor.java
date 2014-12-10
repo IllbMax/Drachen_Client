@@ -1,4 +1,4 @@
-package com.visis.drachen.sensor;
+package com.vsis.drachen.sensor;
 
 public interface ISensor {
 

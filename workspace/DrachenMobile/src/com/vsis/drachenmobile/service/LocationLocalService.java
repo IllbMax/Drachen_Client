@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
-import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.LocationService.LocationChanged;
 import com.vsis.drachen.SensorService;
@@ -20,6 +19,7 @@ import com.vsis.drachen.SensorService.OnQuestTargetChangedListener;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
+import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.sensor.AccelarationSensor;
 import com.vsis.drachenmobile.sensor.GPSSensor;

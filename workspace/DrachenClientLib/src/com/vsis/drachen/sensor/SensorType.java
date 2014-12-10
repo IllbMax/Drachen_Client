@@ -1,4 +1,4 @@
-package com.visis.drachen.sensor;
+package com.vsis.drachen.sensor;
 
 /**
  * Lists all possible Sensor-Types known by the Drachensystem

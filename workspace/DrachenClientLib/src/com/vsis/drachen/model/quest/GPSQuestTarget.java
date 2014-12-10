@@ -3,9 +3,9 @@ package com.vsis.drachen.model.quest;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.model.world.Point;
 import com.vsis.drachen.model.world.Polygon;
+import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachen.sensor.data.ISensorData;
 

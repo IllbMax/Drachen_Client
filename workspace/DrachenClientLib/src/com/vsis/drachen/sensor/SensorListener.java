@@ -1,4 +1,4 @@
-package com.visis.drachen.sensor;
+package com.vsis.drachen.sensor;
 
 import com.vsis.drachen.sensor.data.ISensorData;
 

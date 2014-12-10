@@ -3,10 +3,10 @@ package com.vsis.drachenmobile;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.visis.drachen.sensor.ISensor;
-import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachen.sensor.ISensor;
+import com.vsis.drachen.sensor.SensorType;
 
 public class Sensor_details_Activity extends Activity {
 

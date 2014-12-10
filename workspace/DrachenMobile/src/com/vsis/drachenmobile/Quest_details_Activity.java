@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.visis.drachen.sensor.SensorType;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
+import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;

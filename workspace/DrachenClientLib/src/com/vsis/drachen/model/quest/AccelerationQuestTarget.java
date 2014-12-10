@@ -3,7 +3,7 @@ package com.vsis.drachen.model.quest;
 import java.util.EnumSet;
 import java.util.Set;
 
-import com.visis.drachen.sensor.SensorType;
+import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachen.sensor.data.AccelarationSensorData;
 import com.vsis.drachen.sensor.data.ISensorData;
 

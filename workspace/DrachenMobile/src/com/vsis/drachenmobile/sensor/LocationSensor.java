@@ -9,10 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.visis.drachen.sensor.AbstractSensor;
-import com.visis.drachen.sensor.ISensor;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.model.world.Location;
+import com.vsis.drachen.sensor.AbstractSensor;
+import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 
