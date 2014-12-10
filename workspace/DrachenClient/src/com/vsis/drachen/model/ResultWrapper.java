@@ -1,7 +1,7 @@
 package com.vsis.drachen.model;
 
 import com.google.gson.annotations.Expose;
-import com.visis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.exception.DrachenBaseException;
 
 public class ResultWrapper<T> {
 	@Expose

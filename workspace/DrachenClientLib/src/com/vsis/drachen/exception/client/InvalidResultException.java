@@ -1,4 +1,4 @@
-package com.visis.drachen.exception.client;
+package com.vsis.drachen.exception.client;
 
 /**
  * Representing errors if the server result cannot be read, has an invalid

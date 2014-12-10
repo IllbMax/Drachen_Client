@@ -1,4 +1,4 @@
-package com.visis.drachen.exception.client;
+package com.vsis.drachen.exception.client;
 
 /**
  * Representing errors with the connection, or no access to the resource etc.

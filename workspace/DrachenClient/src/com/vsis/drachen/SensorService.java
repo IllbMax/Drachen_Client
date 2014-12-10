@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.visis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.sensor.ISensor;

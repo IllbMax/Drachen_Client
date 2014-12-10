@@ -19,11 +19,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.visis.drachen.exception.DrachenBaseException;
-import com.visis.drachen.exception.InternalProcessException;
-import com.visis.drachen.exception.InvalidParameterException;
-import com.visis.drachen.exception.MissingParameterException;
-import com.visis.drachen.exception.RestrictionException;
+import com.vsis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.exception.InternalProcessException;
+import com.vsis.drachen.exception.InvalidParameterException;
+import com.vsis.drachen.exception.MissingParameterException;
+import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;

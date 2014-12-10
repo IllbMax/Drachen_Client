@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.visis.drachen.exception.DrachenBaseException;
-import com.visis.drachen.exception.InternalProcessException;
-import com.visis.drachen.exception.InvalidParameterException;
-import com.visis.drachen.exception.MissingParameterException;
-import com.visis.drachen.exception.RestrictionException;
+import com.vsis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.exception.InternalProcessException;
+import com.vsis.drachen.exception.InvalidParameterException;
+import com.vsis.drachen.exception.MissingParameterException;
+import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;

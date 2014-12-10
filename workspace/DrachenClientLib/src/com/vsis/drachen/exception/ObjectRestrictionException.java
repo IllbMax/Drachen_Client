@@ -1,4 +1,4 @@
-package com.visis.drachen.exception;
+package com.vsis.drachen.exception;
 
 /**
  * Representing error with accessing an object:

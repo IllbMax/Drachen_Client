@@ -1,4 +1,4 @@
-package com.visis.drachen.exception;
+package com.vsis.drachen.exception;
 
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;

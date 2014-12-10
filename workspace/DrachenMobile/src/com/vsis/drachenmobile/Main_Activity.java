@@ -23,10 +23,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.visis.drachen.exception.DrachenBaseException;
-import com.visis.drachen.exception.InternalProcessException;
-import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.LocationService;
+import com.vsis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.exception.InternalProcessException;
+import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.helper.Helper;

@@ -2,8 +2,8 @@ package com.vsis.drachenmobile.helper;
 
 import android.content.Context;
 
-import com.visis.drachen.exception.InvalidParameterException;
-import com.visis.drachen.exception.InvalidParameterException.InvalidType;
+import com.vsis.drachen.exception.InvalidParameterException;
+import com.vsis.drachen.exception.InvalidParameterException.InvalidType;
 import com.vsis.drachen.model.quest.QuestProgressStatus;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.R;
