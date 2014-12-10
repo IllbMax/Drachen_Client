@@ -93,11 +93,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return true;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return false;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -147,11 +147,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				throw new CredentialException("wrong password");
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -192,11 +192,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return false;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -244,11 +244,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -298,11 +298,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -350,11 +350,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -406,11 +406,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -462,11 +462,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -525,11 +525,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}
@@ -564,6 +564,8 @@ public class BlubClient {
 	 * @throws IdNotFoundException
 	 *             if there is no {@link Quest} with the id questId or no
 	 *             {@link QuestTarget} with the id questTragetId
+	 * @throws InvalidParameterException
+	 *             if the state of the questTarget (data) is malformated
 	 * @throws QuestFinishedException
 	 *             if the quest is already finished, so the questTargets cannot
 	 *             change anymore
@@ -595,11 +597,11 @@ public class BlubClient {
 				throw new InternalProcessException("Empty Result");
 			else if (output.success)
 				return output.resultObject;
-			else if (output.expection == null)
+			else if (output.exception == null)
 				return null;
 			else // there is an exception provided by the server
 			{
-				DrachenBaseException e = output.expection;
+				DrachenBaseException e = output.exception;
 				e.fillInStackTrace();
 				throw e;
 			}

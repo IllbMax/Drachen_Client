@@ -25,19 +25,28 @@ public class ObjectRestrictionException extends DrachenBaseException {
 		return otype;
 	}
 
-	public ObjectRestrictionException() {
+	public ObjectRestrictionException(int id, String type) {
+		oid = id;
+		otype = type;
 	}
 
-	public ObjectRestrictionException(String message) {
+	public ObjectRestrictionException(int id, String type, String message) {
 		super(message);
+		oid = id;
+		otype = type;
 	}
 
-	public ObjectRestrictionException(Throwable cause) {
+	public ObjectRestrictionException(int id, String type, Throwable cause) {
 		super(cause);
+		oid = id;
+		otype = type;
 	}
 
-	public ObjectRestrictionException(String message, Throwable cause) {
+	public ObjectRestrictionException(int id, String type, String message,
+			Throwable cause) {
 		super(message, cause);
+		oid = id;
+		otype = type;
 	}
 
 }

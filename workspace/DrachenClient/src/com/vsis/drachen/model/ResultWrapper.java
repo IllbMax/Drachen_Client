@@ -9,5 +9,5 @@ public class ResultWrapper<T> {
 	@Expose
 	public T resultObject;
 	@Expose
-	public DrachenBaseException expection;
+	public DrachenBaseException exception;
 }
