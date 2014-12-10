@@ -1,4 +1,4 @@
-package com.visis.drachen.sensor.data;
+package com.vsis.drachen.sensor.data;
 
 /**
  * Sensordata for GPS Quests

@@ -12,9 +12,9 @@ import com.visis.drachen.exception.DrachenBaseException;
 import com.visis.drachen.sensor.ISensor;
 import com.visis.drachen.sensor.SensorListener;
 import com.visis.drachen.sensor.SensorType;
-import com.visis.drachen.sensor.data.ISensorData;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
+import com.vsis.drachen.sensor.data.ISensorData;
 
 public class SensorService {
 

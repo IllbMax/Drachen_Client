@@ -3,8 +3,8 @@ package com.vsis.drachen.model.quest;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
-import com.visis.drachen.sensor.data.ISensorData;
 import com.vsis.drachen.model.IdObject;
+import com.vsis.drachen.sensor.data.ISensorData;
 
 public abstract class QuestTarget extends IdObject {
 

@@ -4,8 +4,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
-import com.visis.drachen.sensor.data.AccelarationSensorData;
-import com.visis.drachen.sensor.data.ISensorData;
+import com.vsis.drachen.sensor.data.AccelarationSensorData;
+import com.vsis.drachen.sensor.data.ISensorData;
 
 public class AccelerationQuestTarget extends QuestTarget {
 

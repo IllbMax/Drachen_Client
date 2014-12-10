@@ -4,9 +4,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.visis.drachen.sensor.SensorType;
-import com.visis.drachen.sensor.data.ISensorData;
-import com.visis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachen.model.world.Location;
+import com.vsis.drachen.sensor.data.ISensorData;
+import com.vsis.drachen.sensor.data.LocationSensorData;
 
 public class LocationQuestTarget extends QuestTarget {
 

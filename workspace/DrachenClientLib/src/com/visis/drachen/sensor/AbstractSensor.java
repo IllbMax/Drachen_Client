@@ -3,7 +3,7 @@ package com.visis.drachen.sensor;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.visis.drachen.sensor.data.ISensorData;
+import com.vsis.drachen.sensor.data.ISensorData;
 
 public abstract class AbstractSensor implements ISensor {
 

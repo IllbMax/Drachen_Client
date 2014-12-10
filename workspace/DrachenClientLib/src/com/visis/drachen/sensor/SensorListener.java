@@ -1,6 +1,6 @@
 package com.visis.drachen.sensor;
 
-import com.visis.drachen.sensor.data.ISensorData;
+import com.vsis.drachen.sensor.data.ISensorData;
 
 public interface SensorListener {
 	/**

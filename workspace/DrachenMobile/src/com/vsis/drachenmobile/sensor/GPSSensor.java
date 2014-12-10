@@ -11,7 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.visis.drachen.sensor.AbstractSensor;
 import com.visis.drachen.sensor.ISensor;
-import com.visis.drachen.sensor.data.GPSSensorData;
+import com.vsis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 
 public class GPSSensor extends AbstractSensor implements ISensor {
