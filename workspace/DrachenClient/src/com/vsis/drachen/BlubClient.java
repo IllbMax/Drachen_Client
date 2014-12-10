@@ -36,6 +36,7 @@ import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestStartException;
+import com.visis.drachen.exception.QuestTargetNotFinishedException;
 import com.visis.drachen.exception.RestrictionException;
 import com.visis.drachen.exception.client.ConnectionException;
 import com.visis.drachen.exception.client.InvalidResultException;
@@ -480,13 +481,54 @@ public class BlubClient {
 
 	}
 
-	public Boolean FinishQuest(int questId) {
+	/**
+	 * Finish the {@link Quest} with the id questId if all {@link QuestTarget}
+	 * are succeeded.
+	 * 
+	 * @param questId
+	 *            id of the quest you want to finish
+	 * @return true if it was successful finished
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the questId parameter is missing (should not happen)
+	 * @throws IdNotFoundException
+	 *             if there is no {@link Quest} with the id questId
+	 * @throws QuestTargetNotFinishedException
+	 *             if not all {@link QuestTarget}s are succeeded (contains the
+	 *             first target that isn't succeeded)
+	 * @throws ObjectRestrictionException
+	 *             if the quest belongs to an other user
+	 * 
+	 */
+	public Boolean FinishQuest(int questId) throws DrachenBaseException,
+			InternalProcessException, RestrictionException,
+			MissingParameterException, IdNotFoundException,
+			ObjectRestrictionException, QuestTargetNotFinishedException {
 		try {
 
 			Map<String, Object> param = new LinkedHashMap<>();
 			param.put("questId", questId);
 
-			return loadFormGson("finishQuest", param, Boolean.class);
+			ResultWrapper<Boolean> output = loadFormGson("finishQuest", param,
+					Boolean.class);
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.expection == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.expection;
+				e.fillInStackTrace();
+				throw e;
+			}
 		} catch (ConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

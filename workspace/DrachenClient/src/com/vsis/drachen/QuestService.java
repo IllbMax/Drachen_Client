@@ -14,6 +14,7 @@ import com.visis.drachen.exception.MissingParameterException;
 import com.visis.drachen.exception.ObjectRestrictionException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestStartException;
+import com.visis.drachen.exception.QuestTargetNotFinishedException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
@@ -131,23 +132,33 @@ public class QuestService {
 			QuestAbortException, InternalProcessException,
 			RestrictionException, DrachenBaseException {
 
+		Quest quest = removeQuestFromMap(questId);
+		if (quest == null) // if quest is not listed assume that quest doesn't
+							// exists
+			throw new IdNotFoundException("questid");
 		Boolean success = client.AbortQuest(questId);
 
 		if (success != null && success) {
-			Quest quest = removeQuestFromMap(questId);
 			user.abortQuest(quest);
 			return true;
 		}
 		return false;
 	}
 
-	public boolean finishQuest(int questId) {
+	public boolean finishQuest(int questId) throws MissingParameterException,
+			IdNotFoundException, QuestTargetNotFinishedException,
+			InternalProcessException, RestrictionException,
+			ObjectRestrictionException, DrachenBaseException {
+
+		Quest quest = getQuestFromId(questId);
+		if (quest == null) // if quest is not listed assume that quest doesn't
+							// exists
+			throw new IdNotFoundException("questid");
 		Boolean success = client.FinishQuest(questId);
-		if (success) {
-			Quest quest = getQuestFromId(questId);
+		if (success != null && success) {
 			quest.finishQuest();
+
 		}
-		// TODO: check for success
 		// Quest quest = removeQuestFromMap(questId);
 		// user.finishQuest(quest);
 		return success;

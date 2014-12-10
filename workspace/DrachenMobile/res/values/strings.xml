@@ -62,7 +62,10 @@
     <string name="quest_cannot_repeated">You cannot repeat this quest.</string>
     <string name="quest_still_ongoing">You are already on this quest.</string>
     <string name="quest_abortion_failed">Quest abortion failed</string>
+    <string name="quest_finishing_failed">Quest finishing failed</string>
     <string name="quest_not_yours">This is not your quest!</string>
     <string name="quest_already_finished">This quest is already finished.</string>
+    <string name="questtarget_s_not_success">The quest target %1$s isn\'t succeeded.</string>
+    <string name="questtarget_d_not_suc_not_found">Quest target (id=%1$d) isn\'t succeeded and not found locally.</string>
     
 </resources>

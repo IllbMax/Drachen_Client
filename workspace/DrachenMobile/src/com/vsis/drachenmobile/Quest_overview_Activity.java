@@ -21,8 +21,16 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.visis.drachen.exception.DrachenBaseException;
+import com.visis.drachen.exception.IdNotFoundException;
+import com.visis.drachen.exception.InternalProcessException;
+import com.visis.drachen.exception.MissingParameterException;
+import com.visis.drachen.exception.ObjectRestrictionException;
+import com.visis.drachen.exception.QuestTargetNotFinishedException;
+import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
@@ -298,6 +306,7 @@ public class Quest_overview_Activity extends Activity {
 
 		private ProgressDialog ringProgressDialog;
 		private Quest quest;
+		private DrachenBaseException _exception;
 
 		public QuestFinishTask(Quest quest) {
 			this.quest = quest;
@@ -323,24 +332,94 @@ public class Quest_overview_Activity extends Activity {
 					.getAppData();
 			QuestService questService = appData.getQuestService();
 
-			boolean result = questService.finishQuest(quest.getId());
+			try {
+				boolean result = questService.finishQuest(quest.getId());
+				return result;
+			} catch (DrachenBaseException e) {
+				_exception = e;
+				e.printStackTrace();
+				return false;
+			}
 
-			return result;
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
 
-			if (result != null) {
+			ringProgressDialog.dismiss();
+			if (result) {
 				_questAdapter.removeGroup(quest);
 				_questAdapter.notifyDataSetChanged();
 
 			} else {
-				// TODO: error: no Quest finished
+				showAlertExceptionDialog();
 			}
+		}
 
-			ringProgressDialog.dismiss();
+		/**
+		 * shows an {@link AlertDialog} with information of the
+		 * {@link DrachenBaseException}
+		 */
+		protected void showAlertExceptionDialog() {
+			Context ctx = Quest_overview_Activity.this;
+			String message = getErrorString();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+			builder.setTitle(R.string.quest_finishing_failed);
+			builder.setMessage(message);
+			builder.show();
+		}
+
+		private String getErrorString() {
+			Context ctx = Quest_overview_Activity.this;
+			String message = ctx.getString(R.string.please_try_again);
+
+			if (_exception != null) {
+
+				if (_exception instanceof QuestTargetNotFinishedException) {
+					QuestTargetNotFinishedException e = (QuestTargetNotFinishedException) _exception;
+					MyDataSet appData = ((DrachenApplication) getApplication())
+							.getAppData();
+					QuestService questService = appData.getQuestService();
+					Quest quest = questService.getQuestFromId(e.getQuestId());
+					QuestTarget questTarget = null;
+					if (quest != null)
+						questTarget = quest.getQuestTargetFromId(e
+								.getQuestTargetId());
+					if (quest != null && questTarget != null)
+						message = ctx
+								.getString(R.string.questtarget_s_not_success);
+					else {
+						message = ctx.getString(R.string.grats_bug);
+						message += "\n";
+						message = ctx
+								.getString(R.string.questtarget_d_not_suc_not_found);
+					}
+				} else if (_exception instanceof ObjectRestrictionException) {
+					// ObjectRestrictionException e =
+					// (ObjectRestrictionException) _exception;
+					message = ctx.getString(R.string.quest_not_yours);
+				} else if (_exception instanceof IdNotFoundException) {
+				} else if (_exception instanceof MissingParameterException) {
+					MissingParameterException e = (MissingParameterException) _exception;
+					message = ctx.getString(R.string.missing_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof IdNotFoundException) {
+					IdNotFoundException e = (IdNotFoundException) _exception;
+					message = ctx.getString(R.string.id_not_found_parameter_s,
+							e.getParameter());
+				} else if (_exception instanceof RestrictionException) {
+					// RestrictionException e = (RestrictionException)
+					// _exception;
+					message = ctx.getString(R.string.access_denied);
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
 		}
 	}
 

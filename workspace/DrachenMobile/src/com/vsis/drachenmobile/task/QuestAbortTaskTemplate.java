@@ -87,7 +87,6 @@ public class QuestAbortTaskTemplate extends AsyncTask<Void, Void, Boolean> {
 	protected void showAlertExceptionDialog() {
 		String message = getErrorString();
 
-		ringProgressDialog.dismiss();
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle(R.string.quest_abortion_failed);
 		builder.setMessage(message);
@@ -116,7 +115,7 @@ public class QuestAbortTaskTemplate extends AsyncTask<Void, Void, Boolean> {
 				message = ctx.getString(R.string.id_not_found_parameter_s,
 						e.getParameter());
 			} else if (_exception instanceof RestrictionException) {
-				InternalProcessException e = (InternalProcessException) _exception;
+				// RestrictionException e = (RestrictionException) _exception;
 				message = ctx.getString(R.string.access_denied);
 			} else if (_exception instanceof InternalProcessException) {
 				InternalProcessException e = (InternalProcessException) _exception;

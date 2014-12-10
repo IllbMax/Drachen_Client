@@ -94,6 +94,13 @@ public class Quest extends IdObject {
 		return questTargets.get(i);
 	}
 
+	public QuestTarget getQuestTargetFromId(int id) {
+		for (QuestTarget qt : questTargets)
+			if (qt.getId() == id)
+				return qt;
+		return null;
+	}
+
 	public List<QuestTarget> getQuestTargets() {
 		return new ArrayList<QuestTarget>(questTargets);
 	}

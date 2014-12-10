@@ -13,6 +13,7 @@ import com.visis.drachen.exception.ParameterException;
 import com.visis.drachen.exception.QuestAbortException;
 import com.visis.drachen.exception.QuestException;
 import com.visis.drachen.exception.QuestStartException;
+import com.visis.drachen.exception.QuestTargetNotFinishedException;
 import com.visis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.quest.AccelerationQuestTarget;
 import com.vsis.drachen.model.quest.GPSQuestTarget;
@@ -61,6 +62,7 @@ public class AdapterProvider {
 		adapter.registerSubtype(QuestException.class);
 		adapter.registerSubtype(QuestStartException.class);
 		adapter.registerSubtype(QuestAbortException.class);
+		adapter.registerSubtype(QuestTargetNotFinishedException.class);
 
 		return adapter;
 	}
