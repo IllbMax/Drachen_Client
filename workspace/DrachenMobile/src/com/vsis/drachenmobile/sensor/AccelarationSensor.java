@@ -19,6 +19,8 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 
 	private final SensorManager sensorService;
 	private float[] values;
+	private long millis;
+	private long nanos;
 
 	public AccelarationSensor(String name, Service ctx) {
 		super(name);
@@ -92,11 +94,13 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 
 	protected void useData(SensorEvent event) {
 		values = event.values;
+		millis = System.currentTimeMillis();
+		nanos = event.timestamp;
 		float x = values[0];
 		float y = values[1];
 		float z = values[2];
 
-		callListener(new AccelarationSensorData(x, y, z));
+		callListener(new AccelarationSensorData(millis, nanos, x, y, z));
 	}
 
 	protected void useDataOld() {
@@ -104,7 +108,7 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		float y = values[1];
 		float z = values[2];
 
-		callListener(new AccelarationSensorData(x, y, z));
+		callListener(new AccelarationSensorData(millis, nanos, x, y, z));
 	}
 
 	@Override

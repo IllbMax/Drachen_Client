@@ -2,11 +2,12 @@ package com.vsis.drachen.model.quest;
 
 import java.util.Set;
 
+import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.IdObject;
 import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachen.sensor.data.ISensorData;
 
-public abstract class QuestTarget extends IdObject {
+public abstract class QuestTarget extends IdObject implements ISensorSensitive {
 
 	private String name;
 	private Quest quest;
@@ -109,31 +110,22 @@ public abstract class QuestTarget extends IdObject {
 		this.finished = state.isFinished();
 	}
 
-	/**
-	 * Determines if new sensor data are required
-	 * 
-	 * @param type
-	 *            type of possible new data
-	 * 
-	 * @return true if this QuestTarget should be notified if new sensor data is
-	 *         available
+	/* (non-Javadoc)
+	 * @see com.vsis.drachen.model.quest.ISensorSensitve#needsNewSensordata(com.vsis.drachen.sensor.SensorType)
 	 */
+	@Override
 	public abstract boolean needsNewSensordata(SensorType type);
 
-	/**
-	 * Set of required Sensors for this target
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.vsis.drachen.model.quest.ISensorSensitve#requiredSensors()
 	 */
+	@Override
 	public abstract Set<SensorType> requiredSensors();
 
-	/**
-	 * 
-	 * @param type
-	 *            Type of the sending sensor
-	 * @param data TODO
-	 * @return true if there is an update in the state
+	/* (non-Javadoc)
+	 * @see com.vsis.drachen.model.quest.ISensorSensitve#receiveSensordata(com.vsis.drachen.sensor.SensorType, com.vsis.drachen.sensor.data.ISensorData)
 	 */
+	@Override
 	public abstract boolean receiveSensordata(SensorType type, ISensorData data);
 
 }

@@ -91,7 +91,9 @@ public class LocationSensor extends AbstractSensor implements ISensor {
 	}
 
 	protected void useData(Location location) {
-		callListener(new LocationSensorData(location));
+		long millis = System.currentTimeMillis();
+		long nanos = System.nanoTime();
+		callListener(new LocationSensorData(millis, nanos, location));
 	}
 
 	@Override

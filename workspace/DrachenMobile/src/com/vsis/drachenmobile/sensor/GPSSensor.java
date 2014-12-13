@@ -1,5 +1,6 @@
 package com.vsis.drachenmobile.sensor;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.vsis.drachen.sensor.AbstractSensor;
@@ -83,8 +85,25 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 	}
 
 	protected void useData(Location location) {
-		callListener(new GPSSensorData(location.getLatitude(),
-				location.getLongitude()));
+		callListener(new GPSSensorData(location.getTime(), getNanos(location),
+				location.getLatitude(), location.getLongitude()));
+	}
+
+	private long getNanos(Location location) {
+		if (Build.VERSION.SDK_INT >= 17)
+			return getNanos_o17(location);
+		else
+			return getNanos_u17(location);
+
+	}
+
+	@TargetApi(17)
+	private long getNanos_o17(Location location) {
+		return location.getElapsedRealtimeNanos();
+	}
+
+	private long getNanos_u17(Location location) {
+		return System.nanoTime();
 	}
 
 	@Override

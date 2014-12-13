@@ -3,16 +3,25 @@ package com.vsis.drachen.sensor.data;
 import com.vsis.drachen.model.world.Location;
 
 /**
- * Sensordata for GPS Quests
+ * Sensordata from DrachenLocation Sensor
  * 
  */
 public class LocationSensorData implements ISensorData {
 	private Location location;
+	private long millis, nanos;
 
-	public LocationSensorData(Location location) {
+	public LocationSensorData(long millis, long nanos, Location location) {
 		this.location = location;
+
+		this.millis = millis;
+		this.nanos = nanos;
 	}
 
+	/**
+	 * The (drachen!!!) {@link Location}
+	 * 
+	 * @return
+	 */
 	public Location getLocation() {
 		return location;
 	}
@@ -23,4 +32,13 @@ public class LocationSensorData implements ISensorData {
 				location != null ? location.getName() : "None");
 	}
 
+	@Override
+	public long getUnixMillis() {
+		return millis;
+	}
+
+	@Override
+	public long getNanoTime() {
+		return nanos;
+	}
 }

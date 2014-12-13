@@ -49,6 +49,10 @@ public class AccelerationQuestTarget extends QuestTarget {
 	public boolean receiveSensordata(SensorType type, ISensorData data) {
 		assert (type == SensorType.Position);
 
+		boolean onlyOnce = true;
+		if (isFulfilled() && onlyOnce)
+			return false;
+
 		AccelarationSensorData accelData = (AccelarationSensorData) data;
 
 		double ax = accelData.getAx();
@@ -58,12 +62,14 @@ public class AccelerationQuestTarget extends QuestTarget {
 		double sum = ax * ax + ay * ay + az * az;
 		boolean success = lowerBound * lowerBound <= sum
 				&& sum <= upperBound * upperBound;
-		// TODO: use success
+
 		if (isOnGoing() && success)
 			setProgress(QuestProgressStatus.Succeeded);
-		else if (isFulfilled() && !success)
+		else if (isFulfilled() && !success) {
 			setProgress(QuestProgressStatus.OnGoing);
-		else
+			if (onlyOnce)
+				setFinished(true);
+		} else
 			return false;
 		return true;
 	}
