@@ -1,13 +1,13 @@
 package com.vsis.drachenmobile.service;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
@@ -16,10 +16,13 @@ import com.vsis.drachen.LocationService;
 import com.vsis.drachen.LocationService.LocationChanged;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.SensorService.OnQuestTargetChangedListener;
+import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
 import com.vsis.drachen.sensor.SensorType;
+import com.vsis.drachen.sensor.data.GPSSensorData;
+import com.vsis.drachen.sensor.data.ISensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.sensor.AccelarationSensor;
 import com.vsis.drachenmobile.sensor.GPSSensor;
@@ -35,7 +38,7 @@ public class LocationLocalService extends Service {
 
 	private final IBinder _binder = new MyBinder();
 	private LocationService locationService;
-	private LocationListener locationListener;
+	private ISensorSensitive positionListener;
 	private LocationChanged drachenLocationListener;
 	private OnQuestTargetChangedListener questTargetListener;
 
@@ -48,23 +51,24 @@ public class LocationLocalService extends Service {
 	public void initialize() {
 		DrachenApplication app = (DrachenApplication) getApplication();
 		locationService = app.getAppData().getLocationService();
-
-		installDrachenLocationListener();
-		installAndroidLocationListener();
-		startLoctionListener();
-
 		SensorService sensorService = app.getAppData().getSensorService();
+
+		installPositionListener();
+		sensorService.trackSensorReceiver(positionListener);
+		installDrachenLocationListener();
+
 		questTargetListener = new OnQuestTargetChangedListener() {
 
 			@Override
 			public void onQuestTargetChanged(QuestTarget qt) {
-
+				broadcastQuestTargetChanged(qt);
 			}
 		};
 		sensorService.registerQuestTargetChangedListener(questTargetListener);
 
 		GPSSensor gpsSensor = new GPSSensor("GPS Sensor", this);
-		LocationSensor locationSensor = new LocationSensor("GPS Sensor", this);
+		LocationSensor locationSensor = new LocationSensor("Location Sensor",
+				this);
 		AccelarationSensor accelSensor = new AccelarationSensor(
 				"Accelaration Sensor", this);
 
@@ -81,6 +85,35 @@ public class LocationLocalService extends Service {
 		accelSensor.start();
 	}
 
+	private void installPositionListener() {
+		positionListener = new ISensorSensitive() {
+			private final EnumSet<SensorType> sensors = EnumSet
+					.of(SensorType.Position);
+
+			@Override
+			public Set<SensorType> requiredSensors() {
+				return sensors;
+			}
+
+			@Override
+			public boolean receiveSensordata(SensorType type, ISensorData data) {
+				// assert type == SensorType.Position;
+				GPSSensorData gpsdata = (GPSSensorData) data;
+				makeUseOfNewLocation(gpsdata);
+				// this return is not important
+				return false;
+			}
+
+			@Override
+			public boolean needsNewSensordata(SensorType type) {
+				// Always needs the data (if Location change is provided by
+				// other input than maybe not...)
+				return sensors.contains(type);
+			}
+		};
+
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		initialize();
@@ -90,19 +123,6 @@ public class LocationLocalService extends Service {
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return _binder;
-	}
-
-	public void startLoctionListener() {
-		LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-
-		boolean prov = false;
-
-		String provider = prov ? LocationManager.NETWORK_PROVIDER
-				: LocationManager.GPS_PROVIDER;
-
-		locationManager
-				.requestLocationUpdates(provider, 0, 0, locationListener);
 	}
 
 	private void installDrachenLocationListener() {
@@ -116,65 +136,45 @@ public class LocationLocalService extends Service {
 		locationService.RegisterListener(drachenLocationListener);
 	}
 
-	public void installAndroidLocationListener() {
+	protected void makeUseOfNewLocation(final GPSSensorData gps) {
 
-		locationListener = new LocationListener() {
-			public void onLocationChanged(android.location.Location location) {
-				// Called when a new location is found by the network location
-				makeUseOfNewLocation(location);
-			}
-
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-				Toast.makeText(
-						LocationLocalService.this,
-						"S:" + provider + status + "  " + extras == null ? ""
-								: extras.toString(), Toast.LENGTH_LONG).show();
-			}
-
-			public void onProviderEnabled(String provider) {
-				Toast.makeText(LocationLocalService.this, "E:" + provider,
-						Toast.LENGTH_LONG).show();
-			}
-
-			public void onProviderDisabled(String provider) {
-				Toast.makeText(LocationLocalService.this, "D:" + provider,
-						Toast.LENGTH_LONG).show();
-			}
-		};
-	}
-
-	protected void makeUseOfNewLocation(android.location.Location location) {
-
-		String data = String.format("Lat: %f, Lon: %f, Acc: %f \nAlt: %f",
-				location.getLatitude(), location.getLongitude(),
-				location.getAccuracy(), location.getAltitude());
-		Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
-
-		broadcastGPSChange(location);
-
-		Point p = new Point(location.getLatitude(), location.getLongitude());
-		com.vsis.drachen.model.world.Location loc = locationService
+		Point p = new Point(gps.getLatitude(), gps.getLongitude());
+		final com.vsis.drachen.model.world.Location loc = locationService
 				.getLoationFromPoint(p);
 
-		if (loc == null) {
-			Toast.makeText(this, "no location", Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(this, "location:" + loc.getName(),
-					Toast.LENGTH_SHORT).show();
-			AsyncTask<Location, Void, Boolean> task = new AsyncTask<Location, Void, Boolean>() {
+		Handler handler = new Handler(getMainLooper());
+		handler.post(new Runnable() {
 
-				@Override
-				protected Boolean doInBackground(Location... params) {
-					Location loc = params[0];
-					boolean success = locationService.SetRegion(loc);
-					return success;
+			@Override
+			public void run() {
+				String data = String.format("Lat: %f, Lon: %f",
+						gps.getLatitude(), gps.getLongitude());
+				Toast.makeText(LocationLocalService.this, data,
+						Toast.LENGTH_SHORT).show();
+
+				if (loc == null) {
+					Toast.makeText(LocationLocalService.this, "no location",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(LocationLocalService.this,
+							"location:" + loc.getName(), Toast.LENGTH_SHORT)
+							.show();
+					AsyncTask<Location, Void, Boolean> task = new AsyncTask<Location, Void, Boolean>() {
+
+						@Override
+						protected Boolean doInBackground(Location... params) {
+							Location loc = params[0];
+							boolean success = locationService.SetRegion(loc);
+							return success;
+						}
+
+					};
+					task.execute(loc);
+
 				}
+			}
+		});
 
-			};
-			task.execute(loc);
-
-		}
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class LocationLocalService extends Service {
 	 * @param qt
 	 *            QuestTarget that has changed
 	 */
-	private void broadcastLocationChange(QuestTarget qt) {
+	private void broadcastQuestTargetChanged(QuestTarget qt) {
 		Intent intent = new Intent(DrachenApplication.EVENT_QUESTTARGET_CHANGED);
 
 		intent.putExtra(DrachenApplication.EXTRA_QUEST_ID, qt.getQuest()
@@ -208,20 +208,6 @@ public class LocationLocalService extends Service {
 				old != null ? old.getId() : -1);
 		intent.putExtra(DrachenApplication.EXTRA_LOCATION_NEW,
 				now != null ? now.getId() : -1);
-
-		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-	}
-
-	/**
-	 * Starts a local broadcast to notify the GPS change
-	 * 
-	 * @param location
-	 *            new GPS location
-	 */
-	private void broadcastGPSChange(android.location.Location location) {
-		Intent intent = new Intent(DrachenApplication.EVENT_GPSPOSITION_CHANGED);
-
-		intent.putExtra(DrachenApplication.EXTRA_LOCATION_NEW, location);
 
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
