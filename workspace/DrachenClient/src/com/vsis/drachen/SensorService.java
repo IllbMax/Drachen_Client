@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.vsis.drachen.exception.DrachenBaseException;
+import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.sensor.ISensor;
@@ -26,13 +27,13 @@ public class SensorService {
 		List<ISensor> _registeredSensors;
 		private ISensor _defaultSensor;
 
-		List<QuestTarget> _questTargets;
+		List<ISensorSensitive> _sensorDataReveiver;
 		SensorType _type;
 		ISensorData _lastSensorData;
 
 		public SensorMapItem(SensorType type) {
 			_registeredSensors = new ArrayList<ISensor>();
-			_questTargets = new ArrayList<QuestTarget>();
+			_sensorDataReveiver = new ArrayList<ISensorSensitive>();
 			_type = type;
 		}
 
@@ -120,22 +121,32 @@ public class SensorService {
 			System.out
 					.println("recv new newSensorData: " + _type + ", " + data);
 			List<QuestTarget> updateTargets = new LinkedList<QuestTarget>();
-			for (QuestTarget qt : _questTargets)
-				if (isTargetTracked(qt) && qt.needsNewSensordata(_type)
-						&& sensorsRunning(qt.requiredSensors()))
-					updateTargets.add(qt);
+			List<ISensorSensitive> other = new LinkedList<ISensorSensitive>();
+			for (ISensorSensitive ss : _sensorDataReveiver)
+				if (ss.needsNewSensordata(_type)
+						&& sensorsRunning(ss.requiredSensors())) {
+					if (ss instanceof QuestTarget) {
+						QuestTarget qt = (QuestTarget) ss;
+						if (isTargetTracked(qt))
+							updateTargets.add(qt);
+
+					} else {
+						other.add(ss);
+					}
+				}
 
 			_lastSensorData = data;
 
-			sendSensorData(updateTargets, _type, data);
+			sendSensorData_Other(other, _type, data);
+			sendSensorData_QuestTargets(updateTargets, _type, data);
 		}
 
-		public void addQuestTarget(QuestTarget questTarget) {
-			_questTargets.add(questTarget);
+		public void addSensorReceiver(ISensorSensitive ss) {
+			_sensorDataReveiver.add(ss);
 		}
 
-		public boolean removeQuestTarget(QuestTarget questTarget) {
-			return _questTargets.remove(questTarget);
+		public boolean removeSensorReceiver(ISensorSensitive ss) {
+			return _sensorDataReveiver.remove(ss);
 		}
 
 	}
@@ -201,7 +212,7 @@ public class SensorService {
 		// TODO: create own method for next 2 lines
 		System.out.println(questTarget.getName());
 		for (SensorType st : questTarget.requiredSensors())
-			_map.get(st).addQuestTarget(questTarget);
+			_map.get(st).addSensorReceiver(questTarget);
 		questTarget.setTrackTarget(true);
 		_trackedQuests.add(questTarget);
 	}
@@ -210,7 +221,7 @@ public class SensorService {
 		questTarget.setTrackTarget(false);
 		_trackedQuests.remove(questTarget);
 		for (SensorType st : questTarget.requiredSensors())
-			_map.get(st).removeQuestTarget(questTarget);
+			_map.get(st).removeSensorReceiver(questTarget);
 
 	}
 
@@ -222,6 +233,20 @@ public class SensorService {
 	public void untrackQuest(Quest quest) {
 		for (QuestTarget questTarget : quest.getQuestTargets())
 			untrackQuestTarget(questTarget);
+	}
+
+	public void trackSensorReceiver(ISensorSensitive ss) {
+		if (ss instanceof QuestTarget)
+			trackQuestTarget((QuestTarget) ss);
+		for (SensorType st : ss.requiredSensors())
+			_map.get(st).addSensorReceiver(ss);
+	}
+
+	public void untrackSensorReceiver(ISensorSensitive ss) {
+		if (ss instanceof QuestTarget)
+			untrackQuestTarget((QuestTarget) ss);
+		for (SensorType st : ss.requiredSensors())
+			_map.get(st).removeSensorReceiver(ss);
 	}
 
 	/**
@@ -271,7 +296,7 @@ public class SensorService {
 	 * @param type
 	 * @param data
 	 */
-	protected void sendSensorData(List<QuestTarget> questTargets,
+	protected void sendSensorData_QuestTargets(List<QuestTarget> questTargets,
 			SensorType type, ISensorData data) {
 
 		for (QuestTarget qt : questTargets) {
@@ -296,6 +321,17 @@ public class SensorService {
 					if (su != null && su)
 						CallOnQuestTargetChangedListerns(qt);
 				}
+			}
+
+		}
+	}
+
+	protected void sendSensorData_Other(List<ISensorSensitive> dataReceiver,
+			SensorType type, ISensorData data) {
+
+		for (ISensorSensitive ss : dataReceiver) {
+			synchronized (ss) {
+				ss.receiveSensordata(type, data);
 			}
 
 		}

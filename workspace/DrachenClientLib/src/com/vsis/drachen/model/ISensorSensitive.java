@@ -30,7 +30,9 @@ public interface ISensorSensitive {
 	public abstract Set<SensorType> requiredSensors();
 
 	/**
-	 * let this object know the new SensorData
+	 * let this object know the new SensorData.
+	 * 
+	 * if you implement this method you should declare it synchronized
 	 * 
 	 * @param type
 	 *            Type of the sending sensor
