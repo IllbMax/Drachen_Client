@@ -16,6 +16,7 @@ import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.InvalidParameterException;
 import com.vsis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.exception.RestrictionException;
+import com.vsis.drachen.model.IMiniGame;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
@@ -32,6 +33,8 @@ public class MyDataSet {
 	private LocationService locationService;
 	private QuestService questService;
 	private SensorService sensorService;
+
+	private IMiniGame currentMinigame;
 
 	Context ctx;
 
@@ -183,6 +186,26 @@ public class MyDataSet {
 
 	public SensorService getSensorService() {
 		return sensorService;
+	}
+
+	public IMiniGame getCurrentMinigame() {
+		return currentMinigame;
+	}
+
+	public void setCurrentMinigame(IMiniGame currentMinigame) {
+		if (this.currentMinigame != null)
+			unregisterMinigame();
+		if (currentMinigame != null)
+			registerMinigame(currentMinigame);
+		this.currentMinigame = currentMinigame;
+	}
+
+	private void registerMinigame(IMiniGame currentMinigame2) {
+
+	}
+
+	private void unregisterMinigame() {
+
 	}
 
 }

@@ -30,6 +30,7 @@ import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.helper.Helper;
+import com.vsis.drachenmobile.minigame.Skirmish_Activity;
 
 public class Main_Activity extends Activity {
 
@@ -94,6 +95,16 @@ public class Main_Activity extends Activity {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(Main_Activity.this,
 						SensorManager_Activity.class);
+				startActivity(intent);
+			}
+		});
+		btn = (Button) findViewById(R.id.button_main_minigameTest);
+		btn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(Main_Activity.this,
+						Skirmish_Activity.class);
 				startActivity(intent);
 			}
 		});

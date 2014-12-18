@@ -67,5 +67,10 @@
     <string name="quest_already_finished">This quest is already finished.</string>
     <string name="questtarget_s_not_success">The quest target %1$s isn\'t succeeded.</string>
     <string name="questtarget_d_not_suc_not_found">Quest target (id=%1$d) isn\'t succeeded and not found locally.</string>
+    <string name="action_fight">Fight</string>
+    <string name="action_run">Run</string>
+    <string name="use_skill">Use Skill</string>
+    <string name="char_uses_skill">%1$s uses %2$s</string>
+    <string name="select_a_skill">Select a skill</string>
     
 </resources>

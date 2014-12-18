@@ -4,8 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/black"
-    android:orientation="vertical"
-    tools:context=".Login_Activity" >
+    android:orientation="vertical">
 
     <GridLayout
         android:layout_width="match_parent"
