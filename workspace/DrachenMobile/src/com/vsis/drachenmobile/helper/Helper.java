@@ -143,4 +143,26 @@ public final class Helper {
 		}
 		return message;
 	}
+
+	/**
+	 * returns true if the string is null or empty
+	 * 
+	 * @param string
+	 *            tested string
+	 * @return true if the string is null or empty
+	 */
+	public static boolean nullOrEmpty(String string) {
+		return string == null || string.equals("");
+	}
+
+	/**
+	 * returns true if the string is null or empty or whitespace
+	 * 
+	 * @param string
+	 *            tested string
+	 * @return true if the string is null or empty or whitespace
+	 */
+	public static boolean nullOrEmptyOrWS(String string) {
+		return string == null || string.trim().equals("");
+	}
 }
