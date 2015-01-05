@@ -63,12 +63,13 @@ public class AccelerationQuestTarget extends QuestTarget {
 		boolean success = lowerBound * lowerBound <= sum
 				&& sum <= upperBound * upperBound;
 
-		if (isOnGoing() && success)
+		if (isOnGoing() && success) {
 			setProgress(QuestProgressStatus.Succeeded);
-		else if (isFulfilled() && !success) {
-			setProgress(QuestProgressStatus.OnGoing);
 			if (onlyOnce)
 				setFinished(true);
+		} else if (isFulfilled() && !success) {
+			setProgress(QuestProgressStatus.OnGoing);
+
 		} else
 			return false;
 		return true;
@@ -77,7 +78,7 @@ public class AccelerationQuestTarget extends QuestTarget {
 	@Override
 	public boolean needsNewSensordata(SensorType type) {
 		// TODO Auto-generated method stub
-		return this.requiredSensors().contains(type);
+		return !isFinished() && this.requiredSensors().contains(type);
 	}
 
 }

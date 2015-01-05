@@ -22,6 +22,7 @@ public class DrachenApplication extends Application {
 	public static final String EXTRA_LOCATION_OLD = "location.old";
 	public static final String EXTRA_QUEST_ID = "quest.id";
 	public static final String EXTRA_QUESTTARGET_ID = "questTarget.id";
+	public static final boolean OFFLINE_DEBUG = false;
 
 	private static MyDataSet appdata;
 

@@ -1,8 +1,14 @@
 package com.vsis.drachenmobile.minigame;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -20,13 +26,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.InternalProcessException;
@@ -34,7 +43,6 @@ import com.vsis.drachen.exception.InvalidParameterException;
 import com.vsis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.IMiniGame;
-import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.minigame.skirmish.Character;
 import com.vsis.drachen.model.minigame.skirmish.MeeleAttack;
@@ -44,8 +52,6 @@ import com.vsis.drachen.model.minigame.skirmish.Skirmish;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.ISkillListener;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.PerformOrder;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.SkirmishOutcome;
-import com.vsis.drachen.sensor.SensorType;
-import com.vsis.drachen.sensor.data.AccelarationSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.Main_Activity;
 import com.vsis.drachenmobile.MyDataSet;
@@ -53,16 +59,12 @@ import com.vsis.drachenmobile.R;
 import com.vsis.drachenmobile.Register_Activity;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.helper.IActionDelegate;
+import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 
 public class Skirmish_Activity extends Activity {
 
 	Skirmish skirmish;
-
-	Skill userSkill;
-
-	public Skirmish_Activity() {
-		createDummy();
-	}
+	boolean inSkillSelectionPhase = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -75,6 +77,22 @@ public class Skirmish_Activity extends Activity {
 		IMiniGame minigame = appdata.getCurrentMinigame();
 		if (minigame == null || !(minigame instanceof Skirmish))
 			finish();
+
+		String filename = LoadSD();
+		resourceService = new AndroidDrachenResourceService(
+				getApplicationContext());
+		try {
+			resourceService.loadZip(filename);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ParserConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SAXException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		skirmish = (Skirmish) minigame;
 		skirmish.setSkillSensorSelectedListener(new ISkillListener() {
@@ -90,6 +108,14 @@ public class Skirmish_Activity extends Activity {
 
 			}
 		});
+
+		ImageView avatar = (ImageView) findViewById(R.id.imageView2);
+		Character c = skirmish.getChar2();
+		String avatarId = c.getAvatar();
+		if (Helper.nullOrEmptyOrWS(avatarId))
+			avatar.setImageResource(R.drawable.ic_launcher);
+		else
+			avatar.setImageBitmap(resourceService.getBitmapOrNotFound(avatarId));
 
 		Button btnFight = (Button) findViewById(R.id.button1);
 		Button btnRun = (Button) findViewById(R.id.button2);
@@ -109,6 +135,7 @@ public class Skirmish_Activity extends Activity {
 			}
 		});
 
+		updateActionBar();
 		updateBothCharacters();
 
 		switch (skirmish.upcomingPhase()) {
@@ -130,18 +157,37 @@ public class Skirmish_Activity extends Activity {
 		}
 	}
 
-	private void createDummy() {
-		DrachenApplication app = (DrachenApplication) getApplication();
+	private String LoadSD() {
+		String state = Environment.getExternalStorageState();
+
+		if (!(state.equals(Environment.MEDIA_MOUNTED))) {
+			Toast.makeText(this, "There is no any sd card", Toast.LENGTH_LONG)
+					.show();
+			return "";
+
+		} else {
+			Toast.makeText(this, "Sd card available", Toast.LENGTH_LONG).show();
+			File file = Environment.getExternalStorageDirectory();
+			File zipFile = new File(file, "data.zip");
+			return zipFile.getAbsolutePath();
+		}
+	}
+
+	public static void createDummy(DrachenApplication app) {
+		// DrachenApplication app = (DrachenApplication) getApplication();
 		MyDataSet appdata = app.getAppData();
 		String username = appdata.getUser().getDisplayName();
 
 		List<Skill> skills = new ArrayList<Skill>();
-		skills.add(new MeeleAttack("Attack", "Kling klang", 10, 20, 15, 10));
-		skills.add(new MeeleAttack("Crit", "Boooom", 30, 30, 20, 100));
-		skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
-		skills.add(new MeeleAttack("Stomp", "Squeeeeeze", 200, 200, 0, 0, true));
+		skills.add(new MeeleAttack("Attack", "Kling klang", "%1$s cuts %2$s.",
+				10, 20, 15, 10));
+		skills.add(new MeeleAttack("Crit", "Boooom", "Yeah! Crit (as always)",
+				30, 30, 20, 100));
+		skills.add(new MeeleAttack("sorry", "meh.", "meh.", 100, 100, 0, 0));
+		skills.add(new MeeleAttack("Stomp", "Squeeeeeze",
+				"%1$s stomps on %2$s.", 200, 200, 0, 0, true));
 
-		Character char_user = new Character(username, 200, skills, null);
+		Character char_user = new Character(username, 200, skills, null, null);
 
 		Character char2 = generateRandomOpponent();
 
@@ -149,15 +195,81 @@ public class Skirmish_Activity extends Activity {
 		appdata.setCurrentMinigame(skirmish);
 	}
 
-	private Character generateRandomOpponent() {
+	private static int next = 0;
+	private AndroidDrachenResourceService resourceService;
+
+	private static Character generateRandomOpponent() {
 		Random rnd = new Random();
 
+		Character[] chars = new Character[3];
+		chars[0] = generateBoar();
+		chars[1] = generateFlowerDragon();
+		chars[2] = generateMrItalian();
+
+		next = next % chars.length;
+		// List<Skill> skills = new ArrayList<Skill>();
+		// // skills.add(new MeeleAttack("Attack", "Kling klang", 10, 20, 15,
+		// 10));
+		// // skills.add(new MeeleAttack("Other attack", "...", 15, 25, 30, 0));
+		// // skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
+		// Character char2 = new Character("Not me", 200, skills,
+		// new RandomSkillSelector(skills));
+		return chars[next++];
+	}
+
+	private static Character generateBoar() {
+
 		List<Skill> skills = new ArrayList<Skill>();
-		// skills.add(new MeeleAttack("Attack", "Kling klang", 10, 20, 15, 10));
-		// skills.add(new MeeleAttack("Other attack", "...", 15, 25, 30, 0));
+		skills.add(new MeeleAttack("Charge", "charge at target",
+				"%1$s charges at %2$s", 10, 20, 100, 10));
+		skills.add(new MeeleAttack("Pierce", "pierce the target",
+				"%1$s attacks with tusks.", 15, 25, 30, 0));
 		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
-		Character char2 = new Character("Not me", 200, skills,
-				new RandomSkillSelector(skills));
+		Character char2 = new Character("Wild Boar", 75, skills,
+				new RandomSkillSelector(skills), "boar.png");
+		return char2;
+	}
+
+	private static Character generateMrItalian() {
+
+		List<Skill> skills = new ArrayList<Skill>();
+		skills.add(new MeeleAttack("Jump", "Jump on the head",
+				"Mamma mia, %1$s jumps on %2$s's head.", 10, 20, 15, 10));
+		skills.add(new MeeleAttack("Fireball", "eat a fireflower",
+				"Really? %2$s got hit by bouncy fireballs.", 15, 25, 30, 0));
+		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
+		Character char2 = new Character("Italian Plumber", 200, skills,
+				new RandomSkillSelector(skills), "pixel.png");
+		return char2;
+	}
+
+	private static Character generateFlowerDragon() {
+
+		List<Skill> skills = new ArrayList<Skill>();
+		skills.add(new MeeleAttack("Flower Power", "rain of beatiful flowers",
+				"%1$s presents its flower.\n%2$s feels refreshed.", -100, -100,
+				15, 10));
+		skills.add(new MeeleAttack("Dragon Rage", "exactly 40 damage.",
+				"%2$s got hit by %1$s's %3$s and loosed 40 HP.", 40, 40, 1000,
+				0));
+		Character char2 = new Character("REALLY REALLY scary dragon", 200,
+				skills, new RandomSkillSelector(skills), "flowerdragon.png");
+		return char2;
+	}
+
+	private static Character generateOtherDragon() {
+
+		List<Skill> skills = new ArrayList<Skill>();
+		skills.add(new MeeleAttack("Flower Power", "rain of beatiful flowers",
+				"%1$s presents its flower.\n%2$s feels refreshed.", -100, -100,
+				15, 10));
+		skills.add(new MeeleAttack("Dragon Rage", "exactly 40 damage.",
+				"%2$s got hit by %2$s's %3$s and loosed 40 HP.", 40, 40, 0,
+				1000));
+		skills.add(new MeeleAttack("sorry", "meh.", "Did I hit you too hard?",
+				100, 100, 0, 0));
+		Character char2 = new Character("REALLY REALLY scary dragon", 200,
+				skills, new RandomSkillSelector(skills), "flowerdragon.png");
 		return char2;
 	}
 
@@ -195,38 +307,37 @@ public class Skirmish_Activity extends Activity {
 	}
 
 	private void performUserRun() {
-		// skirmish.characterRun(true);
-		//
-		// beginEndPhase();
-		;
-		for (ISensorSensitive sr : skirmish.getSensorReceiver()) {
-			if (sr.needsNewSensordata(SensorType.Accelaration))
-				sr.receiveSensordata(SensorType.Accelaration,
-						new AccelarationSensorData(System.currentTimeMillis(),
-								System.nanoTime(), 0, 20, 0));
-		}
+		skirmish.characterRun(true);
+		beginEndPhase();
 	}
 
 	/**
 	 * Starting Phase: (maybe with introduction text)
 	 */
 	private void beginInitialPhase() {
+		updateActionBar();
 		setButtonsEnabled(false);
 		if (skirmish.checkEnd())
 			beginEndPhase();
-		else
+		else {
+			skirmish.begin();
 			beginSkillSelectionPhase();
+		}
 	}
 
 	private void beginSkillSelectionPhase() {
+		inSkillSelectionPhase = true;
+		updateActionBar();
 		setButtonsEnabled(true);
 
 	}
 
 	private void beginCombatPhase(final Skill userSkill) {
+		inSkillSelectionPhase = false;
+		updateActionBar();
 		setButtonsEnabled(false);
 
-		final int hpAnimationTime = 2500; // 1 second
+		final int hpAnimationTime = 3000; // 3 seconds
 		final Skill skill2 = skirmish.getChar2().getSkillSelector()
 				.chooseSkill();
 
@@ -284,6 +395,7 @@ public class Skirmish_Activity extends Activity {
 	}
 
 	private void beginEndPhase() {
+		updateActionBar();
 		setButtonsEnabled(false);
 		SkirmishOutcome result = skirmish.getOutCome();
 
@@ -312,7 +424,7 @@ public class Skirmish_Activity extends Activity {
 			message = "Zero HP is your defeat.";
 			break;
 		case Duce:
-			title = "Boring...";
+			title = "Boring ...";
 			message = "No one wins.";
 			break;
 		case None:
@@ -325,12 +437,18 @@ public class Skirmish_Activity extends Activity {
 
 		if (Build.VERSION.SDK_INT >= 17) {
 			displayEndDialog(message, title);
+		} else {
+			endMinigame();
+			finish();
 		}
 
 	}
 
 	private void endMinigame() {
 		// TODO: say Minigame that it is over (so events can be fired)
+		DrachenApplication app = (DrachenApplication) getApplication();
+		MyDataSet appdata = app.getAppData();
+		appdata.setCurrentMinigame(null);
 	}
 
 	@TargetApi(17)
@@ -347,6 +465,7 @@ public class Skirmish_Activity extends Activity {
 				finish();
 			}
 		});
+		builder.setPositiveButton(R.string.close, null);
 		builder.show();
 	}
 
@@ -356,6 +475,12 @@ public class Skirmish_Activity extends Activity {
 
 		btnFight.setEnabled(enabled);
 		btnRun.setEnabled(enabled);
+	}
+
+	private void updateActionBar() {
+		int turn = skirmish.getTurn();
+		setTitle("Drachen!!! Skirmish");
+		getActionBar().setSubtitle("Turn: " + turn);
 	}
 
 	private void updateBothCharacters() {
@@ -409,12 +534,22 @@ public class Skirmish_Activity extends Activity {
 
 				@Override
 				public void onAnimationEnd(Animator animation) {
+					// if the activity is finished while performing the
+					// animation
+					// stop chain calls
+					if (isFinishing())
+						return;
 					if (animatenEnd != null)
 						animatenEnd.performAction();
 				}
 
 				@Override
 				public void onAnimationCancel(Animator animation) {
+					// if the activity is finished while performing the
+					// animation
+					// stop chain calls
+					if (isFinishing())
+						return;
 					// if the animation canceled make sure the the HP are set to
 					// the correct value
 					hpView.setProgress(c.getHP());
@@ -444,17 +579,25 @@ public class Skirmish_Activity extends Activity {
 
 			@Override
 			public void performAction() {
+				int aniTime = hpAnimationTime;
 				TextView middleView = (TextView) findViewById(R.id.textView3);
 
 				Character c = char1 ? skirmish.getChar1() : skirmish.getChar2();
-
+				Character other = !char1 ? skirmish.getChar1() : skirmish
+						.getChar2();
 				String text = getString(R.string.char_uses_skill, c.getName(),
 						skill.getName());
+				text += "\n"
+						+ String.format(skill.getActionText(), c.getName(),
+								other.getName(), skill.getName());
 				middleView.setText(text);
+				if (text.length() > 40)
+					aniTime *= 2;
+
 				if (char1) // update the other char
-					updateChar2(hpAnimationTime, nextAction);
+					updateChar2(aniTime, nextAction);
 				else
-					updateChar1(hpAnimationTime, nextAction);
+					updateChar1(aniTime, nextAction);
 			}
 		};
 	}
@@ -613,6 +756,8 @@ public class Skirmish_Activity extends Activity {
 	 *            the skill which will be used
 	 */
 	private void skillChosenBySensor(Character c, final Skill s) {
+		if (!inSkillSelectionPhase)
+			return;
 		if (s != null && c == skirmish.getChar1()) // user
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(

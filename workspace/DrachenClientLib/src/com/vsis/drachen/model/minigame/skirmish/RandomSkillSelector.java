@@ -6,7 +6,8 @@ import java.util.Random;
 
 public class RandomSkillSelector implements ISkillSelector {
 
-	private Skill despair = new MeeleAttack("Despair", "meh.", 10, 15, 10, 0);
+	private Skill despair = new MeeleAttack("Despair", "meh.",
+			"%1$s acts in despair...", 10, 15, 10, 0);
 	private List<Skill> skills;
 	Random rnd = new Random();
 

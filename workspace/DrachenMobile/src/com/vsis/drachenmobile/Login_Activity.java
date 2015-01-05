@@ -141,13 +141,16 @@ public class Login_Activity extends Activity {
 			DrachenApplication app = (DrachenApplication) getApplication();
 			MyDataSet client = app.getAppData();
 
-			try {
-				boolean success = client.login(username, password);
-				return success;
-			} catch (DrachenBaseException e) {
-				_exception = e;
-				return null;
-			}
+			if (DrachenApplication.OFFLINE_DEBUG)
+				return client.dummyLogin();
+			else
+				try {
+					boolean success = client.login(username, password);
+					return success;
+				} catch (DrachenBaseException e) {
+					_exception = e;
+					return null;
+				}
 
 		}
 

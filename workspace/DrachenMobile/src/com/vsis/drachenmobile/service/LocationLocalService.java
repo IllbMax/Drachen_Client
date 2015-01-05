@@ -147,18 +147,15 @@ public class LocationLocalService extends Service {
 
 			@Override
 			public void run() {
-				String data = String.format("Lat: %f, Lon: %f",
-						gps.getLatitude(), gps.getLongitude());
-				Toast.makeText(LocationLocalService.this, data,
-						Toast.LENGTH_SHORT).show();
+				// String data = String.format("Lat: %f, Lon: %f",
+				// gps.getLatitude(), gps.getLongitude());
+				// Toast.makeText(LocationLocalService.this, data,
+				// Toast.LENGTH_SHORT).show();
 
 				if (loc == null) {
-					Toast.makeText(LocationLocalService.this, "no location",
-							Toast.LENGTH_SHORT).show();
+					// Toast.makeText(LocationLocalService.this, "no location",
+					// Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(LocationLocalService.this,
-							"location:" + loc.getName(), Toast.LENGTH_SHORT)
-							.show();
 					AsyncTask<Location, Void, Boolean> task = new AsyncTask<Location, Void, Boolean>() {
 
 						@Override
@@ -167,6 +164,15 @@ public class LocationLocalService extends Service {
 							boolean success = locationService.SetRegion(loc);
 							return success;
 						}
+
+						@Override
+						protected void onPostExecute(Boolean result) {
+							if (result != null && result) {
+								Toast.makeText(LocationLocalService.this,
+										"location:" + loc.getName(),
+										Toast.LENGTH_SHORT).show();
+							}
+						};
 
 					};
 					task.execute(loc);

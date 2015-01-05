@@ -7,7 +7,10 @@ import com.vsis.drachen.model.minigame.skirmish.Damage.DamageType;
 public class Character {
 
 	private String name;
-
+	/**
+	 * name of avatar image
+	 */
+	private String avatar;
 	/**
 	 * health/hit points
 	 */
@@ -21,8 +24,9 @@ public class Character {
 	private ISkillSelector skillSelector;
 
 	public Character(String name, int maxHp, List<Skill> skills,
-			ISkillSelector skillSelector) {
+			ISkillSelector skillSelector, String avatar) {
 		this.name = name;
+		this.avatar = avatar;
 		this.maxHp = maxHp;
 		this.hp = maxHp;
 		this.skills = skills;
@@ -39,6 +43,10 @@ public class Character {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getAvatar() {
+		return avatar;
 	}
 
 	public List<Skill> getSkills() {

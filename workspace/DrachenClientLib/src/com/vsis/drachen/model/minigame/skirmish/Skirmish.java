@@ -79,8 +79,12 @@ public class Skirmish implements IMiniGame {
 
 				if (!needsNewSensordata(type))
 					return false;
-				// wait 2 seconds until trigger event again
-				if (data.getNanoTime() / 1000000 - lastNano / 1000000 < 2000)
+				// wait 3 seconds until trigger event again
+				if (lastNano == Long.MIN_VALUE) {
+					lastNano = data.getNanoTime();
+					return false;
+				}
+				if (Math.abs(data.getNanoTime() / 1000000 - lastNano / 1000000) < 3000)
 					return false;
 				// if (isFulfilled() && onlyOnce)
 				// return false;
@@ -127,7 +131,7 @@ public class Skirmish implements IMiniGame {
 	@Override
 	public void begin() {
 		// TODO Auto-generated method stub
-
+		phase = Phase.SkillSelectionPhase;
 	}
 
 	@Override

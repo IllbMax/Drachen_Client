@@ -17,6 +17,7 @@ import com.vsis.drachen.exception.InvalidParameterException;
 import com.vsis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.IMiniGame;
+import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
@@ -145,6 +146,19 @@ public class MyDataSet {
 		}
 	}
 
+	public boolean dummyLogin() {
+		user = new User();
+		user.setDisplayName("Dummy");
+		user.setId(0);
+
+		locationService = new LocationService(client);
+		questService = new QuestService(client);
+		sensorService = new SensorService(client);
+
+		setUser(user);
+		return true;
+	}
+
 	public boolean logout() throws InternalProcessException,
 			RestrictionException, DrachenBaseException {
 		boolean success = client.Logout();
@@ -200,12 +214,16 @@ public class MyDataSet {
 		this.currentMinigame = currentMinigame;
 	}
 
-	private void registerMinigame(IMiniGame currentMinigame2) {
-
+	private void registerMinigame(IMiniGame minigame) {
+		if (minigame != null)
+			for (ISensorSensitive ss : minigame.getSensorReceiver())
+				sensorService.trackSensorReceiver(ss);
 	}
 
 	private void unregisterMinigame() {
-
+		if (currentMinigame != null)
+			for (ISensorSensitive ss : currentMinigame.getSensorReceiver())
+				sensorService.untrackSensorReceiver(ss);
 	}
 
 }

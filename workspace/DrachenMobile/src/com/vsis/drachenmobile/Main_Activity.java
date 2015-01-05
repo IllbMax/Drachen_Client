@@ -103,6 +103,8 @@ public class Main_Activity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
+				Skirmish_Activity
+						.createDummy((DrachenApplication) getApplication());
 				Intent intent = new Intent(Main_Activity.this,
 						Skirmish_Activity.class);
 				startActivity(intent);

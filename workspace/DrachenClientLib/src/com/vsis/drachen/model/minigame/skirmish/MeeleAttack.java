@@ -19,14 +19,15 @@ public class MeeleAttack extends Skill {
 	int speed;
 	boolean isHidden;
 
-	public MeeleAttack(String name, String description, int minDmg, int maxDmg,
-			int speed, int critChance) {
-		this(name, description, minDmg, maxDmg, speed, critChance, false);
+	public MeeleAttack(String name, String description, String actionText,
+			int minDmg, int maxDmg, int speed, int critChance) {
+		this(name, description, actionText, minDmg, maxDmg, speed, critChance,
+				false);
 	}
 
-	public MeeleAttack(String name, String description, int minDmg, int maxDmg,
-			int speed, int critChance, boolean isHidden) {
-		super(name, description);
+	public MeeleAttack(String name, String description, String actionText,
+			int minDmg, int maxDmg, int speed, int critChance, boolean isHidden) {
+		super(name, description, actionText);
 		minDamage = minDmg;
 		maxDamage = maxDmg;
 		this.critChance = critChance;
