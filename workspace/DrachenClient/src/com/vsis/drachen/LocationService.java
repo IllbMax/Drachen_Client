@@ -119,11 +119,14 @@ public class LocationService {
 	}
 
 	public Location getLoationFromPoint(Point p) {
+		System.out.println("getLocationFromPoint called");
 		for (Location loc : locationHierachy) {
+			System.out.println("getLocationFromPoint called:checking location");
 			Location l = loc.findSublocation(p);
 			if (l != null)
 				return l;
 		}
+		System.out.println("getLocationFromPoint called:no location found");
 		return null;
 	}
 
@@ -170,9 +173,16 @@ public class LocationService {
 	 * @param newLocaion
 	 * @return true if change was successful
 	 */
-	private boolean notifyServer(Location newLocaion) {
-		// TODO: call client.changeLocation(bla)
-		return true;
+	private boolean notifyServer(Location newLocation) {
+		boolean success = false;
+		try {
+			success = client.updateLocation(newLocation);
+		} catch (DrachenBaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return success;
 	}
 
 	public void dispose() {
