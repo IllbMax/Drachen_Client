@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.MessageQueue;
+import android.os.MessageQueue.IdleHandler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -20,13 +23,16 @@ import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
+import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachen.sensor.data.GPSSensorData;
 import com.vsis.drachen.sensor.data.ISensorData;
+import com.vsis.drachen.sensor.data.StringSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.sensor.AccelarationSensor;
 import com.vsis.drachenmobile.sensor.GPSSensor;
 import com.vsis.drachenmobile.sensor.LocationSensor;
+import com.vsis.drachenmobile.sensor.SpeechSensor;
 
 public class LocationLocalService extends Service {
 
@@ -71,18 +77,54 @@ public class LocationLocalService extends Service {
 				this);
 		AccelarationSensor accelSensor = new AccelarationSensor(
 				"Accelaration Sensor", this);
+		ISensor stringSensor = //
+		new SpeechSensor("Speech input", getApplicationContext());
+		// new StringInputSensor("Inputdialog", getApplicationContext());
+		// ISensor codeSensor = new CodeScanner();
 
 		sensorService.registerSensor(SensorType.Position, gpsSensor);
 		sensorService.registerSensor(SensorType.Location, locationSensor);
 		sensorService.registerSensor(SensorType.Accelaration, accelSensor);
+		sensorService.registerSensor(SensorType.TextInput, stringSensor);
+		// sensorService.registerSensor(SensorType.CodeScanner, codeSensor);
 
 		sensorService.setDefaultSensor(SensorType.Position, gpsSensor);
 		sensorService.setDefaultSensor(SensorType.Location, locationSensor);
 		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
+		sensorService.setDefaultSensor(SensorType.TextInput, stringSensor);
+		// sensorService.setDefaultSensor(SensorType.CodeScanner, codeSensor);
 
 		gpsSensor.start();
 		locationSensor.start();
 		accelSensor.start();
+
+		sensorService.trackSensorReceiver(new ISensorSensitive() {
+
+			@Override
+			public Set<SensorType> requiredSensors() {
+				return EnumSet.of(SensorType.CodeScanner, SensorType.TextInput);
+			}
+
+			@Override
+			public boolean receiveSensordata(SensorType type, ISensorData data) {
+
+				StringSensorData sdata = (StringSensorData) data;
+
+				String input = sdata.getFirstString();
+
+				showToastInThread(input);
+				// Toast.makeText(getApplicationContext(), input,
+				// Toast.LENGTH_SHORT).show();
+
+				return false;
+			}
+
+			@Override
+			public boolean needsNewSensordata(SensorType type) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		});
 	}
 
 	private void installPositionListener() {
@@ -218,4 +260,23 @@ public class LocationLocalService extends Service {
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
 
+	public void showToastInThread(final String str) {
+
+		Looper.prepare();
+		MessageQueue queue = Looper.myQueue();
+		queue.addIdleHandler(new IdleHandler() {
+			int mReqCount = 0;
+
+			@Override
+			public boolean queueIdle() {
+				if (++mReqCount == 2) {
+					Looper.myLooper().quit();
+					return false;
+				} else
+					return true;
+			}
+		});
+		Toast.makeText(this, str, Toast.LENGTH_LONG).show();
+		Looper.loop();
+	}
 }

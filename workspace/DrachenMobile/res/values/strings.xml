@@ -73,5 +73,7 @@
     <string name="use_skill">Use Skill</string>
     <string name="char_uses_skill">%1$s uses %2$s</string>
     <string name="select_a_skill">Select a skill</string>
+    <string name="ok">OK</string>
+    <string name="sensor">Sensor</string>
     
 </resources>

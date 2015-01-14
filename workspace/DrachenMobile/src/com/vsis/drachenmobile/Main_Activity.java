@@ -47,10 +47,15 @@ public class Main_Activity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		// action with ID action_refresh was selected
+
 		case R.id.action_logout:
 			logout();
 			break;
+		case R.id.action_sensorquickaccess:
+			Intent intent2 = new Intent(this, SensorQuickSelect_Activity.class);
+			startActivity(intent2);
+			break;
+
 		}
 
 		return true;
