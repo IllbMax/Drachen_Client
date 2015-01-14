@@ -45,4 +45,9 @@ public abstract class AbstractSensor implements ISensor {
 		});
 		thread.start();
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
