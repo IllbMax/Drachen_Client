@@ -1,6 +1,8 @@
 package com.vsis.drachenmobile;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +22,9 @@ import com.vsis.drachen.model.IMiniGame;
 import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachen.model.quest.QuestProgressStatus;
+import com.vsis.drachen.model.quest.QuestPrototype;
+import com.vsis.drachen.model.quest.StringCompareQuestTarget;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class MyDataSet {
@@ -155,7 +160,22 @@ public class MyDataSet {
 		questService = new QuestService(client);
 		sensorService = new SensorService(client);
 
+		QuestPrototype proto = new QuestPrototype("talk", "palaber");
+		Quest quest = new Quest();
+		quest.setPrototype(proto);
+
+		List<String> choice = new ArrayList<String>();
+		choice.add("Speak after me");
+		choice.add("bananarama");
+		StringCompareQuestTarget qt = new StringCompareQuestTarget(
+				"compare me", choice, 0);
+		qt.setProgress(QuestProgressStatus.OnGoing);
+		quest.addQuestTarget(qt);
+
+		user.startQuest(quest);
 		setUser(user);
+		for (Quest q : questService.getUserQuests())
+			sensorService.trackQuest(q);
 		return true;
 	}
 

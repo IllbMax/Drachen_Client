@@ -98,7 +98,7 @@ public class LocationLocalService extends Service {
 		locationSensor.start();
 		accelSensor.start();
 
-		sensorService.trackSensorReceiver(new ISensorSensitive() {
+		ISensorSensitive listener = new ISensorSensitive() {
 
 			@Override
 			public Set<SensorType> requiredSensors() {
@@ -124,7 +124,8 @@ public class LocationLocalService extends Service {
 				// TODO Auto-generated method stub
 				return true;
 			}
-		});
+		};
+		// sensorService.trackSensorReceiver(listener);
 	}
 
 	private void installPositionListener() {

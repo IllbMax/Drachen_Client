@@ -29,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
@@ -160,8 +159,6 @@ public class QuestPrototype_Activity extends Activity {
 		QuestStartTask task = new QuestStartTask(questPrototype);
 		task.execute();
 
-		Toast.makeText(this, "clicked " + questPrototype.getId(),
-				Toast.LENGTH_SHORT).show();
 	}
 
 	private void setDisplayLocation(Location location) {

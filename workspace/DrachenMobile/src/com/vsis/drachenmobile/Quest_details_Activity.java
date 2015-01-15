@@ -130,8 +130,7 @@ public class Quest_details_Activity extends Activity {
 			if (convertView == null) {
 				LayoutInflater infalInflater = (LayoutInflater) this._context
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = infalInflater.inflate(_layouts[childPosition],
-						null);
+				convertView = infalInflater.inflate(_layouts[0], null);
 			}
 
 			SensorType sensor = (SensorType) getChild(questTarget,
@@ -213,7 +212,7 @@ public class Quest_details_Activity extends Activity {
 			int i = 0;
 			SensorType sensor = null;
 			for (SensorType s : group.requiredSensors())
-				if (i == childPosition) {
+				if (i++ == childPosition) {
 					sensor = s;
 					break;
 				}

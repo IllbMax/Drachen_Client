@@ -52,6 +52,7 @@ import com.vsis.drachen.model.minigame.skirmish.Skirmish;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.ISkillListener;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.PerformOrder;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.SkirmishOutcome;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.Main_Activity;
 import com.vsis.drachenmobile.MyDataSet;
@@ -112,7 +113,7 @@ public class Skirmish_Activity extends Activity {
 		ImageView avatar = (ImageView) findViewById(R.id.imageView2);
 		Character c = skirmish.getChar2();
 		String avatarId = c.getAvatar();
-		if (Helper.nullOrEmptyOrWS(avatarId))
+		if (StringFunction.nullOrWhiteSpace(avatarId))
 			avatar.setImageResource(R.drawable.ic_launcher);
 		else
 			avatar.setImageBitmap(resourceService.getBitmapOrNotFound(avatarId));
