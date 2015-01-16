@@ -1,11 +1,18 @@
 package com.vsis.drachenmobile;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.vsis.drachen.BlubClient;
@@ -25,6 +32,7 @@ import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestProgressStatus;
 import com.vsis.drachen.model.quest.QuestPrototype;
 import com.vsis.drachen.model.quest.StringCompareQuestTarget;
+import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class MyDataSet {
@@ -42,6 +50,7 @@ public class MyDataSet {
 
 	private IMiniGame currentMinigame;
 
+	private AndroidDrachenResourceService resourceService;
 	Context ctx;
 
 	public MyDataSet(Context ctx) {
@@ -117,6 +126,7 @@ public class MyDataSet {
 			e.printStackTrace();
 		}
 		if (user != null) {
+			createDrachenResourceService();
 			locationService = new LocationService(client);
 			questService = new QuestService(client);
 			sensorService = new SensorService(client);
@@ -156,6 +166,7 @@ public class MyDataSet {
 		user.setDisplayName("Dummy");
 		user.setId(0);
 
+		createDrachenResourceService();
 		locationService = new LocationService(client);
 		questService = new QuestService(client);
 		sensorService = new SensorService(client);
@@ -192,11 +203,45 @@ public class MyDataSet {
 		return success;
 	}
 
+	private void createDrachenResourceService() {
+		String filename = loadSD();
+		resourceService = new AndroidDrachenResourceService(ctx);
+		try {
+			resourceService.loadZip(filename);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ParserConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SAXException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	private String loadSD() {
+		String state = Environment.getExternalStorageState();
+
+		if (!(state.equals(Environment.MEDIA_MOUNTED))) {
+			// Toast.makeText(ctx, "There is no any sd card",
+			// Toast.LENGTH_LONG).show();
+			return "";
+
+		} else {
+			// Toast.makeText(ctx, "Sd card available",
+			// Toast.LENGTH_LONG).show();
+			File file = Environment.getExternalStorageDirectory();
+			File zipFile = new File(file, "data.zip");
+			return zipFile.getAbsolutePath();
+		}
+	}
+
 	public void disposeComponents() {
 		locationService.dispose();
 		sensorService.dispose();
 		questService.dispose();
-
+		resourceService.dispose();
 	}
 
 	public User getUser() {
@@ -223,6 +268,10 @@ public class MyDataSet {
 
 	public SensorService getSensorService() {
 		return sensorService;
+	}
+
+	public AndroidDrachenResourceService getResourceService() {
+		return resourceService;
 	}
 
 	public IMiniGame getCurrentMinigame() {

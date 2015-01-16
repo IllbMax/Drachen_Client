@@ -84,6 +84,32 @@ public class AndroidDrachenResourceService extends ResourceService {
 		return getNotFoundSVG();
 	}
 
+	public SVG getSVGOrNull(String id) {
+		ResourceStream resStream = null;
+		try {
+			resStream = getMediaResourceStream(ZIP_DIR_IMG + id);
+
+			SVG mySVG = SVG.getFromInputStream(resStream.getInputStream());
+			return mySVG;
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SVGParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (resStream != null)
+				try {
+					resStream.close();
+				} catch (Throwable t) {
+				}
+		}
+		return null;
+	}
+
 	private SVG getNotFoundSVG() {
 		try {
 			return SVG.getFromAsset(_ctx.getAssets(), "imagenotfound.svg");
@@ -93,6 +119,10 @@ public class AndroidDrachenResourceService extends ResourceService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void dispose() {
+
 	}
 
 }
