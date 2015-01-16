@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/action_logout"
-        android:icon="@drawable/logout"
+        android:icon="@drawable/logout_darktheme"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/logout"/>
