@@ -35,11 +35,12 @@ import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.InvalidParameterException;
@@ -76,6 +77,13 @@ public class Skirmish_Activity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_skirmish);
+
+		// LinearLayout layout = new LinearLayout(this);
+		// SVGImageView svgImageView = new SVGImageView(this);
+		// svgImageView.setImageAsset("my_svg_file.svg");
+		// // layout.addView(svgImageView, new LinearLayout.LayoutParams(
+		// // LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		// setContentView(layout);
 
 		DrachenApplication app = (DrachenApplication) getApplication();
 		MyDataSet appdata = app.getAppData();
@@ -114,13 +122,36 @@ public class Skirmish_Activity extends Activity {
 			}
 		});
 
-		ImageView avatar = (ImageView) findViewById(R.id.imageView2);
+		SVGImageView avatar = (SVGImageView) findViewById(R.id.imageView2);
 		Character c = skirmish.getChar2();
 		String avatarId = c.getAvatar();
 		if (StringFunction.nullOrWhiteSpace(avatarId))
 			avatar.setImageResource(R.drawable.ic_launcher);
+		else if (avatarId.endsWith(".svg"))
+			avatar.setSVG(resourceService.getSVGOrNotFound(avatarId));
 		else
 			avatar.setImageBitmap(resourceService.getBitmapOrNotFound(avatarId));
+
+		SVGImageView self = (SVGImageView) findViewById(R.id.imageView1);
+		// Read an SVG from the assets folder
+		SVG svg;
+		svg = resourceService.getSVGOrNotFound("dragon1.svg"); // SVG.getFromAsset(getAssets(),"");
+		self.setSVG(svg);
+		// Create a canvas to draw onto
+		// if (svg.getDocumentWidth() != -1) {
+		// Bitmap newBM = Bitmap.createBitmap(
+		// (int) Math.ceil(svg.getDocumentWidth()),
+		// (int) Math.ceil(svg.getDocumentHeight()),
+		// Bitmap.Config.ARGB_8888);
+		//
+		// Canvas bmcanvas = new Canvas(newBM);
+		// // Clear background to white
+		// bmcanvas.drawRGB(255, 255, 255);
+		// // Render our document onto our canvas
+		// svg.renderToCanvas(bmcanvas);
+		//
+		// self.setImageBitmap(newBM);
+		// }
 
 		Button btnFight = (Button) findViewById(R.id.button1);
 		Button btnRun = (Button) findViewById(R.id.button2);
@@ -250,7 +281,7 @@ public class Skirmish_Activity extends Activity {
 				"%1$s attacks with tusks.", 15, 25, 30, 0));
 		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
 		Character char2 = new Character("Wild Boar", 75, skills,
-				new RandomSkillSelector(skills), "boar.png");
+				new RandomSkillSelector(skills), "boar.svg");
 		return char2;
 	}
 
@@ -263,7 +294,7 @@ public class Skirmish_Activity extends Activity {
 				"Really? %2$s got hit by bouncy fireballs.", 15, 25, 30, 0));
 		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
 		Character char2 = new Character("Italian Plumber", 200, skills,
-				new RandomSkillSelector(skills), "pixel.png");
+				new RandomSkillSelector(skills), "pixel.svg");
 		return char2;
 	}
 
@@ -277,7 +308,7 @@ public class Skirmish_Activity extends Activity {
 				"%2$s got hit by %1$s's %3$s and loosed 40 HP.", 40, 40, 1000,
 				0));
 		Character char2 = new Character("REALLY REALLY scary dragon", 200,
-				skills, new RandomSkillSelector(skills), "flowerdragon.png");
+				skills, new RandomSkillSelector(skills), "flowerdragon.svg");
 		return char2;
 	}
 
@@ -293,7 +324,7 @@ public class Skirmish_Activity extends Activity {
 		skills.add(new MeeleAttack("sorry", "meh.", "Did I hit you too hard?",
 				100, 100, 0, 0));
 		Character char2 = new Character("REALLY REALLY scary dragon", 200,
-				skills, new RandomSkillSelector(skills), "flowerdragon.png");
+				skills, new RandomSkillSelector(skills), "dragon1.svg");
 		return char2;
 	}
 
