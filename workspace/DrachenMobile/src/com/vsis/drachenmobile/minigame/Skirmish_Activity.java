@@ -27,6 +27,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
@@ -58,6 +61,7 @@ import com.vsis.drachenmobile.Main_Activity;
 import com.vsis.drachenmobile.MyDataSet;
 import com.vsis.drachenmobile.R;
 import com.vsis.drachenmobile.Register_Activity;
+import com.vsis.drachenmobile.SensorQuickSelect_Activity;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.helper.IActionDelegate;
 import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
@@ -156,6 +160,25 @@ public class Skirmish_Activity extends Activity {
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.sensormenu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+
+		case R.id.action_sensorquickaccess:
+			Intent intent2 = new Intent(this, SensorQuickSelect_Activity.class);
+			startActivity(intent2);
+			break;
+		}
+		return true;
 	}
 
 	private String LoadSD() {

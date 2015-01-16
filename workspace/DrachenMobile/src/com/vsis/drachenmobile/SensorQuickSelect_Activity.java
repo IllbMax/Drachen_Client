@@ -6,10 +6,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.vsis.drachen.SensorService;
@@ -45,6 +47,18 @@ public class SensorQuickSelect_Activity extends Activity {
 					int position, long id) {
 				ISensor sensor = (ISensor) parent.getItemAtPosition(position);
 				sensor.start();
+				finish();
+			}
+		});
+
+		Button managerButton = (Button) findViewById(R.id.button1);
+		managerButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(SensorQuickSelect_Activity.this,
+						SensorManager_Activity.class);
+				startActivity(intent);
 				finish();
 			}
 		});
