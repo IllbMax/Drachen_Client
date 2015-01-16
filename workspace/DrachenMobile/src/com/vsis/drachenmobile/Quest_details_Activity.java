@@ -19,6 +19,7 @@ import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.sensor.SensorType;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
@@ -28,6 +29,13 @@ public class Quest_details_Activity extends Activity {
 	public static final String EXTRA_QUESTID = "questId";
 
 	int _questId;
+
+	/**
+	 * goes from 0-3: 0 no hint, 3 all 3 hints
+	 */
+	private int hintLevel = 0;
+	private boolean[] hasHint = new boolean[4];
+	private int[] hintLevelButtonId = new int[4];
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +102,65 @@ public class Quest_details_Activity extends Activity {
 					this, quest.getQuestTargets());
 			listView_QuestTargets.setAdapter(adapter);
 
+			// the hints
+			Button buttonHint1 = (Button) findViewById(R.id.button1);
+			Button buttonHint2 = (Button) findViewById(R.id.button2);
+			Button buttonHint3 = (Button) findViewById(R.id.button3);
+
+			TextView textViewHint1 = (TextView) findViewById(R.id.textView1);
+			TextView textViewHint2 = (TextView) findViewById(R.id.textView2);
+			TextView textViewHint3 = (TextView) findViewById(R.id.textView3);
+
+			hasHint[0] = true;
+			hintLevelButtonId[0] = 0;
+			hintLevelButtonId[1] = R.id.button1;
+			hintLevelButtonId[2] = R.id.button2;
+			hintLevelButtonId[3] = R.id.button3;
+			setHintButton(buttonHint1, textViewHint1, quest.getHint1(), 1);
+			setHintButton(buttonHint2, textViewHint2, quest.getHint2(), 2);
+			setHintButton(buttonHint3, textViewHint3, quest.getHint3(), 3);
+
+			setHintLevel(0);
+		}
+	}
+
+	private void setHintButton(Button buttonHint, final TextView textViewHint,
+			String hint, final int level) {
+		if (StringFunction.nullOrWhiteSpace(hint)) {
+			hasHint[level] = false;
+			buttonHint.setVisibility(View.GONE);
+			textViewHint.setVisibility(View.GONE);
+			textViewHint.setText("");
+		} else {
+			hasHint[level] = true;
+			buttonHint.setVisibility(View.GONE);
+			textViewHint.setVisibility(View.GONE);
+			textViewHint.setText(hint);
+
+			buttonHint.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					setHintLevel(level);
+					if (textViewHint.getVisibility() == View.VISIBLE)
+
+						textViewHint.setVisibility(View.GONE);
+					else
+						textViewHint.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+	}
+
+	private void setHintLevel(int level) {
+		// TODO: maybe save hint level in quest
+		this.hintLevel = Math.max(hintLevel, level);
+		int maxIndex = Math.min(hintLevel, 2) + 1;
+
+		for (int i = 1; i <= maxIndex; i++) {
+			if (hasHint[i])
+				((Button) findViewById(hintLevelButtonId[i]))
+						.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -253,4 +320,8 @@ public class Quest_details_Activity extends Activity {
 		}
 	}
 
+	private class HintSystem {
+		int buttonId, textViewId;
+
+	}
 }

@@ -161,6 +161,9 @@ public class MyDataSet {
 		sensorService = new SensorService(client);
 
 		QuestPrototype proto = new QuestPrototype("talk", "palaber");
+		proto.setHint1("try this and that");
+		proto.setHint2("lorem ipsum dolor sit ...");
+		proto.setHint3("ok go to this website");
 		Quest quest = new Quest();
 		quest.setPrototype(proto);
 
