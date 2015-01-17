@@ -179,4 +179,8 @@ public class LocationService {
 		// no resources, so all done
 
 	}
+
+	public void setDummyLocation() {
+
+	}
 }

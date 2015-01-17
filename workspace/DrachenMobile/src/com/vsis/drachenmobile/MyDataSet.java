@@ -190,6 +190,7 @@ public class MyDataSet {
 		setUser(user);
 		for (Quest q : questService.getUserQuests())
 			sensorService.trackQuest(q);
+		locationService.setDummyLocation();
 		return true;
 	}
 
