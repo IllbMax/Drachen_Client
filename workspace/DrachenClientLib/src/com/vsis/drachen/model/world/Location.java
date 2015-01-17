@@ -8,7 +8,7 @@ import com.vsis.drachen.model.IdObject;
 public class Location extends IdObject {
 
 	private String name;
-
+	private String imageKey;
 	private Location parentLocation = null;
 
 	private Set<Location> childLocations = new HashSet<Location>(0);
@@ -47,6 +47,14 @@ public class Location extends IdObject {
 
 	public void setName(String newName) {
 		name = newName;
+	}
+
+	public String getImageKey() {
+		return imageKey;
+	}
+
+	public void setImageKey(String imageKey) {
+		this.imageKey = imageKey;
 	}
 
 	public void setParentLocation(Location newParentLocation) {

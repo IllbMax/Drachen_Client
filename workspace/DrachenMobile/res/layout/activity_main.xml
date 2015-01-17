@@ -64,5 +64,11 @@ android:orientation="vertical">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Minigame" />
+
+    <com.caverock.androidsvg.SVGImageView
+        android:id="@+id/imageView1"
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp" />
     
 </LinearLayout>

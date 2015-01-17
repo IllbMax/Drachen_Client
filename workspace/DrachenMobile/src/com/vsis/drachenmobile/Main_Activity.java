@@ -23,12 +23,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.minigame.Skirmish_Activity;
 
@@ -123,6 +126,7 @@ public class Main_Activity extends Activity {
 		textView = (TextView) findViewById(R.id.textView_Main_title);
 		textView.setText(String.format(getString(R.string.greetings),
 				user.getDisplayName()));
+
 	}
 
 	@Override
@@ -191,6 +195,17 @@ public class Main_Activity extends Activity {
 				.getLocationDisplay(Main_Activity.this, newLocation);
 		locationView.setText(name);
 
+		String key = newLocation != null ? newLocation.getImageKey() : null;
+
+		MyDataSet appdata = ((DrachenApplication) getApplication())
+				.getAppData();
+		SVGImageView locationImage = (SVGImageView) findViewById(R.id.imageView1);
+		SVG svg = StringFunction.nullOrWhiteSpace(key) ? null : appdata
+				.getResourceService().getSVGOrNull(key);
+		if (svg != null)
+			locationImage.setSVG(svg);
+		else
+			locationImage.setImageBitmap(null);
 	}
 
 	@Override
