@@ -1,10 +1,14 @@
 package com.vsis.drachenmobile;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,12 +86,22 @@ public class Quest_details_Activity extends Activity {
 		} else {
 			TextView textView_name = (TextView) findViewById(R.id.textview_Quest_Name);
 			TextView textView_desc = (TextView) findViewById(R.id.textview_Quest_Description);
+			TextView textView_stared = (TextView) findViewById(R.id.textview_Quest_Started);
 			Button buttonAbort = (Button) findViewById(R.id.listview_QuestDetails_AbortButton);
 
 			ExpandableListView listView_QuestTargets = (ExpandableListView) findViewById(R.id.explistView_Quest_Questtargets);
 
 			textView_name.setText(quest.getName());
 			textView_desc.setText(quest.getDescription());
+			java.text.DateFormat dateFormat = DateFormat.getDateFormat(this);
+			java.text.DateFormat timeFormat = DateFormat.getTimeFormat(this);
+			Date date = new Date(quest.getStartTimeMillis());
+			Calendar c = new GregorianCalendar();
+			c.setTime(date);
+
+			textView_stared.setText(getString(R.string.started_date_time,
+					dateFormat.format(date), timeFormat.format(date)));
+
 			buttonAbort.setOnClickListener(new OnClickListener() {
 
 				@Override

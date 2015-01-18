@@ -32,26 +32,23 @@
             />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="10" >
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/textview_Quest_Description"
-            android:layout_width="0dp"
+            android:id="@+id/textview_Quest_Started"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textSize="12sp" 
+            />
+        <TextView
+            android:id="@+id/textview_Quest_Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="Lorem ipsum dolor sit ..."
             android:textSize="15sp" 
             />
-    </LinearLayout>
 
     <ExpandableListView
         android:id="@+id/explistView_Quest_Questtargets"

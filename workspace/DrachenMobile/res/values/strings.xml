@@ -79,5 +79,5 @@
     <string name="hint_1">Hint</string>
     <string name="hint_2">Next hint</string>
     <string name="hint_3">OK the walkthrough</string>
-    
+    <string name="started_date_time">Started: %1$s %2$s</string>
 </resources>
