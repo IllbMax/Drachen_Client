@@ -51,20 +51,30 @@ public class StringCompareQuestTarget extends QuestTarget {
 		float bestRating = 0;
 		String bestMatch = null;
 		String desiredString = null;
-		for (String possible : stringdata.getMultipleString()) {
-			if (StringFunction.nullOrWhiteSpace(possible))
+
+		loop: for (String p : stringdata.getMultipleString()) {
+			if (StringFunction.nullOrWhiteSpace(p))
 				continue;
-			for (String choiceString : choice) {
-				if (StringFunction.nullOrWhiteSpace(choiceString))
+			String possible = p.toLowerCase();
+			for (String c : choice) {
+				if (StringFunction.nullOrWhiteSpace(c))
 					continue;
-				int norm = StringFunction.leventsteinNorm(possible,
-						choiceString);
-				// 1 == 100% match 0 == 0% match
-				float rating = 1 - (norm / (float) choiceString.length());
+				String choiceString = c.toLowerCase();
+				float rating;
+				if (matchingThreshold == 1) {
+					rating = possible.equals(choiceString) ? 1 : 0;
+				} else {
+					int norm = StringFunction.leventsteinNorm(possible,
+							choiceString);
+					// 1 == 100% match 0 == 0% match
+					rating = 1 - (norm / (float) choiceString.length());
+				}
 				if (rating >= matchingThreshold && rating > bestRating) {
 					bestRating = rating;
 					bestMatch = possible;
 					desiredString = choiceString;
+					if (rating == 1)
+						break loop;
 				}
 			}
 		}
@@ -74,7 +84,7 @@ public class StringCompareQuestTarget extends QuestTarget {
 		{
 			System.out.print("Time: " + (System.nanoTime() - start) / 1000000
 					+ "ms");
-			// success = true;
+			success = true;
 			System.out.print(String.format(
 					"rate=%.2f Matched: '%s', input: '%s'", bestRating,
 					desiredString, bestMatch));

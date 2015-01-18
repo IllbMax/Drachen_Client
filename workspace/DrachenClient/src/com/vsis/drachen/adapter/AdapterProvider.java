@@ -22,6 +22,7 @@ import com.vsis.drachen.model.quest.LocationQuestTarget;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.quest.QuestTargetDefaultUpdateState;
+import com.vsis.drachen.model.quest.StringCompareQuestTarget;
 
 public class AdapterProvider {
 
@@ -31,6 +32,7 @@ public class AdapterProvider {
 		adapter.registerSubtype(GPSQuestTarget.class);
 		adapter.registerSubtype(AccelerationQuestTarget.class);
 		adapter.registerSubtype(LocationQuestTarget.class);
+		adapter.registerSubtype(StringCompareQuestTarget.class);
 		// .registerSubtype(MoreQuestTarget.class)
 
 		return adapter;

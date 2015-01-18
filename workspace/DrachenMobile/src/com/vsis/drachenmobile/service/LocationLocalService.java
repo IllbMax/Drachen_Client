@@ -33,6 +33,7 @@ import com.vsis.drachenmobile.sensor.AccelarationSensor;
 import com.vsis.drachenmobile.sensor.GPSSensor;
 import com.vsis.drachenmobile.sensor.LocationSensor;
 import com.vsis.drachenmobile.sensor.SpeechSensor;
+import com.vsis.drachenmobile.sensor.StringInputSensor;
 
 public class LocationLocalService extends Service {
 
@@ -77,9 +78,10 @@ public class LocationLocalService extends Service {
 				this);
 		AccelarationSensor accelSensor = new AccelarationSensor(
 				"Accelaration Sensor", this);
-		ISensor stringSensor = //
-		new SpeechSensor("Speech input", getApplicationContext());
-		// new StringInputSensor("Inputdialog", getApplicationContext());
+		boolean speech = true;
+		ISensor stringSensor = speech ? new SpeechSensor("Speech input",
+				getApplicationContext()) : new StringInputSensor("Inputdialog",
+				getApplicationContext());
 		// ISensor codeSensor = new CodeScanner();
 
 		sensorService.registerSensor(SensorType.Position, gpsSensor);
