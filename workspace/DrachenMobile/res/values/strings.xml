@@ -75,6 +75,7 @@
     <string name="select_a_skill">Select a skill</string>
     <string name="ok">OK</string>
     <string name="sensor">Sensor</string>
+    <string name="quests">Quests</string>
     <string name="hint_1">Hint</string>
     <string name="hint_2">Next hint</string>
     <string name="hint_3">OK the walkthrough</string>

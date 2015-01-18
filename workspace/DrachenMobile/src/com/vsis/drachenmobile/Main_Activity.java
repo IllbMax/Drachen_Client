@@ -49,14 +49,19 @@ public class Main_Activity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch (item.getItemId()) {
 
 		case R.id.action_logout:
 			logout();
 			break;
 		case R.id.action_sensorquickaccess:
-			Intent intent2 = new Intent(this, SensorQuickSelect_Activity.class);
-			startActivity(intent2);
+			intent = new Intent(this, SensorQuickSelect_Activity.class);
+			startActivity(intent);
+			break;
+		case R.id.action_quests:
+			intent = new Intent(this, Quest_overview_Activity.class);
+			startActivity(intent);
 			break;
 
 		}

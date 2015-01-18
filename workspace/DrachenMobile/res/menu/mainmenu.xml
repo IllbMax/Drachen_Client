@@ -2,18 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/action_quests"
+        android:icon="@drawable/questicon"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/quests"/>
+    <item
         android:id="@+id/action_sensorquickaccess"
         android:icon="@drawable/sensor"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/sensor"/>
-
     <item
         android:id="@+id/action_logout"
         android:icon="@drawable/logout_darktheme"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/logout"/>
-
 
 </menu>
