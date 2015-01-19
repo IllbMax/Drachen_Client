@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.IdNotFoundException;
@@ -110,6 +112,20 @@ public class QuestService {
 			int locationId) throws InternalProcessException,
 			RestrictionException, IdNotFoundException, DrachenBaseException {
 		return getAvailableQuestForLocation(locationId, false);
+	}
+
+	public Collection<QuestPrototype> removeStartedQuests(
+			Collection<QuestPrototype> questPrototypes) {
+		List<QuestPrototype> result = new ArrayList<QuestPrototype>(
+				questPrototypes.size());
+		Set<Integer> protoIds = new HashSet<Integer>();
+		Collection<Quest> quests = getUserQuests();
+		for (Quest q : quests)
+			protoIds.add(q.getPrototype().getId());
+		for (QuestPrototype q : questPrototypes)
+			if (!protoIds.contains(q.getId()))
+				result.add(q);
+		return result;
 	}
 
 	public Quest startQuest(int questPrototypeId)

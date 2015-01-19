@@ -364,7 +364,7 @@ public class QuestPrototype_Activity extends Activity {
 			try {
 				Collection<QuestPrototype> result = questService
 						.getAvailableQuestForLocation(locationId, forceReload);
-				return result;
+				return questService.removeStartedQuests(result);
 
 			} catch (DrachenBaseException e) {
 				_exception = e;
