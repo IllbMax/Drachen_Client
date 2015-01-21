@@ -36,11 +36,11 @@ import com.vsis.drachen.model.minigame.skirmish.Skirmish;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.ISkillListener;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.PerformOrder;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.SkirmishOutcome;
-import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.DrachenApplication;
 import com.vsis.drachenmobile.MyDataSet;
 import com.vsis.drachenmobile.R;
 import com.vsis.drachenmobile.SensorQuickSelect_Activity;
+import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.helper.IActionDelegate;
 import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 
@@ -54,13 +54,6 @@ public class Skirmish_Activity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_skirmish);
-
-		// LinearLayout layout = new LinearLayout(this);
-		// SVGImageView svgImageView = new SVGImageView(this);
-		// svgImageView.setImageAsset("my_svg_file.svg");
-		// // layout.addView(svgImageView, new LinearLayout.LayoutParams(
-		// // LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		// setContentView(layout);
 
 		DrachenApplication app = (DrachenApplication) getApplication();
 		MyDataSet appdata = app.getAppData();
@@ -88,12 +81,8 @@ public class Skirmish_Activity extends Activity {
 		SVGImageView avatar = (SVGImageView) findViewById(R.id.imageView2);
 		Character c = skirmish.getChar2();
 		String avatarId = c.getAvatar();
-		if (StringFunction.nullOrWhiteSpace(avatarId))
-			avatar.setImageResource(R.drawable.ic_launcher);
-		else if (avatarId.endsWith(".svg"))
-			avatar.setSVG(resourceService.getSVGOrNotFound(avatarId));
-		else
-			avatar.setImageBitmap(resourceService.getBitmapOrNotFound(avatarId));
+
+		Helper.setImage(avatar, resourceService, avatarId, false);
 
 		SVGImageView self = (SVGImageView) findViewById(R.id.imageView1);
 		// Read an SVG from the assets folder

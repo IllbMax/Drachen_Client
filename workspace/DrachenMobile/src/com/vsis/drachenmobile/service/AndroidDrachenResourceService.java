@@ -53,6 +53,15 @@ public class AndroidDrachenResourceService extends ResourceService {
 		}
 	}
 
+	public Bitmap getBitmapOrNull(String id) {
+		try {
+			return getBitmap(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public SVG getSVG(String id) throws IOException, SVGParseException {
 		ResourceStream resStream = null;
 		try {
@@ -110,7 +119,7 @@ public class AndroidDrachenResourceService extends ResourceService {
 		return null;
 	}
 
-	private SVG getNotFoundSVG() {
+	public SVG getNotFoundSVG() {
 		try {
 			return SVG.getFromAsset(_ctx.getAssets(), "imagenotfound.svg");
 		} catch (SVGParseException e) {

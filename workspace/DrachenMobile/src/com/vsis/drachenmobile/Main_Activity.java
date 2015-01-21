@@ -1,6 +1,7 @@
 package com.vsis.drachenmobile;
 
 import java.util.Date;
+import java.util.List;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -15,23 +16,28 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.RestrictionException;
+import com.vsis.drachen.model.NPC;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
-import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.minigame.Skirmish_Activity;
 
@@ -205,12 +211,12 @@ public class Main_Activity extends Activity {
 		MyDataSet appdata = ((DrachenApplication) getApplication())
 				.getAppData();
 		SVGImageView locationImage = (SVGImageView) findViewById(R.id.imageView1);
-		SVG svg = StringFunction.nullOrWhiteSpace(key) ? null : appdata
-				.getResourceService().getSVGOrNull(key);
-		if (svg != null)
-			locationImage.setSVG(svg);
-		else
-			locationImage.setImageBitmap(null);
+		Helper.setImage(locationImage, appdata.getResourceService(), key, true);
+
+		if (newLocation != null) {
+			LoadNPCTask task = new LoadNPCTask();
+			task.execute(newLocation.getId());
+		}
 	}
 
 	@Override
@@ -330,5 +336,139 @@ public class Main_Activity extends Activity {
 		}
 
 	};
+
+	class LoadNPCTask extends AsyncTask<Integer, Void, List<NPC>> {
+
+		private ProgressDialog ringProgressDialog;
+		private DrachenBaseException _exception = null;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			Context ctx = Main_Activity.this;
+			ringProgressDialog = ProgressDialog.show(ctx,
+					ctx.getString(R.string.please_wait_),
+					ctx.getString(R.string.load_npc), true);
+			ringProgressDialog.setCancelable(true);
+			ringProgressDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					// actually could set running = false; right here, but I'll
+					// stick to contract.
+					boolean success = cancel(true);
+				}
+			});
+		}
+
+		@Override
+		protected List<NPC> doInBackground(Integer... params) {
+			DrachenApplication app = (DrachenApplication) getApplication();
+			MyDataSet client = app.getAppData();
+			int locationId = params[0];
+			try {
+				List<NPC> result = client.getNPCService()
+						.getPresentNPCForLocation(locationId);
+				return result;
+			} catch (DrachenBaseException e) {
+				_exception = e;
+				return null;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(List<NPC> result) {
+			super.onPostExecute(result);
+			if (result != null) {
+				ringProgressDialog.dismiss();
+
+				ListView npcs = (ListView) findViewById(R.id.listView1);
+				npcs.setAdapter(new NPCArrayAdapter(Main_Activity.this, result));
+				npcs.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						NPC npc = (NPC) parent.getAdapter().getItem(position);
+						Intent intent = new Intent(Main_Activity.this,
+								NPC_talk_Activity.class);
+						intent.putExtra(NPC_talk_Activity.EXTRA_NPCID,
+								npc.getId());
+						startActivity(intent);
+					}
+				});
+
+			} else {
+				String message = getErrorString();
+
+				ringProgressDialog.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						Main_Activity.this);
+				builder.setTitle(R.string.logout_failed);
+				builder.setMessage(message);
+
+				builder.show();
+			}
+
+		}
+
+		private String getErrorString() {
+			Context ctx = Main_Activity.this;
+			String message = ctx.getString(R.string.please_try_again);
+
+			if (_exception != null) {
+				if (_exception instanceof RestrictionException) {
+					// RestrictionException e = (RestrictionException)
+					// _exception;
+					message = ctx.getString(R.string.access_denied_logged_out);
+				} else if (_exception instanceof InternalProcessException) {
+					InternalProcessException e = (InternalProcessException) _exception;
+					message = ctx.getString(R.string.internal_process_error,
+							e.getMessage());
+				}
+			}
+			return message;
+		}
+
+	};
+
+	private class NPCArrayAdapter extends ArrayAdapter<NPC> {
+
+		// Map<SensorType, Integer> mIdMap = new EnumMap<SensorType, Integer>(
+		// SensorType.class);
+
+		public NPCArrayAdapter(Context context, List<NPC> objects) {
+			super(context, R.layout.listviewitem_imagetext, objects);
+			// for (int i = 0; i < objects.size(); ++i) {
+			// mIdMap.put(objects.get(i), i);
+			// }
+		}
+
+		@Override
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
+
+			if (convertView == null) {
+				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = inflater.inflate(R.layout.listviewitem_imagetext,
+						parent, false);
+			}
+			SVGImageView avatar = (SVGImageView) convertView
+					.findViewById(R.id.imageview1);
+			TextView name = (TextView) convertView.findViewById(R.id.textview1);
+
+			NPC npc = getItem(position);
+
+			name.setText(npc.getName());
+
+			String key = npc != null ? npc.getImageKey() : null;
+
+			MyDataSet appdata = ((DrachenApplication) getApplication())
+					.getAppData();
+			Helper.setImage(avatar, appdata.getResourceService(), key, true);
+
+			return convertView;
+		}
+
+	}
 
 }

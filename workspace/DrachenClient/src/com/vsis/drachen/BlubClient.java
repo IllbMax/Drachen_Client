@@ -41,6 +41,7 @@ import com.vsis.drachen.exception.QuestTargetException;
 import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.exception.client.ConnectionException;
 import com.vsis.drachen.exception.client.InvalidResultException;
+import com.vsis.drachen.model.NPC;
 import com.vsis.drachen.model.ResultWrapper;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.IQuestTargetUpdateState;
@@ -239,6 +240,59 @@ public class BlubClient {
 			ResultWrapper<List<QuestPrototype>> output = loadFormGson(
 					"showQuestsForLocation", param,
 					new TypeToken<ResultWrapper<List<QuestPrototype>>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.exception == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.exception;
+				e.fillInStackTrace();
+				throw e;
+			}
+
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidResultException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Load the NPCs for the location with the locationId
+	 * 
+	 * @param locationId
+	 *            Id of the location with the desired NPCs
+	 * @return NPCs for the location
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws IdNotFoundException
+	 *             if there is no location with locationId
+	 */
+	public List<NPC> NPCsForLocation(int locationId)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, IdNotFoundException {
+
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("locationId", locationId);
+
+			ResultWrapper<List<NPC>> output = loadFormGson(
+					"showNPCsForLocation", param,
+					new TypeToken<ResultWrapper<List<NPC>>>() {
 					}.getType());
 			if (output == null)
 				throw new InternalProcessException("Empty Result");

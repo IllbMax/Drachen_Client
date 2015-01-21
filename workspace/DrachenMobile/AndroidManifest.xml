@@ -36,6 +36,7 @@
             <intent-filter>
             </intent-filter>
         </activity>
+        <activity android:name="com.vsis.drachenmobile.NPC_talk_Activity" />
         <activity android:name="com.vsis.drachenmobile.Quest_overview_Activity" >
             <intent-filter>
             </intent-filter>

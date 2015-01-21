@@ -17,6 +17,7 @@ import android.preference.PreferenceManager;
 
 import com.vsis.drachen.BlubClient;
 import com.vsis.drachen.LocationService;
+import com.vsis.drachen.NPCService;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.exception.CredentialException;
@@ -46,6 +47,7 @@ public class MyDataSet {
 	private BlubClient client;
 	private LocationService locationService;
 	private QuestService questService;
+	private NPCService npcService;
 	private SensorService sensorService;
 
 	private IMiniGame currentMinigame;
@@ -129,6 +131,7 @@ public class MyDataSet {
 			createDrachenResourceService();
 			locationService = new LocationService(client);
 			questService = new QuestService(client);
+			npcService = new NPCService(client);
 			sensorService = new SensorService(client);
 
 			setUser(user);
@@ -242,6 +245,7 @@ public class MyDataSet {
 		locationService.dispose();
 		sensorService.dispose();
 		questService.dispose();
+		npcService.dispose();
 		resourceService.dispose();
 	}
 
@@ -253,6 +257,7 @@ public class MyDataSet {
 		this.user = user;
 		locationService.setUser(user);
 		questService.setUser(user);
+		npcService.setUser(user);
 	}
 
 	public BlubClient getClient() {
@@ -265,6 +270,10 @@ public class MyDataSet {
 
 	public QuestService getQuestService() {
 		return questService;
+	}
+
+	public NPCService getNPCService() {
+		return npcService;
 	}
 
 	public SensorService getSensorService() {

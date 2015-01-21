@@ -14,6 +14,7 @@
 	<string name="greetings">Greetings %1$s</string>
 	<string name="logging_in">Logging in ...</string>
 	<string name="logging_out">Logging out ...</string>
+	<string name="load_npc">load NPC ...</string>
 	<string name="perform_register">Register ...</string>
 	<string name="abortQuest">Abort</string>
 	<string name="finshQuest">Finish</string>
@@ -80,4 +81,5 @@
     <string name="hint_2">Next hint</string>
     <string name="hint_3">OK the walkthrough</string>
     <string name="started_date_time">Started: %1$s %2$s</string>
+    <string name="npc_talk">%1$s: „%2$s“</string>
 </resources>

@@ -1,12 +1,17 @@
 package com.vsis.drachenmobile.helper;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
 import com.vsis.drachen.exception.InvalidParameterException;
 import com.vsis.drachen.exception.InvalidParameterException.InvalidType;
 import com.vsis.drachen.model.quest.QuestProgressStatus;
 import com.vsis.drachen.model.world.Location;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.R;
+import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 
 public final class Helper {
 	private Helper() {
@@ -142,5 +147,42 @@ public final class Helper {
 
 		}
 		return message;
+	}
+
+	/**
+	 * Set the Image (SVG or Bitmap) of the {@link SVGImageView} to the resource
+	 * with imageKey. if no image is found an error image or no image is shown.
+	 * 
+	 * @param imageView
+	 *            target {@link SVGImageView}.
+	 * @param resourceService
+	 *            resource service.
+	 * @param imageKey
+	 *            key of the image. (it can point to svg or bitmap)
+	 * @param noImage
+	 *            if true no image will be shown; if false the error image will
+	 *            be shown.
+	 */
+	public static void setImage(SVGImageView imageView,
+			AndroidDrachenResourceService resourceService, String imageKey,
+			boolean noImage) {
+
+		SVG svg = null;
+		Bitmap bitmap = null;
+		if (!StringFunction.nullOrWhiteSpace(imageKey)) {
+			if (imageKey.endsWith(".svg"))
+				svg = resourceService.getSVGOrNull(imageKey);
+			else
+				bitmap = resourceService.getBitmapOrNotFound(imageKey);
+		}
+
+		if (svg != null)
+			imageView.setSVG(svg);
+		else if (bitmap != null)
+			imageView.setImageBitmap(bitmap);
+		else if (noImage)
+			imageView.setImageBitmap(null);
+		else
+			imageView.setSVG(resourceService.getNotFoundSVG());
 	}
 }
