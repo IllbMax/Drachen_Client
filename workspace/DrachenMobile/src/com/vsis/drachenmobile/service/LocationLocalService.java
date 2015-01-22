@@ -34,6 +34,7 @@ import com.vsis.drachenmobile.sensor.GPSSensor;
 import com.vsis.drachenmobile.sensor.LocationSensor;
 import com.vsis.drachenmobile.sensor.SpeechSensor;
 import com.vsis.drachenmobile.sensor.StringInputSensor;
+import com.vsis.drachenmobile.sensor.ZXingScannerSensor;
 
 public class LocationLocalService extends Service {
 
@@ -82,19 +83,20 @@ public class LocationLocalService extends Service {
 		ISensor stringSensor = speech ? new SpeechSensor("Speech input",
 				getApplicationContext()) : new StringInputSensor("Inputdialog",
 				getApplicationContext());
-		// ISensor codeSensor = new CodeScanner();
+		ISensor codeSensor = new ZXingScannerSensor("ZXing Codescanner",
+				getApplicationContext());
 
 		sensorService.registerSensor(SensorType.Position, gpsSensor);
 		sensorService.registerSensor(SensorType.Location, locationSensor);
 		sensorService.registerSensor(SensorType.Accelaration, accelSensor);
 		sensorService.registerSensor(SensorType.TextInput, stringSensor);
-		// sensorService.registerSensor(SensorType.CodeScanner, codeSensor);
+		sensorService.registerSensor(SensorType.CodeScanner, codeSensor);
 
 		sensorService.setDefaultSensor(SensorType.Position, gpsSensor);
 		sensorService.setDefaultSensor(SensorType.Location, locationSensor);
 		sensorService.setDefaultSensor(SensorType.Accelaration, accelSensor);
 		sensorService.setDefaultSensor(SensorType.TextInput, stringSensor);
-		// sensorService.setDefaultSensor(SensorType.CodeScanner, codeSensor);
+		sensorService.setDefaultSensor(SensorType.CodeScanner, codeSensor);
 
 		gpsSensor.start();
 		locationSensor.start();

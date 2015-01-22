@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseArray;
 
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.vsis.drachenmobile.R;
 
 public class StartForResult_Activity extends Activity {
@@ -13,6 +14,7 @@ public class StartForResult_Activity extends Activity {
 	private static final String EXTRA_INTENT = "startForResult.intent";
 	private static final String EXTRA_BUNDLE = "startForResult.options";
 	private static final String EXTRA_CALLBACK = "startForResult.callback";
+	private static final String EXTRA_ZXING = "startForResult.zxing";
 	private static final int RESULTCODE = 0;
 	private static int newId = 0;
 
@@ -37,8 +39,23 @@ public class StartForResult_Activity extends Activity {
 		ctx.startActivity(hack);
 	}
 
+	public static synchronized void startForXZingResult(Context ctx,
+			IOnResultListener callback) {
+		Intent hack = new Intent(ctx, StartForResult_Activity.class);
+
+		hack.putExtra(EXTRA_ZXING, true);
+		hack.putExtra(EXTRA_CALLBACK, newId);
+		hack.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+		callback_map.put(newId, callback);
+		newId++;
+
+		ctx.startActivity(hack);
+	}
+
 	private IOnResultListener listener;
 	private int listener_id;
+	private boolean zxing = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -46,12 +63,19 @@ public class StartForResult_Activity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_forresult);
 
-		Intent intent = getIntent().getExtras().getParcelable(EXTRA_INTENT);
-		Bundle bundle = getIntent().getExtras().getBundle(EXTRA_BUNDLE);
+		zxing = getIntent().getExtras().getBoolean(EXTRA_ZXING, false);
 		listener_id = getIntent().getExtras().getInt(EXTRA_CALLBACK);
 		listener = callback_map.get(listener_id);
-		startActivityForResult(intent, RESULTCODE, bundle);
 
+		if (zxing) {
+			IntentIntegrator integrator = new IntentIntegrator(this);
+			integrator.initiateScan();
+
+		} else {
+			Intent intent = getIntent().getExtras().getParcelable(EXTRA_INTENT);
+			Bundle bundle = getIntent().getExtras().getBundle(EXTRA_BUNDLE);
+			startActivityForResult(intent, RESULTCODE, bundle);
+		}
 	}
 
 	@Override
@@ -64,7 +88,11 @@ public class StartForResult_Activity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == RESULTCODE) {
+		if (zxing) {
+			if (requestCode == IntentIntegrator.REQUEST_CODE) {
+				listener.onActivityResult(resultCode, data);
+			}
+		} else if (requestCode == RESULTCODE) {
 			listener.onActivityResult(resultCode, data);
 		}
 		finish();
