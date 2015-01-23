@@ -130,19 +130,18 @@ public class Main_Activity extends Activity {
 			}
 		});
 
-		DrachenApplication app = (DrachenApplication) getApplication();
-		User user = app.getAppData().getUser();
-
-		TextView textView = (TextView) findViewById(R.id.textView_yourLocation);
-		textView = (TextView) findViewById(R.id.textView_Main_title);
-		textView.setText(String.format(getString(R.string.greetings),
-				user.getDisplayName()));
-
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		DrachenApplication app = (DrachenApplication) getApplication();
+		User user = app.getAppData().getUser();
+
+		TextView textView = (TextView) findViewById(R.id.textView_Main_title);
+		textView.setText(String.format(getString(R.string.greetings),
+				user.getDisplayName()));
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
 				locationChangedReceiver,
@@ -151,11 +150,8 @@ public class Main_Activity extends Activity {
 		LocationService locationService = ((DrachenApplication) getApplication())
 				.getAppData().getLocationService();
 
-		if (_lastLocationReciev.before(locationService
-				.getLastCurrentLocationSetTime())) {
+		showLocation(locationService.getCurrentLocation());
 
-			showLocation(locationService.getCurrentLocation());
-		}
 		ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle("");
 		actionBar.setTitle("Drachen!!!");
