@@ -104,11 +104,8 @@ public class QuestPrototype_Activity extends Activity {
 		LocationService locationService = ((DrachenApplication) getApplication())
 				.getAppData().getLocationService();
 
-		if (_lastLocationReciev.before(locationService
-				.getLastCurrentLocationSetTime())) {
+		setDisplayLocation(locationService.getCurrentLocation());
 
-			setDisplayLocation(locationService.getCurrentLocation());
-		}
 		ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle("available Quests");
 		actionBar.setTitle("Drachen!!!");
