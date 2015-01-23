@@ -2,6 +2,7 @@ package com.vsis.drachenmobile.sensor;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
@@ -18,10 +19,12 @@ public class SpeechSensor extends AbstractSensor implements ISensor {
 	private IOnResultListener callback = new IOnResultListener() {
 		@Override
 		public void onActivityResult(int resultCode, Intent data) {
-			ArrayList<String> matches = data
-					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			if (resultCode == Activity.RESULT_OK && data != null) {
+				ArrayList<String> matches = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-			useData(matches);
+				useData(matches);
+			}
 		}
 	};
 
