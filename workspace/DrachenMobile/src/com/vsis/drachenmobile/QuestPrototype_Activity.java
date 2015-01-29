@@ -29,22 +29,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.QuestService;
-import com.vsis.drachen.SensorService;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.IdNotFoundException;
 import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.MissingParameterException;
-import com.vsis.drachen.exception.QuestStartException;
-import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachenmobile.helper.Helper;
+import com.vsis.drachenmobile.task.QuestStartTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
 
 public class QuestPrototype_Activity extends Activity {
@@ -107,11 +104,8 @@ public class QuestPrototype_Activity extends Activity {
 		LocationService locationService = ((DrachenApplication) getApplication())
 				.getAppData().getLocationService();
 
-		if (_lastLocationReciev.before(locationService
-				.getLastCurrentLocationSetTime())) {
+		setDisplayLocation(locationService.getCurrentLocation());
 
-			setDisplayLocation(locationService.getCurrentLocation());
-		}
 		ActionBar actionBar = getActionBar();
 		actionBar.setSubtitle("available Quests");
 		actionBar.setTitle("Drachen!!!");
@@ -157,11 +151,10 @@ public class QuestPrototype_Activity extends Activity {
 	}
 
 	private void startQuest(QuestPrototype questPrototype) {
-		QuestStartTask task = new QuestStartTask(questPrototype);
+		QuestStartTask task = new QuestStartTask(this, questPrototype,
+				((DrachenApplication) this.getApplication()).getAppData());
 		task.execute();
 
-		Toast.makeText(this, "clicked " + questPrototype.getId(),
-				Toast.LENGTH_SHORT).show();
 	}
 
 	private void setDisplayLocation(Location location) {
@@ -367,7 +360,7 @@ public class QuestPrototype_Activity extends Activity {
 			try {
 				Collection<QuestPrototype> result = questService
 						.getAvailableQuestForLocation(locationId, forceReload);
-				return result;
+				return questService.removeStartedQuests(result);
 
 			} catch (DrachenBaseException e) {
 				_exception = e;
@@ -420,47 +413,11 @@ public class QuestPrototype_Activity extends Activity {
 
 	}
 
-	private class QuestStartTask extends AsyncTask<Void, Void, Quest> {
+	private class QuestStartTask extends QuestStartTaskTemplate {
 
-		private ProgressDialog ringProgressDialog;
-		private QuestPrototype questPrototype;
-		private DrachenBaseException _exception;
-
-		public QuestStartTask(QuestPrototype questPrototype) {
-			this.questPrototype = questPrototype;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-			Context ctx = QuestPrototype_Activity.this;
-			ringProgressDialog = ProgressDialog.show(ctx,
-					ctx.getString(R.string.please_wait_),
-					ctx.getString(R.string.starting_quest) + ": "
-							+ questPrototype.getName(), true);
-			ringProgressDialog.setCancelable(true);
-
-		}
-
-		@Override
-		protected Quest doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			MyDataSet appData = ((DrachenApplication) getApplication())
-					.getAppData();
-			QuestService questService = appData.getQuestService();
-			SensorService sensorService = appData.getSensorService();
-
-			try {
-				Quest result = questService.startQuest(questPrototype.getId());
-				sensorService.trackQuest(result);
-				return result;
-
-			} catch (DrachenBaseException e) {
-				_exception = e;
-				e.printStackTrace();
-				return null;
-			}
+		public QuestStartTask(Context ctx, QuestPrototype questPrototype,
+				MyDataSet appData) {
+			super(ctx, questPrototype, appData);
 		}
 
 		@Override
@@ -472,62 +429,9 @@ public class QuestPrototype_Activity extends Activity {
 				_prototypeAdapter.notifyDataSetChanged();
 
 			} else {
-				String message = getErrorString();
-
-				ringProgressDialog.dismiss();
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						QuestPrototype_Activity.this);
-				builder.setTitle(R.string.start_quest_failed);
-				builder.setMessage(message);
-				builder.show();
+				showAlertExceptionDialog();
 			}
-
-			ringProgressDialog.dismiss();
 		}
-
-		private String getErrorString() {
-			Context ctx = QuestPrototype_Activity.this;
-			String message = ctx.getString(R.string.please_try_again);
-
-			if (_exception != null) {
-
-				if (_exception instanceof QuestStartException) {
-					QuestStartException e = (QuestStartException) _exception;
-					switch (e.getType()) {
-					case NotQualified:
-						message = ctx.getString(R.string.quest_not_qualified);
-						break;
-					case NotRepeatable:
-						message = ctx.getString(R.string.quest_cannot_repeated);
-						break;
-					case StillOnGoing:
-						message = ctx.getString(R.string.quest_still_ongoing);
-						break;
-					default:
-						break;
-
-					}
-				} else if (_exception instanceof MissingParameterException) {
-					MissingParameterException e = (MissingParameterException) _exception;
-					message = ctx.getString(R.string.missing_parameter_s,
-							e.getParameter());
-				} else if (_exception instanceof IdNotFoundException) {
-					IdNotFoundException e = (IdNotFoundException) _exception;
-					message = ctx.getString(R.string.id_not_found_parameter_s,
-							e.getParameter());
-				} else if (_exception instanceof RestrictionException) {
-					// RestrictionException e = (RestrictionException)
-					// _exception;
-					message = ctx.getString(R.string.access_denied);
-				} else if (_exception instanceof InternalProcessException) {
-					InternalProcessException e = (InternalProcessException) _exception;
-					message = ctx.getString(R.string.internal_process_error,
-							e.getMessage());
-				}
-			}
-			return message;
-		}
-
 	}
 
 }

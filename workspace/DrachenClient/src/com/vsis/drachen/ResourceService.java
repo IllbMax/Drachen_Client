@@ -151,4 +151,8 @@ public class ResourceService {
 			file.close();
 		}
 	}
+
+	public void dispose() {
+		// nothing to dispose
+	}
 }

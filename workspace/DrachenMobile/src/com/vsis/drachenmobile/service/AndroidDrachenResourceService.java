@@ -7,6 +7,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
 import com.vsis.drachen.ResourceService;
 import com.vsis.drachenmobile.R;
 
@@ -50,4 +52,86 @@ public class AndroidDrachenResourceService extends ResourceService {
 					R.drawable.imagenotfound);
 		}
 	}
+
+	public Bitmap getBitmapOrNull(String id) {
+		try {
+			return getBitmap(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public SVG getSVG(String id) throws IOException, SVGParseException {
+		ResourceStream resStream = null;
+		try {
+			resStream = getMediaResourceStream(ZIP_DIR_IMG + id);
+
+			SVG mySVG = SVG.getFromInputStream(resStream.getInputStream());
+			return mySVG;
+
+		} catch (FileNotFoundException e) {
+			return SVG.getFromAsset(_ctx.getAssets(), "imagenotfound.svg");
+		} finally {
+			if (resStream != null)
+				try {
+					resStream.close();
+				} catch (Throwable t) {
+				}
+		}
+
+	}
+
+	public SVG getSVGOrNotFound(String id) {
+		try {
+			return getSVG(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SVGParseException e) {
+			e.printStackTrace();
+		}
+		return getNotFoundSVG();
+	}
+
+	public SVG getSVGOrNull(String id) {
+		ResourceStream resStream = null;
+		try {
+			resStream = getMediaResourceStream(ZIP_DIR_IMG + id);
+
+			SVG mySVG = SVG.getFromInputStream(resStream.getInputStream());
+			return mySVG;
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SVGParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (resStream != null)
+				try {
+					resStream.close();
+				} catch (Throwable t) {
+				}
+		}
+		return null;
+	}
+
+	public SVG getNotFoundSVG() {
+		try {
+			return SVG.getFromAsset(_ctx.getAssets(), "imagenotfound.svg");
+		} catch (SVGParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void dispose() {
+
+	}
+
 }

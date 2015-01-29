@@ -131,7 +131,7 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 			String provider = prov ? LocationManager.NETWORK_PROVIDER
 					: LocationManager.GPS_PROVIDER;
 
-			locationManager.requestLocationUpdates(provider, 0, 0,
+			locationManager.requestLocationUpdates(provider, 10, 15,
 					locationListener);
 			_isRegistered = true;
 			_running = true;

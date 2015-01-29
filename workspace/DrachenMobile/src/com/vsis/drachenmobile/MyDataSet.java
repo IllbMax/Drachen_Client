@@ -1,13 +1,23 @@
 package com.vsis.drachenmobile;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.vsis.drachen.BlubClient;
 import com.vsis.drachen.LocationService;
+import com.vsis.drachen.NPCService;
 import com.vsis.drachen.QuestService;
 import com.vsis.drachen.SensorService;
 import com.vsis.drachen.exception.CredentialException;
@@ -20,6 +30,10 @@ import com.vsis.drachen.model.IMiniGame;
 import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachen.model.quest.QuestProgressStatus;
+import com.vsis.drachen.model.quest.QuestPrototype;
+import com.vsis.drachen.model.quest.StringCompareQuestTarget;
+import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 import com.vsis.drachenmobile.settings.ConnectionSettingsActivity;
 
 public class MyDataSet {
@@ -33,10 +47,12 @@ public class MyDataSet {
 	private BlubClient client;
 	private LocationService locationService;
 	private QuestService questService;
+	private NPCService npcService;
 	private SensorService sensorService;
 
 	private IMiniGame currentMinigame;
 
+	private AndroidDrachenResourceService resourceService;
 	Context ctx;
 
 	public MyDataSet(Context ctx) {
@@ -112,8 +128,10 @@ public class MyDataSet {
 			e.printStackTrace();
 		}
 		if (user != null) {
+			createDrachenResourceService();
 			locationService = new LocationService(client);
 			questService = new QuestService(client);
+			npcService = new NPCService(client);
 			sensorService = new SensorService(client);
 
 			setUser(user);
@@ -151,11 +169,31 @@ public class MyDataSet {
 		user.setDisplayName("Dummy");
 		user.setId(0);
 
+		createDrachenResourceService();
 		locationService = new LocationService(client);
 		questService = new QuestService(client);
 		sensorService = new SensorService(client);
 
+		QuestPrototype proto = new QuestPrototype("talk", "palaber");
+		proto.setHint1("try this and that");
+		proto.setHint2("lorem ipsum dolor sit ...");
+		proto.setHint3("ok go to this website");
+		Quest quest = new Quest();
+		quest.setPrototype(proto);
+
+		List<String> choice = new ArrayList<String>();
+		choice.add("Speak after me");
+		choice.add("bananarama");
+		StringCompareQuestTarget qt = new StringCompareQuestTarget(
+				"compare me", choice, 0);
+		qt.setProgress(QuestProgressStatus.OnGoing);
+		quest.addQuestTarget(qt);
+
+		user.startQuest(quest);
 		setUser(user);
+		for (Quest q : questService.getUserQuests())
+			sensorService.trackQuest(q);
+		locationService.setDummyLocation();
 		return true;
 	}
 
@@ -169,11 +207,46 @@ public class MyDataSet {
 		return success;
 	}
 
+	private void createDrachenResourceService() {
+		String filename = loadSD();
+		resourceService = new AndroidDrachenResourceService(ctx);
+		try {
+			resourceService.loadZip(filename);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ParserConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SAXException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	private String loadSD() {
+		String state = Environment.getExternalStorageState();
+
+		if (!(state.equals(Environment.MEDIA_MOUNTED))) {
+			// Toast.makeText(ctx, "There is no any sd card",
+			// Toast.LENGTH_LONG).show();
+			return "";
+
+		} else {
+			// Toast.makeText(ctx, "Sd card available",
+			// Toast.LENGTH_LONG).show();
+			File file = Environment.getExternalStorageDirectory();
+			File zipFile = new File(file, "data.zip");
+			return zipFile.getAbsolutePath();
+		}
+	}
+
 	public void disposeComponents() {
 		locationService.dispose();
 		sensorService.dispose();
 		questService.dispose();
-
+		npcService.dispose();
+		resourceService.dispose();
 	}
 
 	public User getUser() {
@@ -184,6 +257,7 @@ public class MyDataSet {
 		this.user = user;
 		locationService.setUser(user);
 		questService.setUser(user);
+		npcService.setUser(user);
 	}
 
 	public BlubClient getClient() {
@@ -198,8 +272,16 @@ public class MyDataSet {
 		return questService;
 	}
 
+	public NPCService getNPCService() {
+		return npcService;
+	}
+
 	public SensorService getSensorService() {
 		return sensorService;
+	}
+
+	public AndroidDrachenResourceService getResourceService() {
+		return resourceService;
 	}
 
 	public IMiniGame getCurrentMinigame() {

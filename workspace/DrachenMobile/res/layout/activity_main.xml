@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-
-android:orientation="vertical">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -17,30 +17,29 @@ android:orientation="vertical">
             android:layout_height="wrap_content"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
 
-</LinearLayout>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="horizontal" >
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/your_location"
-            android:layout_centerVertical="true"
-            
-            />
+            android:layout_height="match_parent"
+            android:gravity="left|center_vertical"
+            android:text="@string/your_location" />
+
         <TextView
             android:id="@+id/textView_yourLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Large Text"
-            />
-        
-</RelativeLayout>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:text="Large Text" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/button_main_QuestsPrototypes"
@@ -52,17 +51,32 @@ android:orientation="vertical">
         android:id="@+id/button_main_Quests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ongoing Quests" />
+        android:text="Ongoing Quests"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/button_main_SensorManager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sensormanager" />
+        android:text="Sensormanager"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/button_main_minigameTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Minigame" />
-    
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+    <com.caverock.androidsvg.SVGImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
 </LinearLayout>

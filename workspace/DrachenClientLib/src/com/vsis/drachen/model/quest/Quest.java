@@ -18,9 +18,7 @@ public class Quest extends IdObject {
 
 	// private User user;
 
-	// private String name;
-
-	// private String description;
+	private long startTimeMillis;
 
 	private List<QuestTarget> questTargets = new ArrayList<QuestTarget>();
 
@@ -84,6 +82,26 @@ public class Quest extends IdObject {
 	// public void setDescription(String description) {
 	// this.description = description;
 	// }
+
+	public String getHint1() {
+		return prototype.getHint1();
+	}
+
+	public String getHint2() {
+		return prototype.getHint2();
+	}
+
+	public String getHint3() {
+		return prototype.getHint3();
+	}
+
+	public long getStartTimeMillis() {
+		return startTimeMillis;
+	}
+
+	public void setStartTimeMillis(long startMillis) {
+		this.startTimeMillis = startMillis;
+	}
 
 	public void addQuestTarget(QuestTarget newQuestTarget) {
 		questTargets.add(newQuestTarget);

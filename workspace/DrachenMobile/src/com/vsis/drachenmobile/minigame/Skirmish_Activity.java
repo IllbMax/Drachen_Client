@@ -1,14 +1,7 @@
 package com.vsis.drachenmobile.minigame;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -17,33 +10,24 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.vsis.drachen.exception.DrachenBaseException;
-import com.vsis.drachen.exception.InternalProcessException;
-import com.vsis.drachen.exception.InvalidParameterException;
-import com.vsis.drachen.exception.MissingParameterException;
-import com.vsis.drachen.exception.RestrictionException;
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
 import com.vsis.drachen.model.IMiniGame;
-import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.minigame.skirmish.Character;
 import com.vsis.drachen.model.minigame.skirmish.MeeleAttack;
 import com.vsis.drachen.model.minigame.skirmish.RandomSkillSelector;
@@ -53,10 +37,9 @@ import com.vsis.drachen.model.minigame.skirmish.Skirmish.ISkillListener;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.PerformOrder;
 import com.vsis.drachen.model.minigame.skirmish.Skirmish.SkirmishOutcome;
 import com.vsis.drachenmobile.DrachenApplication;
-import com.vsis.drachenmobile.Main_Activity;
 import com.vsis.drachenmobile.MyDataSet;
 import com.vsis.drachenmobile.R;
-import com.vsis.drachenmobile.Register_Activity;
+import com.vsis.drachenmobile.SensorQuickSelect_Activity;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.helper.IActionDelegate;
 import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
@@ -78,21 +61,7 @@ public class Skirmish_Activity extends Activity {
 		if (minigame == null || !(minigame instanceof Skirmish))
 			finish();
 
-		String filename = LoadSD();
-		resourceService = new AndroidDrachenResourceService(
-				getApplicationContext());
-		try {
-			resourceService.loadZip(filename);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ParserConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SAXException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		resourceService = appdata.getResourceService();
 
 		skirmish = (Skirmish) minigame;
 		skirmish.setSkillSensorSelectedListener(new ISkillListener() {
@@ -109,13 +78,32 @@ public class Skirmish_Activity extends Activity {
 			}
 		});
 
-		ImageView avatar = (ImageView) findViewById(R.id.imageView2);
+		SVGImageView avatar = (SVGImageView) findViewById(R.id.imageView2);
 		Character c = skirmish.getChar2();
 		String avatarId = c.getAvatar();
-		if (Helper.nullOrEmptyOrWS(avatarId))
-			avatar.setImageResource(R.drawable.ic_launcher);
-		else
-			avatar.setImageBitmap(resourceService.getBitmapOrNotFound(avatarId));
+
+		Helper.setImage(avatar, resourceService, avatarId, false);
+
+		SVGImageView self = (SVGImageView) findViewById(R.id.imageView1);
+		// Read an SVG from the assets folder
+		SVG svg;
+		svg = resourceService.getSVGOrNotFound("dragon1.svg"); // SVG.getFromAsset(getAssets(),"");
+		self.setSVG(svg);
+		// Create a canvas to draw onto
+		// if (svg.getDocumentWidth() != -1) {
+		// Bitmap newBM = Bitmap.createBitmap(
+		// (int) Math.ceil(svg.getDocumentWidth()),
+		// (int) Math.ceil(svg.getDocumentHeight()),
+		// Bitmap.Config.ARGB_8888);
+		//
+		// Canvas bmcanvas = new Canvas(newBM);
+		// // Clear background to white
+		// bmcanvas.drawRGB(255, 255, 255);
+		// // Render our document onto our canvas
+		// svg.renderToCanvas(bmcanvas);
+		//
+		// self.setImageBitmap(newBM);
+		// }
 
 		Button btnFight = (Button) findViewById(R.id.button1);
 		Button btnRun = (Button) findViewById(R.id.button2);
@@ -157,20 +145,23 @@ public class Skirmish_Activity extends Activity {
 		}
 	}
 
-	private String LoadSD() {
-		String state = Environment.getExternalStorageState();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.sensormenu, menu);
+		return true;
+	}
 
-		if (!(state.equals(Environment.MEDIA_MOUNTED))) {
-			Toast.makeText(this, "There is no any sd card", Toast.LENGTH_LONG)
-					.show();
-			return "";
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 
-		} else {
-			Toast.makeText(this, "Sd card available", Toast.LENGTH_LONG).show();
-			File file = Environment.getExternalStorageDirectory();
-			File zipFile = new File(file, "data.zip");
-			return zipFile.getAbsolutePath();
+		case R.id.action_sensorquickaccess:
+			Intent intent2 = new Intent(this, SensorQuickSelect_Activity.class);
+			startActivity(intent2);
+			break;
 		}
+		return true;
 	}
 
 	public static void createDummy(DrachenApplication app) {
@@ -199,7 +190,7 @@ public class Skirmish_Activity extends Activity {
 	private AndroidDrachenResourceService resourceService;
 
 	private static Character generateRandomOpponent() {
-		Random rnd = new Random();
+		// Random rnd = new Random();
 
 		Character[] chars = new Character[3];
 		chars[0] = generateBoar();
@@ -226,7 +217,7 @@ public class Skirmish_Activity extends Activity {
 				"%1$s attacks with tusks.", 15, 25, 30, 0));
 		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
 		Character char2 = new Character("Wild Boar", 75, skills,
-				new RandomSkillSelector(skills), "boar.png");
+				new RandomSkillSelector(skills), "boar.svg");
 		return char2;
 	}
 
@@ -239,7 +230,7 @@ public class Skirmish_Activity extends Activity {
 				"Really? %2$s got hit by bouncy fireballs.", 15, 25, 30, 0));
 		// skills.add(new MeeleAttack("sorry", "meh.", 100, 100, 0, 0));
 		Character char2 = new Character("Italian Plumber", 200, skills,
-				new RandomSkillSelector(skills), "pixel.png");
+				new RandomSkillSelector(skills), "pixel.svg");
 		return char2;
 	}
 
@@ -253,7 +244,7 @@ public class Skirmish_Activity extends Activity {
 				"%2$s got hit by %1$s's %3$s and loosed 40 HP.", 40, 40, 1000,
 				0));
 		Character char2 = new Character("REALLY REALLY scary dragon", 200,
-				skills, new RandomSkillSelector(skills), "flowerdragon.png");
+				skills, new RandomSkillSelector(skills), "flowerdragon.svg");
 		return char2;
 	}
 
@@ -269,7 +260,7 @@ public class Skirmish_Activity extends Activity {
 		skills.add(new MeeleAttack("sorry", "meh.", "Did I hit you too hard?",
 				100, 100, 0, 0));
 		Character char2 = new Character("REALLY REALLY scary dragon", 200,
-				skills, new RandomSkillSelector(skills), "flowerdragon.png");
+				skills, new RandomSkillSelector(skills), "dragon1.svg");
 		return char2;
 	}
 
@@ -600,150 +591,6 @@ public class Skirmish_Activity extends Activity {
 					updateChar1(aniTime, nextAction);
 			}
 		};
-	}
-
-	private void login() {
-		String username = ((EditText) findViewById(R.id.editTextUsername))
-				.getText().toString();
-		String password = ((EditText) findViewById(R.id.editTextPassword))
-				.getText().toString();
-
-		LoginTask task = new LoginTask();
-		task.execute(username, password);
-	}
-
-	private void signin() {
-		Intent intent = new Intent(this, Register_Activity.class);
-
-		startActivityForResult(intent, 1);
-	}
-
-	class LoginTask extends AsyncTask<String, Void, Boolean> {
-
-		private ProgressDialog ringProgressDialog;
-		private DrachenBaseException _exception = null;
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			Context ctx = Skirmish_Activity.this;
-			ringProgressDialog = ProgressDialog.show(ctx,
-					ctx.getString(R.string.please_wait_),
-					ctx.getString(R.string.logging_in), true);
-			ringProgressDialog.setCancelable(true);
-			ringProgressDialog.setOnCancelListener(new OnCancelListener() {
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					// actually could set running = false; right here, but I'll
-					// stick to contract.
-					boolean success = cancel(true);
-				}
-			});
-		}
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-			String username = params[0];
-			String password = params[1];
-
-			DrachenApplication app = (DrachenApplication) getApplication();
-			MyDataSet client = app.getAppData();
-
-			try {
-				boolean success = client.login(username, password);
-				return success;
-			} catch (DrachenBaseException e) {
-				_exception = e;
-				return null;
-			}
-
-		}
-
-		@Override
-		protected void onCancelled(Boolean result) {
-			super.onCancelled(result);
-			// TODO evtl clean up
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			super.onPostExecute(result);
-
-			if (result != null && result) {
-
-				DrachenApplication app = (DrachenApplication) getApplication();
-				User user = app.getAppData().getUser();
-
-				app.startDrachenServices();
-
-				Intent intent = new Intent(Skirmish_Activity.this,
-						Main_Activity.class);
-
-				startActivity(intent);
-				ringProgressDialog.dismiss();
-			} else {
-
-				String message = getErrorString();
-
-				ringProgressDialog.dismiss();
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						Skirmish_Activity.this);
-				builder.setTitle(R.string.login_failed);
-				builder.setMessage(message);
-				builder.show();
-			}
-		}
-
-		private String getErrorString() {
-			Context ctx = Skirmish_Activity.this;
-			String message = ctx.getString(R.string.wrong_password);
-
-			if (_exception != null) {
-				if (_exception instanceof MissingParameterException) {
-					MissingParameterException e = (MissingParameterException) _exception;
-					message = ctx.getString(R.string.missing_parameter_s,
-							e.getParameter());
-				} else if (_exception instanceof InternalProcessException) {
-					InternalProcessException e = (InternalProcessException) _exception;
-					message = ctx.getString(R.string.internal_process_error,
-							e.getMessage());
-
-					// the following Exceptions doesn't occur while logging in
-					// but at later requests
-				} else if (_exception instanceof InvalidParameterException) {
-					message = ctx.getString(R.string.grats_bug);
-					message += "\n";
-					message = Helper.getErrorStringForInvalidParameter(ctx,
-							(InvalidParameterException) _exception);
-				} else if (_exception instanceof RestrictionException) {
-					// a strange exception:
-					message = ctx.getString(R.string.grats_bug);
-					message += "\n";
-					message += ctx.getString(R.string.logged_in_no_access);
-				}
-			}
-			return message;
-		}
-
-	};
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == 1) {
-			if (resultCode == RESULT_OK) {
-				String username = data.getStringExtra("username");
-				String password = data.getStringExtra("password");
-
-				((EditText) findViewById(R.id.editTextUsername))
-						.setText(username);
-				((EditText) findViewById(R.id.editTextPassword))
-						.setText(password);
-			}
-			if (resultCode == RESULT_CANCELED) {
-
-			}
-		}
 	}
 
 	/**

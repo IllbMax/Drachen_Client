@@ -32,26 +32,23 @@
             />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="10" >
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/textview_Quest_Description"
-            android:layout_width="0dp"
+            android:id="@+id/textview_Quest_Started"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:text="Lorem ipsum dolor sit, ich weis nicht wie es weiter geht..."
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textSize="12sp" 
+            />
+        <TextView
+            android:id="@+id/textview_Quest_Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Lorem ipsum dolor sit ..."
             android:textSize="15sp" 
             />
-    </LinearLayout>
 
     <ExpandableListView
         android:id="@+id/explistView_Quest_Questtargets"
@@ -59,4 +56,44 @@
         android:layout_height="wrap_content" >
     </ExpandableListView>
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hint_1" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+    
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hint_2" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+    
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hint_3" />
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    
 </LinearLayout>

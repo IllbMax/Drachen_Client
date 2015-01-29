@@ -70,9 +70,6 @@ public class Quest_overview_Activity extends Activity {
 				new ArrayList<Quest>());
 		_questListView.setAdapter(_questAdapter);
 
-		QuestLoadTask task = new QuestLoadTask();
-		task.execute();
-
 	}
 
 	@Override
@@ -81,6 +78,9 @@ public class Quest_overview_Activity extends Activity {
 		_questListView = (ExpandableListView) findViewById(R.id.explistView_Quest_overviewQuests);
 		_questAdapter = (QuestExpListAdapter) _questListView
 				.getExpandableListAdapter();
+
+		QuestLoadTask task = new QuestLoadTask();
+		task.execute();
 	}
 
 	private void finishQuest(Quest quest) {

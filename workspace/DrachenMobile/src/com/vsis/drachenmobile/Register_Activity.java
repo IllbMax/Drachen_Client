@@ -17,8 +17,8 @@ import android.widget.EditText;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.exception.InternalProcessException;
 import com.vsis.drachen.exception.InvalidParameterException;
-import com.vsis.drachen.exception.MissingParameterException;
 import com.vsis.drachen.exception.InvalidParameterException.InvalidType;
+import com.vsis.drachen.exception.MissingParameterException;
 import com.vsis.drachenmobile.helper.Helper;
 
 public class Register_Activity extends Activity {

@@ -124,7 +124,8 @@ public class SensorService {
 			List<ISensorSensitive> other = new LinkedList<ISensorSensitive>();
 			for (ISensorSensitive ss : _sensorDataReveiver)
 				if (ss.needsNewSensordata(_type)
-						&& sensorsRunning(ss.requiredSensors())) {
+				// && sensorsRunning(ss.requiredSensors())) {
+				) {
 					if (ss instanceof QuestTarget) {
 						QuestTarget qt = (QuestTarget) ss;
 						if (isTargetTracked(qt))
@@ -343,6 +344,26 @@ public class SensorService {
 			item.dispose();
 		}
 
+	}
+
+	/**
+	 * lists all available Sensor for non background observation. So these needs
+	 * to be activated to get data once
+	 * 
+	 * @return list of such sensors
+	 */
+	public List<ISensor> getQuickAccessSensors() {
+		ArrayList<ISensor> result = new ArrayList<ISensor>();
+		for (SensorType type : _map.keySet()) {
+			if (type.isBackgroundSensor())
+				continue;
+			SensorMapItem item = _map.get(type);
+			ISensor sensor = item.getDefaultSensor();
+			if (sensor != null && sensor.isAvailable())
+				result.add(sensor);
+		}
+
+		return result;
 	}
 
 }

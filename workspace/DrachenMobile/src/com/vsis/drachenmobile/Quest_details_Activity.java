@@ -1,10 +1,14 @@
 package com.vsis.drachenmobile;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +23,7 @@ import com.vsis.drachen.SensorService;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.sensor.SensorType;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.helper.Helper;
 import com.vsis.drachenmobile.task.QuestAbortTaskTemplate;
 import com.vsis.drachenmobile.util.ArrayDetailsExpandableListAdapter;
@@ -28,6 +33,13 @@ public class Quest_details_Activity extends Activity {
 	public static final String EXTRA_QUESTID = "questId";
 
 	int _questId;
+
+	/**
+	 * goes from 0-3: 0 no hint, 3 all 3 hints
+	 */
+	private int hintLevel = 0;
+	private boolean[] hasHint = new boolean[4];
+	private int[] hintLevelButtonId = new int[4];
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +86,22 @@ public class Quest_details_Activity extends Activity {
 		} else {
 			TextView textView_name = (TextView) findViewById(R.id.textview_Quest_Name);
 			TextView textView_desc = (TextView) findViewById(R.id.textview_Quest_Description);
+			TextView textView_stared = (TextView) findViewById(R.id.textview_Quest_Started);
 			Button buttonAbort = (Button) findViewById(R.id.listview_QuestDetails_AbortButton);
 
 			ExpandableListView listView_QuestTargets = (ExpandableListView) findViewById(R.id.explistView_Quest_Questtargets);
 
 			textView_name.setText(quest.getName());
 			textView_desc.setText(quest.getDescription());
+			java.text.DateFormat dateFormat = DateFormat.getDateFormat(this);
+			java.text.DateFormat timeFormat = DateFormat.getTimeFormat(this);
+			Date date = new Date(quest.getStartTimeMillis());
+			Calendar c = new GregorianCalendar();
+			c.setTime(date);
+
+			textView_stared.setText(getString(R.string.started_date_time,
+					dateFormat.format(date), timeFormat.format(date)));
+
 			buttonAbort.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -94,6 +116,65 @@ public class Quest_details_Activity extends Activity {
 					this, quest.getQuestTargets());
 			listView_QuestTargets.setAdapter(adapter);
 
+			// the hints
+			Button buttonHint1 = (Button) findViewById(R.id.button1);
+			Button buttonHint2 = (Button) findViewById(R.id.button2);
+			Button buttonHint3 = (Button) findViewById(R.id.button3);
+
+			TextView textViewHint1 = (TextView) findViewById(R.id.textView1);
+			TextView textViewHint2 = (TextView) findViewById(R.id.textView2);
+			TextView textViewHint3 = (TextView) findViewById(R.id.textView3);
+
+			hasHint[0] = true;
+			hintLevelButtonId[0] = 0;
+			hintLevelButtonId[1] = R.id.button1;
+			hintLevelButtonId[2] = R.id.button2;
+			hintLevelButtonId[3] = R.id.button3;
+			setHintButton(buttonHint1, textViewHint1, quest.getHint1(), 1);
+			setHintButton(buttonHint2, textViewHint2, quest.getHint2(), 2);
+			setHintButton(buttonHint3, textViewHint3, quest.getHint3(), 3);
+
+			setHintLevel(0);
+		}
+	}
+
+	private void setHintButton(Button buttonHint, final TextView textViewHint,
+			String hint, final int level) {
+		if (StringFunction.nullOrWhiteSpace(hint)) {
+			hasHint[level] = false;
+			buttonHint.setVisibility(View.GONE);
+			textViewHint.setVisibility(View.GONE);
+			textViewHint.setText("");
+		} else {
+			hasHint[level] = true;
+			buttonHint.setVisibility(View.GONE);
+			textViewHint.setVisibility(View.GONE);
+			textViewHint.setText(hint);
+
+			buttonHint.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					setHintLevel(level);
+					if (textViewHint.getVisibility() == View.VISIBLE)
+
+						textViewHint.setVisibility(View.GONE);
+					else
+						textViewHint.setVisibility(View.VISIBLE);
+				}
+			});
+		}
+	}
+
+	private void setHintLevel(int level) {
+		// TODO: maybe save hint level in quest
+		this.hintLevel = Math.max(hintLevel, level);
+		int maxIndex = Math.min(hintLevel, 2) + 1;
+
+		for (int i = 1; i <= maxIndex; i++) {
+			if (hasHint[i])
+				((Button) findViewById(hintLevelButtonId[i]))
+						.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -130,8 +211,7 @@ public class Quest_details_Activity extends Activity {
 			if (convertView == null) {
 				LayoutInflater infalInflater = (LayoutInflater) this._context
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = infalInflater.inflate(_layouts[childPosition],
-						null);
+				convertView = infalInflater.inflate(_layouts[0], null);
 			}
 
 			SensorType sensor = (SensorType) getChild(questTarget,
@@ -213,7 +293,7 @@ public class Quest_details_Activity extends Activity {
 			int i = 0;
 			SensorType sensor = null;
 			for (SensorType s : group.requiredSensors())
-				if (i == childPosition) {
+				if (i++ == childPosition) {
 					sensor = s;
 					break;
 				}
@@ -254,4 +334,8 @@ public class Quest_details_Activity extends Activity {
 		}
 	}
 
+	private class HintSystem {
+		int buttonId, textViewId;
+
+	}
 }
