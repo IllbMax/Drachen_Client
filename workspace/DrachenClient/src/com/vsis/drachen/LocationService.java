@@ -26,6 +26,7 @@ public class LocationService {
 
 	// SparseArray<Location> locationIdMap;
 	Map<Integer, Location> locationIdMap;
+	Map<String, Location> locationKeyMap;
 	List<Location> locationHierachy;
 
 	User user;
@@ -39,6 +40,7 @@ public class LocationService {
 		locationHierachy = new ArrayList<Location>();
 		// locationIdMap = new SparseArray<Location>();
 		locationIdMap = new HashMap<Integer, Location>();
+		locationKeyMap = new HashMap<String, Location>();
 
 		setClient(client);
 	}
@@ -70,6 +72,7 @@ public class LocationService {
 			throw new InternalProcessException(new NullPointerException());
 		locationHierachy.clear();
 		locationIdMap.clear();
+		locationKeyMap.clear();
 		for (Location loc : locs) {
 			loc.updateReferences();
 
@@ -84,6 +87,8 @@ public class LocationService {
 
 	private void addLocationToMap(Location loc) {
 		locationIdMap.put(loc.getId(), loc);
+		if (loc.getScannerKey() != null)
+			locationKeyMap.put(loc.getScannerKey(), loc);
 		for (Location l : loc.getChildLocations())
 			addLocationToMap(l);
 	}
@@ -141,6 +146,17 @@ public class LocationService {
 		}
 		System.out.println("getLocationFromPoint called:no location found");
 		return null;
+	}
+
+	/**
+	 * returns the location with the scannerkey key
+	 * 
+	 * @param key
+	 *            key for the location
+	 * @return location with the key or null if no such location exists
+	 */
+	public Location getLocationFromScannerKey(String key) {
+		return locationKeyMap.get(key);
 	}
 
 	synchronized public boolean SetRegion(int locationId) {

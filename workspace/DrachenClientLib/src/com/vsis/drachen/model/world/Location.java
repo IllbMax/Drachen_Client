@@ -9,6 +9,8 @@ public class Location extends IdObject implements ILocation {
 
 	private String name;
 	private String imageKey;
+
+	private String scannerKey;
 	private Location parentLocation = null;
 
 	private Set<Location> childLocations = new HashSet<Location>(0);
@@ -134,7 +136,7 @@ public class Location extends IdObject implements ILocation {
 	 */
 	@Override
 	public boolean isInside(Point p) {
-		return shape.Contains(p);
+		return shape != null && shape.Contains(p);
 	}
 
 	public Location findSublocation(String searchName) {
@@ -191,4 +193,21 @@ public class Location extends IdObject implements ILocation {
 		}
 	}
 
+	public String getScannerKey() {
+		return scannerKey;
+	}
+
+	public void setScannerKey(String scannerKey) {
+		this.scannerKey = scannerKey;
+	}
+
+	/**
+	 * defines if location is inside a building (so it has no gps
+	 * coordinate-shape)
+	 * 
+	 * @return true if it isn't reachable by GPS
+	 */
+	public boolean isInsideLocation() {
+		return shape == null;
+	}
 }

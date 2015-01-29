@@ -121,12 +121,15 @@ public class LocationLocalService extends Service {
 				// Toast.LENGTH_SHORT).show();
 
 				String[] tokens = input.split(":");
-				if (tokens[0].equals("location")) {
+				if (tokens[0].equals("location") && tokens.length >= 2) {
 
-					int locationId = Integer.parseInt(tokens[1]);
+					// int locationId = Integer.parseInt(tokens[1]);
+					String scannerKey = tokens[1].trim();
 
+					// Location room = locationService
+					// .getLocationForId(locationId);
 					Location room = locationService
-							.getLocationForId(locationId);
+							.getLocationFromScannerKey(scannerKey);
 					if (room != null) {
 						locationService.SetRegion(room);
 					}
