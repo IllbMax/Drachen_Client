@@ -162,6 +162,17 @@ public class Main_Activity extends Activity {
 			}
 		});
 
+		// btn = (Button) findViewById(R.id.button_main_usersNearby);
+		// btn.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// Intent intent = new Intent(Main_Activity.this,
+		// OtherUsers_Activity.class);
+		// startActivity(intent);
+		// }
+		// });
+
 	}
 
 	@Override
