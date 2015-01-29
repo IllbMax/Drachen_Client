@@ -11,6 +11,8 @@
     <string name="startQuest">Start</string>
     <string name="starting_quest">Starting Quest</string>
 	<string name="your_location">Current Location</string>
+	<string name="item_at_location">Items at Location:</string>
+	<string name="item_in_inventory">Items of %s</string>
 	<string name="greetings">Greetings %1$s</string>
 	<string name="logging_in">Logging in ...</string>
 	<string name="logging_out">Logging out ...</string>
@@ -82,4 +84,5 @@
     <string name="hint_3">OK the walkthrough</string>
     <string name="started_date_time">Started: %1$s %2$s</string>
     <string name="npc_talk">%1$s: „%2$s“</string>
+    <string name="inventory">Inventory</string>
 </resources>

@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.vsis.drachen.BlubClient;
+import com.vsis.drachen.ItemService;
 import com.vsis.drachen.LocationService;
 import com.vsis.drachen.NPCService;
 import com.vsis.drachen.QuestService;
@@ -48,6 +49,7 @@ public class MyDataSet {
 	private LocationService locationService;
 	private QuestService questService;
 	private NPCService npcService;
+	private ItemService itemService;
 	private SensorService sensorService;
 
 	private IMiniGame currentMinigame;
@@ -132,6 +134,7 @@ public class MyDataSet {
 			locationService = new LocationService(client);
 			questService = new QuestService(client);
 			npcService = new NPCService(client);
+			itemService = new ItemService(client);
 			sensorService = new SensorService(client);
 
 			setUser(user);
@@ -246,6 +249,7 @@ public class MyDataSet {
 		sensorService.dispose();
 		questService.dispose();
 		npcService.dispose();
+		itemService.dispose();
 		resourceService.dispose();
 	}
 
@@ -258,6 +262,7 @@ public class MyDataSet {
 		locationService.setUser(user);
 		questService.setUser(user);
 		npcService.setUser(user);
+		itemService.setUser(user);
 	}
 
 	public BlubClient getClient() {
@@ -274,6 +279,10 @@ public class MyDataSet {
 
 	public NPCService getNPCService() {
 		return npcService;
+	}
+
+	public ItemService getItemService() {
+		return itemService;
 	}
 
 	public SensorService getSensorService() {

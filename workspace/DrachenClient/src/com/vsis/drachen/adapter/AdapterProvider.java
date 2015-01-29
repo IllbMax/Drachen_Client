@@ -15,6 +15,11 @@ import com.vsis.drachen.exception.QuestFinishedException;
 import com.vsis.drachen.exception.QuestStartException;
 import com.vsis.drachen.exception.QuestTargetException;
 import com.vsis.drachen.exception.RestrictionException;
+import com.vsis.drachen.model.objects.ObjectEffect;
+import com.vsis.drachen.model.objects.ObjectEffectBreak;
+import com.vsis.drachen.model.objects.ObjectEffectTakeDrop;
+import com.vsis.drachen.model.objects.ObjectUseListener;
+import com.vsis.drachen.model.objects.ShakeObjectUseListener;
 import com.vsis.drachen.model.quest.AccelerationQuestTarget;
 import com.vsis.drachen.model.quest.GPSQuestTarget;
 import com.vsis.drachen.model.quest.IQuestTargetUpdateState;
@@ -48,6 +53,25 @@ public class AdapterProvider {
 		return adapter;
 	}
 
+	public static RuntimeTypeAdapter<ObjectUseListener> getObjectUseListenerAdapter() {
+		RuntimeTypeAdapter<ObjectUseListener> adapter = RuntimeTypeAdapter
+				.create(ObjectUseListener.class, "type");
+		adapter.registerSubtype(ShakeObjectUseListener.class);
+		// .registerSubtype(MoreObjectUseListener.class)
+
+		return adapter;// .create();
+	}
+
+	public static RuntimeTypeAdapter<ObjectEffect> getObjectEffectAdapter() {
+		RuntimeTypeAdapter<ObjectEffect> adapter = RuntimeTypeAdapter.create(
+				ObjectEffect.class, "type");
+		adapter.registerSubtype(ObjectEffectBreak.class);
+		adapter.registerSubtype(ObjectEffectTakeDrop.class);
+		// .registerSubtype(MoreObjectEffect.class)
+
+		return adapter;// .create();
+	}
+
 	public static RuntimeTypeAdapter<DrachenBaseException> getDrachenExceptionAdapter() {
 		RuntimeTypeAdapter<DrachenBaseException> adapter = RuntimeTypeAdapter
 				.create(DrachenBaseException.class, "type");
@@ -73,12 +97,15 @@ public class AdapterProvider {
 
 		return builder
 				.registerTypeAdapter(QuestTarget.class, getQuestTargetAdapter())
-				//
 				.registerTypeAdapter(Quest.class, getQuestAdapter())
 				.registerTypeAdapter(IQuestTargetUpdateState.class,
-						getQuestTargetUpdateStateAdapter()) //
+						getQuestTargetUpdateStateAdapter())
 				.registerTypeAdapter(DrachenBaseException.class,
-						getDrachenExceptionAdapter()) //
+						getDrachenExceptionAdapter())
+				.registerTypeAdapter(ObjectUseListener.class,
+						getObjectUseListenerAdapter())
+				.registerTypeAdapter(ObjectEffect.class,
+						getObjectEffectAdapter())
 		// .registerTypeAdapter(QuestTarget.class, getQuestTargetAdapter())
 		// .registerTypeAdapter(QuestTarget.class, getQuestTargetAdapter())
 
@@ -88,5 +115,4 @@ public class AdapterProvider {
 	private static QuestTypeAdapter getQuestAdapter() {
 		return new QuestTypeAdapter();
 	}
-
 }

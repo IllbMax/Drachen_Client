@@ -69,6 +69,11 @@ public class Main_Activity extends Activity {
 			intent = new Intent(this, Quest_overview_Activity.class);
 			startActivity(intent);
 			break;
+		case R.id.action_inventory:
+			intent = new Intent(this, ItemList_Activity.class);
+			intent.putExtra(ItemList_Activity.EXTRA_INVENTRORY, true);
+			startActivity(intent);
+			break;
 
 		}
 
@@ -112,8 +117,12 @@ public class Main_Activity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
+				// Intent intent = new Intent(Main_Activity.this,
+				// SensorManager_Activity.class);
+				// startActivity(intent);
 				Intent intent = new Intent(Main_Activity.this,
-						SensorManager_Activity.class);
+						ItemList_Activity.class);
+				intent.putExtra(ItemList_Activity.EXTRA_INVENTRORY, false);
 				startActivity(intent);
 			}
 		});

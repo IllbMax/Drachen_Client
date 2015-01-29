@@ -44,6 +44,10 @@ import com.vsis.drachen.exception.client.InvalidResultException;
 import com.vsis.drachen.model.NPC;
 import com.vsis.drachen.model.ResultWrapper;
 import com.vsis.drachen.model.User;
+import com.vsis.drachen.model.objects.Item;
+import com.vsis.drachen.model.objects.ObjectAction;
+import com.vsis.drachen.model.objects.ObjectEffect;
+import com.vsis.drachen.model.objects.ObjectEffectParameter;
 import com.vsis.drachen.model.quest.IQuestTargetUpdateState;
 import com.vsis.drachen.model.quest.Quest;
 import com.vsis.drachen.model.quest.QuestPrototype;
@@ -293,6 +297,59 @@ public class BlubClient {
 			ResultWrapper<List<NPC>> output = loadFormGson(
 					"showNPCsForLocation", param,
 					new TypeToken<ResultWrapper<List<NPC>>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.exception == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.exception;
+				e.fillInStackTrace();
+				throw e;
+			}
+
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidResultException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Load the Items for the location with the locationId
+	 * 
+	 * @param locationId
+	 *            Id of the location with the desired Items
+	 * @return Items for the location
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws IdNotFoundException
+	 *             if there is no location with locationId
+	 */
+	public List<Item> ItemsForLocation(int locationId)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, IdNotFoundException {
+
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("locationId", locationId);
+
+			ResultWrapper<List<Item>> output = loadFormGson(
+					"showItemsForLocation", param,
+					new TypeToken<ResultWrapper<List<Item>>>() {
 					}.getType());
 			if (output == null)
 				throw new InternalProcessException("Empty Result");
@@ -667,6 +724,72 @@ public class BlubClient {
 			e.printStackTrace();
 		}
 		return false;
+
+	}
+
+	/**
+	 * Performs the {@link ObjectEffect} of an {@link ObjectAction} on an
+	 * {@link Item}
+	 * 
+	 * @param itemId
+	 *            Id of the Item on witch the action will be performed
+	 * 
+	 * @param actionId
+	 *            Id of the performed {@link ObjectAction}
+	 * @return null if the action cannot performed, or an
+	 *         {@link ObjectEffectParameter} providing information for the local
+	 *         {@link ObjectEffect} and {@link ItemService}.
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the actionId or itemId parameter is missing (should not
+	 *             happen)
+	 * @throws IdNotFoundException
+	 *             if there is no {@link Item} with the id itemId or no
+	 *             {@link ObjectAction} with the id actionId
+	 * @throws ObjectRestrictionException
+	 *             if the item belongs to an other user
+	 * 
+	 */
+	public ObjectEffectParameter performObjectAction(int itemId, int actionId)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, MissingParameterException,
+			IdNotFoundException, ObjectRestrictionException {
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("itemId", itemId);
+			param.put("actionId", actionId);
+
+			ResultWrapper<ObjectEffectParameter> output = loadFormGson(
+					"performItemAction", param,
+					new TypeToken<ResultWrapper<ObjectEffectParameter>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (output.success)
+				return output.resultObject;
+			else if (output.exception == null)
+				return null;
+			else // there is an exception provided by the server
+			{
+				DrachenBaseException e = output.exception;
+				e.fillInStackTrace();
+				throw e;
+			}
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidResultException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 
 	}
 
