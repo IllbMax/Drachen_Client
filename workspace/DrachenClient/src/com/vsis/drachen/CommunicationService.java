@@ -15,14 +15,13 @@ import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
 
-public class LocationService {
+public class CommunicationService {
 
 	public static interface LocationChanged {
 		void Changed(Location oldLocation, Location newLocation);
 	}
 
 	BlubClient client;
-	private boolean inRoom;
 
 	// SparseArray<Location> locationIdMap;
 	Map<Integer, Location> locationIdMap;
@@ -34,8 +33,8 @@ public class LocationService {
 
 	private Date lastCurrentLocationSetTime = new Date();
 
-	public LocationService(BlubClient client) {
-		listener = new ArrayList<LocationService.LocationChanged>();
+	public CommunicationService(BlubClient client) {
+		listener = new ArrayList<CommunicationService.LocationChanged>();
 		locationHierachy = new ArrayList<Location>();
 		// locationIdMap = new SparseArray<Location>();
 		locationIdMap = new HashMap<Integer, Location>();
@@ -131,18 +130,6 @@ public class LocationService {
 		return null;
 	}
 
-	public Location getLocationFromName(String locationName) {
-		System.out.println("getLocationFromPoint called");
-		for (Location loc : locationHierachy) {
-			System.out.println("getLocationFromPoint called:checking location");
-			Location l = loc.findSublocation(locationName);
-			if (l != null)
-				return l;
-		}
-		System.out.println("getLocationFromPoint called:no location found");
-		return null;
-	}
-
 	synchronized public boolean SetRegion(int locationId) {
 		if (getCurrentLocation() == null
 				|| locationId != getCurrentLocation().getId()) {
@@ -202,22 +189,4 @@ public class LocationService {
 		// no resources, so all done
 
 	}
-
-	public void setDummyLocation() {
-
-	}
-
-	public boolean isInRoom() {
-		return inRoom;
-	}
-
-	public void enterRoom(Location room) {
-		this.inRoom = true;
-
-	}
-
-	public void leaveRoom() {
-		this.inRoom = false;
-	}
-
 }

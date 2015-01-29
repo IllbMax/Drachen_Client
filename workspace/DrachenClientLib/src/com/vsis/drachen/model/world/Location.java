@@ -21,7 +21,9 @@ public class Location extends IdObject implements ILocation {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#getName()
 	 */
 	@Override
@@ -29,7 +31,9 @@ public class Location extends IdObject implements ILocation {
 		return name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#getParentLocation()
 	 */
 	@Override
@@ -37,7 +41,9 @@ public class Location extends IdObject implements ILocation {
 		return parentLocation;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#getChildLocations()
 	 */
 	@Override
@@ -49,7 +55,9 @@ public class Location extends IdObject implements ILocation {
 	// return quests;
 	// }
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#getShape()
 	 */
 	@Override
@@ -57,15 +65,21 @@ public class Location extends IdObject implements ILocation {
 		return shape;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vsis.drachen.model.world.ILocation#setShape(com.vsis.drachen.model.world.Polygon)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vsis.drachen.model.world.ILocation#setShape(com.vsis.drachen.model
+	 * .world.Polygon)
 	 */
 	@Override
 	public void setShape(Polygon newShape) {
 		shape = newShape;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#setName(java.lang.String)
 	 */
 	@Override
@@ -73,7 +87,9 @@ public class Location extends IdObject implements ILocation {
 		name = newName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#getImageKey()
 	 */
 	@Override
@@ -81,7 +97,9 @@ public class Location extends IdObject implements ILocation {
 		return imageKey;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#setImageKey(java.lang.String)
 	 */
 	@Override
@@ -89,8 +107,12 @@ public class Location extends IdObject implements ILocation {
 		this.imageKey = imageKey;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vsis.drachen.model.world.ILocation#setParentLocation(com.vsis.drachen.model.world.Location)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vsis.drachen.model.world.ILocation#setParentLocation(com.vsis.drachen
+	 * .model.world.Location)
 	 */
 	@Override
 	public void setParentLocation(Location newParentLocation) {
@@ -103,16 +125,38 @@ public class Location extends IdObject implements ILocation {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vsis.drachen.model.world.ILocation#isInside(com.vsis.drachen.model.world.Point)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vsis.drachen.model.world.ILocation#isInside(com.vsis.drachen.model
+	 * .world.Point)
 	 */
 	@Override
 	public boolean isInside(Point p) {
 		return shape.Contains(p);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vsis.drachen.model.world.ILocation#findSublocation(com.vsis.drachen.model.world.Point)
+	public Location findSublocation(String searchName) {
+		if (this.name.equals(searchName)) {
+			return this;
+		} else {
+			for (Location child : childLocations) {
+				Location tmpLoc = child.findSublocation(searchName);
+				if (tmpLoc != null) {
+					return tmpLoc;
+				}
+			}
+		}
+		//
+		return null;
+	}
+
+	/**
+	 * search this and childlocations for the Location with the right name
+	 * 
+	 * @param p
+	 * @return null if no location contains the point
 	 */
 	@Override
 	public Location findSublocation(Point p) {
@@ -134,7 +178,9 @@ public class Location extends IdObject implements ILocation {
 	// quests.add(quest);
 	// }
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vsis.drachen.model.world.ILocation#updateReferences()
 	 */
 	@Override

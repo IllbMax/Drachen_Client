@@ -430,6 +430,57 @@ public class BlubClient {
 	}
 
 	/**
+	 * update the location on the server
+	 * 
+	 * @param Location
+	 *            the new location
+	 * @return true if change was successful
+	 * 
+	 * @throws DrachenBaseException
+	 *             if other exceptions occurred
+	 * @throws InternalProcessException
+	 *             if something went wrong at the server
+	 * @throws RestrictionException
+	 *             if the user wasn't logged in
+	 * @throws MissingParameterException
+	 *             if the location parameter is missing (should not happen)
+	 */
+	public boolean updateLocation(Location location)
+			throws DrachenBaseException, InternalProcessException,
+			RestrictionException, MissingParameterException,
+			IdNotFoundException {
+
+		try {
+
+			Map<String, Object> param = new LinkedHashMap<>();
+			param.put("locationId", location.getId());
+
+			ResultWrapper<Location> output = loadFormGson("setLocation", param,
+					new TypeToken<ResultWrapper<Object>>() {
+					}.getType());
+			if (output == null)
+				throw new InternalProcessException("Empty Result");
+			else if (!output.success) // there is an exception provided by the
+										// server
+			{
+				DrachenBaseException e = output.exception;
+				e.fillInStackTrace();
+				throw e;
+			}
+			return output.success;
+
+		} catch (ConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidResultException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	/**
 	 * Load the whole location-map (list of trees => forest)
 	 * 
 	 * @return List of all locations

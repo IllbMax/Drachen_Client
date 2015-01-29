@@ -75,6 +75,38 @@ public class Main_Activity extends Activity {
 			startActivity(intent);
 			break;
 
+		// case R.id.rooms_button:
+		//
+		// DrachenApplication app = (DrachenApplication) getApplication();
+		// MyDataSet appdata = app.getAppData();
+		// LocationService locationService = appdata.getLocationService();
+		// MenuItem roomsButton = (MenuItem) findViewById(R.id.rooms_button);
+		// if (locationService.isInRoom()) {
+		// locationService.leaveRoom();
+		//
+		// if (roomsButton != null) {
+		// roomsButton.setIcon(R.drawable.enter_room);
+		// }
+		// }
+		//
+		// // !!!!!!!!!!!!!!!!!!!barcode scanner
+		//
+		// String returnString = "location: 12341234";
+		// String[] tokens = returnString.split(":");
+		// if (tokens[0].equals("location")) {
+		//
+		// int locationId = Integer.parseInt(tokens[1]);
+		//
+		// Location room = locationService.getLocationForId(locationId);
+		// if (room != null) {
+		// locationService.SetRegion(room);
+		// if (roomsButton != null) {
+		// roomsButton.setIcon(R.drawable.leave_room);
+		// }
+		// }
+		// }
+		// break;
+
 		}
 
 		return true;
@@ -138,6 +170,17 @@ public class Main_Activity extends Activity {
 				startActivity(intent);
 			}
 		});
+
+		// btn = (Button) findViewById(R.id.button_main_usersNearby);
+		// btn.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View arg0) {
+		// Intent intent = new Intent(Main_Activity.this,
+		// OtherUsers_Activity.class);
+		// startActivity(intent);
+		// }
+		// });
 
 	}
 
