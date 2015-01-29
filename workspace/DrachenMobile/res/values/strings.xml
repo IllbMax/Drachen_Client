@@ -82,4 +82,6 @@
     <string name="hint_3">OK the walkthrough</string>
     <string name="started_date_time">Started: %1$s %2$s</string>
     <string name="npc_talk">%1$s: „%2$s“</string>
+    <string name="enter_room">Enter a room</string>
+    <string name="leave_room">Leave this room</string>
 </resources>

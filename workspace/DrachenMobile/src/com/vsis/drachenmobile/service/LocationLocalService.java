@@ -120,6 +120,18 @@ public class LocationLocalService extends Service {
 				// Toast.makeText(getApplicationContext(), input,
 				// Toast.LENGTH_SHORT).show();
 
+				String[] tokens = input.split(":");
+				if (tokens[0].equals("location")) {
+
+					int locationId = Integer.parseInt(tokens[1]);
+
+					Location room = locationService
+							.getLocationForId(locationId);
+					if (room != null) {
+						locationService.SetRegion(room);
+					}
+				}
+
 				return false;
 			}
 
@@ -129,7 +141,7 @@ public class LocationLocalService extends Service {
 				return true;
 			}
 		};
-		// sensorService.trackSensorReceiver(listener);
+		sensorService.trackSensorReceiver(listener);
 	}
 
 	private void installPositionListener() {
@@ -184,49 +196,52 @@ public class LocationLocalService extends Service {
 	}
 
 	protected void makeUseOfNewLocation(final GPSSensorData gps) {
+		if (!locationService.isInRoom()) {
+			Point p = new Point(gps.getLatitude(), gps.getLongitude());
+			final com.vsis.drachen.model.world.Location loc = locationService
+					.getLoationFromPoint(p);
 
-		Point p = new Point(gps.getLatitude(), gps.getLongitude());
-		final com.vsis.drachen.model.world.Location loc = locationService
-				.getLoationFromPoint(p);
+			Handler handler = new Handler(getMainLooper());
+			handler.post(new Runnable() {
 
-		Handler handler = new Handler(getMainLooper());
-		handler.post(new Runnable() {
-
-			@Override
-			public void run() {
-				// String data = String.format("Lat: %f, Lon: %f",
-				// gps.getLatitude(), gps.getLongitude());
-				// Toast.makeText(LocationLocalService.this, data,
-				// Toast.LENGTH_SHORT).show();
-
-				if (loc == null) {
-					// Toast.makeText(LocationLocalService.this, "no location",
+				@Override
+				public void run() {
+					// String data = String.format("Lat: %f, Lon: %f",
+					// gps.getLatitude(), gps.getLongitude());
+					// Toast.makeText(LocationLocalService.this, data,
 					// Toast.LENGTH_SHORT).show();
-				} else {
-					AsyncTask<Location, Void, Boolean> task = new AsyncTask<Location, Void, Boolean>() {
 
-						@Override
-						protected Boolean doInBackground(Location... params) {
-							Location loc = params[0];
-							boolean success = locationService.SetRegion(loc);
-							return success;
-						}
+					if (loc == null) {
+						// Toast.makeText(LocationLocalService.this,
+						// "no location",
+						// Toast.LENGTH_SHORT).show();
+					} else {
+						AsyncTask<Location, Void, Boolean> task = new AsyncTask<Location, Void, Boolean>() {
 
-						@Override
-						protected void onPostExecute(Boolean result) {
-							if (result != null && result) {
-								Toast.makeText(LocationLocalService.this,
-										"location:" + loc.getName(),
-										Toast.LENGTH_SHORT).show();
+							@Override
+							protected Boolean doInBackground(Location... params) {
+								Location loc = params[0];
+								boolean success = locationService
+										.SetRegion(loc);
+								return success;
 							}
+
+							@Override
+							protected void onPostExecute(Boolean result) {
+								if (result != null && result) {
+									Toast.makeText(LocationLocalService.this,
+											"location:" + loc.getName(),
+											Toast.LENGTH_SHORT).show();
+								}
+							};
+
 						};
+						task.execute(loc);
 
-					};
-					task.execute(loc);
-
+					}
 				}
-			}
-		});
+			});
+		}
 
 	}
 
@@ -284,4 +299,5 @@ public class LocationLocalService extends Service {
 		Toast.makeText(this, str, Toast.LENGTH_LONG).show();
 		Looper.loop();
 	}
+
 }

@@ -77,6 +77,27 @@ public class Location extends IdObject {
 	 * @param p
 	 * @return null if no location contains the point
 	 */
+	public Location findSublocation(String searchName) {
+		if (this.name.equals(searchName)) {
+			return this;
+		} else {
+			for (Location child : childLocations) {
+				Location tmpLoc = child.findSublocation(searchName);
+				if (tmpLoc != null) {
+					return tmpLoc;
+				}
+			}
+		}
+		//
+		return null;
+	}
+
+	/**
+	 * search this and childlocations for the Location with the right name
+	 * 
+	 * @param p
+	 * @return null if no location contains the point
+	 */
 	public Location findSublocation(Point p) {
 		if (isInside(p)) {
 			for (Location loc : childLocations) {

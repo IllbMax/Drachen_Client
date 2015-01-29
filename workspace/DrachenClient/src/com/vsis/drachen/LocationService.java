@@ -22,6 +22,7 @@ public class LocationService {
 	}
 
 	BlubClient client;
+	private boolean inRoom;
 
 	// SparseArray<Location> locationIdMap;
 	Map<Integer, Location> locationIdMap;
@@ -130,6 +131,18 @@ public class LocationService {
 		return null;
 	}
 
+	public Location getLocationFromName(String locationName) {
+		System.out.println("getLocationFromPoint called");
+		for (Location loc : locationHierachy) {
+			System.out.println("getLocationFromPoint called:checking location");
+			Location l = loc.findSublocation(locationName);
+			if (l != null)
+				return l;
+		}
+		System.out.println("getLocationFromPoint called:no location found");
+		return null;
+	}
+
 	synchronized public boolean SetRegion(int locationId) {
 		if (getCurrentLocation() == null
 				|| locationId != getCurrentLocation().getId()) {
@@ -193,4 +206,18 @@ public class LocationService {
 	public void setDummyLocation() {
 
 	}
+
+	public boolean isInRoom() {
+		return inRoom;
+	}
+
+	public void enterRoom(Location room) {
+		this.inRoom = true;
+
+	}
+
+	public void leaveRoom() {
+		this.inRoom = false;
+	}
+
 }
