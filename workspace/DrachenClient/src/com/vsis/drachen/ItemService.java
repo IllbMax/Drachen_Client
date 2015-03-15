@@ -19,6 +19,11 @@ import com.vsis.drachen.model.objects.Item;
 import com.vsis.drachen.model.objects.ObjectAction;
 import com.vsis.drachen.model.objects.ObjectEffectParameter;
 
+/**
+ * 
+ * Service to holding all items with automated reload, granting access to item
+ * and performing action of items
+ */
 public class ItemService {
 
 	private class LocationItem {
@@ -100,6 +105,12 @@ public class ItemService {
 		}
 	};
 
+	/**
+	 * Inits a new {@link ItemService}
+	 * 
+	 * @param client
+	 *            connection client for server interactions
+	 */
 	public ItemService(BlubClient client) {
 		itemIdMap = new HashMap<Integer, Item>();
 		locationIdItemMap = new HashMap<Integer, LocationItem>();
@@ -110,6 +121,12 @@ public class ItemService {
 		this.client = client;
 	}
 
+	/**
+	 * Sets the user (after login)
+	 * 
+	 * @param user
+	 *            currently active user
+	 */
 	public void setUser(User user) {
 		this.user = user;
 		if (user != null) {
@@ -118,6 +135,20 @@ public class ItemService {
 		}
 	}
 
+	/**
+	 * Returns a list of all {@link Item} belonging to the location
+	 * 
+	 * @param locationId
+	 *            id of the location
+	 * @param forceReload
+	 *            reloads the items from server even if no reload is necessary
+	 * @return List of items of that location
+	 * 
+	 * @throws InternalProcessException
+	 * @throws RestrictionException
+	 * @throws IdNotFoundException
+	 * @throws DrachenBaseException
+	 */
 	public synchronized List<Item> getPresentItemsForLocation(int locationId,
 			boolean forceReload) throws InternalProcessException,
 			RestrictionException, IdNotFoundException, DrachenBaseException {
@@ -150,12 +181,31 @@ public class ItemService {
 		return locationQuests.presentItems;
 	}
 
+	/**
+	 * Returns a list of all {@link Item} belonging to the location
+	 * 
+	 * @param locationId
+	 *            id of the location
+	 * @return List of items of that location
+	 * 
+	 * @throws InternalProcessException
+	 * @throws RestrictionException
+	 * @throws IdNotFoundException
+	 * @throws DrachenBaseException
+	 */
 	public synchronized List<Item> getPresentItemsForLocation(int locationId)
 			throws InternalProcessException, RestrictionException,
 			IdNotFoundException, DrachenBaseException {
 		return getPresentItemsForLocation(locationId, false);
 	}
 
+	/**
+	 * Returns the Item with the Id itemId
+	 * 
+	 * @param itemId
+	 *            id of the desired item
+	 * @return Item with Id itemId or null if no Id exists
+	 */
 	public Item getItemFromId(int itemId) {
 		return itemIdMap.get(itemId);
 	}
@@ -168,6 +218,21 @@ public class ItemService {
 		return itemIdMap.remove(itemId);
 	}
 
+	/**
+	 * Performs the {@link ObjectAction} of an {@link Item}.
+	 * 
+	 * @param action
+	 *            action of the item
+	 * @param item
+	 *            item for the action
+	 * @return True if the actions was performed successful
+	 * @throws MissingParameterException
+	 * @throws IdNotFoundException
+	 * @throws InternalProcessException
+	 * @throws RestrictionException
+	 * @throws ObjectRestrictionException
+	 * @throws DrachenBaseException
+	 */
 	public boolean performObjectAction(ObjectAction action, Item item)
 			throws MissingParameterException, IdNotFoundException,
 			InternalProcessException, RestrictionException,

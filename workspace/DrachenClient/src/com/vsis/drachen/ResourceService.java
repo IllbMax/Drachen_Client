@@ -19,6 +19,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * Class of resource managing. The resources used may vary with the concrete
+ * system (client). It contains Media like Images and Texts by default
+ */
 public class ResourceService {
 
 	public static final String ZIP_DIR_MAP = "map/";
@@ -72,6 +77,15 @@ public class ResourceService {
 	protected void loadOtherDataFromZip() {
 	}
 
+	/**
+	 * reads the strings from the XML resource into the Map
+	 * 
+	 * @param stream
+	 *            stream of the string xml
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	private void readXML_StringResouce(InputStream stream)
 			throws ParserConfigurationException, SAXException, IOException {
 
@@ -99,6 +113,13 @@ public class ResourceService {
 
 	}
 
+	/**
+	 * Gets the string with Id id
+	 * 
+	 * @param id
+	 *            idstring of the text/string resource
+	 * @return the resource with the id
+	 */
 	public String getString(String id) {
 		if (stringMap != null && stringMap.containsKey(id)) {
 			return stringMap.get(id);
@@ -106,16 +127,29 @@ public class ResourceService {
 			return ""; // or null ? ..
 	}
 
+	/**
+	 * Gets the ResourceObject for a Media resource with Id id
+	 * 
+	 * @param id
+	 *            Id of the media resource
+	 * @return the resource
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
 	public ResourceStream getMediaResourceStream(String id) throws IOException,
 			FileNotFoundException {
 		return getMediaResourceStream(id, true);
 	}
 
 	/**
+	 * Returns the Resource with Id id
 	 * 
 	 * @param id
+	 *            Id of the resource
 	 * @param inmedia
-	 * @return
+	 *            if true the desired resource belongs to the media resources
+	 * @return The resourcestream to the resource with Id id (remember to close
+	 *         the stream later)
 	 * @throws FileNotFoundException
 	 *             if the media resource does not exists
 	 * @throws IOException
@@ -133,6 +167,9 @@ public class ResourceService {
 		}
 	}
 
+	/**
+	 * Class representing a resource in form of a {@link InputStream}
+	 */
 	public class ResourceStream implements Closeable {
 		private InputStream stream;
 		private ZipFile file;
@@ -148,6 +185,7 @@ public class ResourceService {
 		}
 
 		public void close() throws IOException {
+			// close the zipfile of the stream
 			file.close();
 		}
 	}

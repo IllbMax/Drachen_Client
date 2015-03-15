@@ -14,6 +14,9 @@ import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.NPC;
 import com.vsis.drachen.model.User;
 
+/**
+ * Service to holding all NPCs with automated reload.
+ */
 public class NPCService {
 
 	private class LocationNPC {
@@ -57,6 +60,20 @@ public class NPCService {
 		this.user = user;
 	}
 
+	/**
+	 * Returns a list of all {@link NPC} at the location
+	 * 
+	 * @param locationId
+	 *            id of the location
+	 * @param forceReload
+	 *            reloads the items from server even if no reload is necessary
+	 * @return List of NPCs at that location
+	 * 
+	 * @throws InternalProcessException
+	 * @throws RestrictionException
+	 * @throws IdNotFoundException
+	 * @throws DrachenBaseException
+	 */
 	public synchronized List<NPC> getPresentNPCForLocation(int locationId,
 			boolean forceReload) throws InternalProcessException,
 			RestrictionException, IdNotFoundException, DrachenBaseException {
@@ -88,12 +105,31 @@ public class NPCService {
 		return locationQuests.presentNPC;
 	}
 
+	/**
+	 * Returns a list of all {@link NPC} at the location
+	 * 
+	 * @param locationId
+	 *            id of the location
+	 * @return List of NPCs at that location
+	 * 
+	 * @throws InternalProcessException
+	 * @throws RestrictionException
+	 * @throws IdNotFoundException
+	 * @throws DrachenBaseException
+	 */
 	public synchronized List<NPC> getPresentNPCForLocation(int locationId)
 			throws InternalProcessException, RestrictionException,
 			IdNotFoundException, DrachenBaseException {
 		return getPresentNPCForLocation(locationId, false);
 	}
 
+	/**
+	 * Get the NPC for id npcId
+	 * 
+	 * @param npcId
+	 *            the id
+	 * @return The NPC or null
+	 */
 	public NPC getNPCFromId(int npcId) {
 		return npcIdMap.get(npcId);
 	}
@@ -108,7 +144,6 @@ public class NPCService {
 
 	public void dispose() {
 		// no resources, all done
-
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.vsis.drachen.adapter;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
 import com.google.gson.typeadapters.RuntimeTypeAdapter;
 import com.vsis.drachen.exception.CredentialException;
 import com.vsis.drachen.exception.DrachenBaseException;
@@ -30,8 +31,18 @@ import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.quest.QuestTargetDefaultUpdateState;
 import com.vsis.drachen.model.quest.StringCompareQuestTarget;
 
+/**
+ * 
+ * Defines static Methods to easily initiate a {@link GsonBuilder} with
+ * application-specific {@link TypeAdapter}s.
+ */
 public class AdapterProvider {
 
+	/**
+	 * Get the adapter for the {@link QuestTarget} class hierarchy
+	 * 
+	 * @return The adapter for {@link QuestTarget} class hierarchy
+	 */
 	public static RuntimeTypeAdapter<QuestTarget> getQuestTargetAdapter() {
 		RuntimeTypeAdapter<QuestTarget> adapter = RuntimeTypeAdapter.create(
 				QuestTarget.class, "type");
@@ -44,6 +55,11 @@ public class AdapterProvider {
 		return adapter;
 	}
 
+	/**
+	 * Get the adapter for the {@link IQuestTargetUpdateState} class hierarchy
+	 * 
+	 * @return The adapter for {@link IQuestTargetUpdateState} class hierarchy
+	 */
 	public static RuntimeTypeAdapter<IQuestTargetUpdateState> getQuestTargetUpdateStateAdapter() {
 		RuntimeTypeAdapter<IQuestTargetUpdateState> adapter = RuntimeTypeAdapter
 				.create(IQuestTargetUpdateState.class, "type");
@@ -54,6 +70,11 @@ public class AdapterProvider {
 		return adapter;
 	}
 
+	/**
+	 * Get the adapter for the {@link ObjectUseListener} class hierarchy
+	 * 
+	 * @return The adapter for {@link ObjectUseListener} class hierarchy
+	 */
 	public static RuntimeTypeAdapter<ObjectUseListener> getObjectUseListenerAdapter() {
 		RuntimeTypeAdapter<ObjectUseListener> adapter = RuntimeTypeAdapter
 				.create(ObjectUseListener.class, "type");
@@ -63,6 +84,11 @@ public class AdapterProvider {
 		return adapter;// .create();
 	}
 
+	/**
+	 * Get the adapter for the {@link ObjectEffect} class hierarchy
+	 * 
+	 * @return The adapter for {@link ObjectEffect} class hierarchy
+	 */
 	public static RuntimeTypeAdapter<ObjectEffect> getObjectEffectAdapter() {
 		RuntimeTypeAdapter<ObjectEffect> adapter = RuntimeTypeAdapter.create(
 				ObjectEffect.class, "type");
@@ -74,6 +100,11 @@ public class AdapterProvider {
 		return adapter;// .create();
 	}
 
+	/**
+	 * Get the adapter for the exceptions that can occur at server calls.
+	 * 
+	 * @return The adapter for {@link DrachenBaseException} class hierarchy
+	 */
 	public static RuntimeTypeAdapter<DrachenBaseException> getDrachenExceptionAdapter() {
 		RuntimeTypeAdapter<DrachenBaseException> adapter = RuntimeTypeAdapter
 				.create(DrachenBaseException.class, "type");
@@ -95,6 +126,23 @@ public class AdapterProvider {
 		return adapter;
 	}
 
+	/**
+	 * Get Adapter for {@link Quest}.
+	 * 
+	 * @return Adapter for {@link Quest}.
+	 */
+	private static QuestTypeAdapter getQuestAdapter() {
+		return new QuestTypeAdapter();
+	}
+
+	/**
+	 * Add all (previous listed) {@link TypeAdapter} to the {@link GsonBuilder}
+	 * builder.
+	 * 
+	 * @param builder
+	 *            the builder which to which the adapter will be added.
+	 * @return {@link GsonBuilder} from the parameter
+	 */
 	public static GsonBuilder installAllAdapter(GsonBuilder builder) {
 
 		return builder
@@ -114,7 +162,4 @@ public class AdapterProvider {
 		;
 	}
 
-	private static QuestTypeAdapter getQuestAdapter() {
-		return new QuestTypeAdapter();
-	}
 }

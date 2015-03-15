@@ -11,18 +11,36 @@ import java.util.Set;
 import com.vsis.drachen.exception.DrachenBaseException;
 import com.vsis.drachen.model.ISensorSensitive;
 import com.vsis.drachen.model.quest.Quest;
+import com.vsis.drachen.model.quest.QuestProgressStatus;
 import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.SensorListener;
 import com.vsis.drachen.sensor.SensorType;
 import com.vsis.drachen.sensor.data.ISensorData;
 
+/**
+ * 
+ * Service managing the {@link ISensor}s. Distributes the received
+ * {@link ISensorData} to the {@link QuestTarget}s and other
+ * {@link ISensorSensitive} objects.
+ */
 public class SensorService {
 
 	public interface OnQuestTargetChangedListener {
 		void onQuestTargetChanged(QuestTarget qt);
 	}
 
+	/**
+	 * Representing a Item in the Sensor list, managing all sensors (and data)
+	 * of a specific {@link SensorType}.
+	 * 
+	 * There can only be one active (default) sensor for each {@link SensorType}
+	 * .
+	 * 
+	 * It implements the {@link SensorListener} interface to receive the
+	 * {@link ISensorData} from the default sensor.
+	 * 
+	 */
 	class SensorMapItem implements SensorListener {
 		List<ISensor> _registeredSensors;
 		private ISensor _defaultSensor;
@@ -37,14 +55,27 @@ public class SensorService {
 			_type = type;
 		}
 
+		/**
+		 * Determines if the default Sensor is running
+		 * 
+		 * @return
+		 */
 		public boolean isRunning() {
 			return getDefaultSensor() != null && getDefaultSensor().isRunning();
 		}
 
+		/**
+		 * Determines if the default Sensor is available
+		 * 
+		 * @return
+		 */
 		public boolean isAvailable() {
 			return getDefaultSensor() != null && getDefaultSensor().isRunning();
 		}
 
+		/**
+		 * Start the default sensor
+		 */
 		public void startDefault() {
 			ISensor s = getDefaultSensor();
 			if (s.isRunning())
@@ -62,11 +93,23 @@ public class SensorService {
 			}
 		}
 
+		/**
+		 * Add a sensor to sensors associated the the {@link SensorType}
+		 * 
+		 * @param sensor
+		 *            new sensor for the {@link SensorType}
+		 */
 		public void registerSensor(ISensor sensor) {
 
 			_registeredSensors.add(sensor);
 		}
 
+		/**
+		 * Removes the sensor from the list of associated sensors
+		 * 
+		 * @param sensor
+		 *            the to be removed sensor
+		 */
 		public void unregisterSensor(ISensor sensor) {
 			sensor.stop();
 			if (sensor.equals(_defaultSensor))
@@ -80,7 +123,8 @@ public class SensorService {
 			for (ISensor sensor : _registeredSensors) {
 				if (sensor != null) {
 					try {
-						sensor.stop();
+						sensor.stop(); // maybe ISensor should get a dispose
+										// method
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -142,10 +186,23 @@ public class SensorService {
 			sendSensorData_QuestTargets(updateTargets, _type, data);
 		}
 
+		/**
+		 * Register a lister which will receive data from the sensor
+		 * 
+		 * @param ss
+		 *            new listener
+		 */
 		public void addSensorReceiver(ISensorSensitive ss) {
 			_sensorDataReveiver.add(ss);
 		}
 
+		/**
+		 * Removes the listener from, so it will receive no more sensor data
+		 * 
+		 * @param ss
+		 *            the old listener
+		 * @return true if the listener was removed successful
+		 */
 		public boolean removeSensorReceiver(ISensorSensitive ss) {
 			return _sensorDataReveiver.remove(ss);
 		}
@@ -173,42 +230,107 @@ public class SensorService {
 		}
 	}
 
+	/**
+	 * Register listener for the QuestTargetChanged (if
+	 * {@link QuestProgressStatus} was changed) Event.
+	 * 
+	 * @param lst
+	 *            the new listener
+	 */
 	public void registerQuestTargetChangedListener(
 			OnQuestTargetChangedListener lst) {
 		_questTargetListeners.add(lst);
 	}
 
+	/**
+	 * removes the listener from the QuestTargetChaged event.
+	 * 
+	 * @param lst
+	 *            the old listener
+	 */
 	public void unregisterQuestTargetChangedListener(
 			OnQuestTargetChangedListener lst) {
 		_questTargetListeners.remove(lst);
 	}
 
+	/**
+	 * Calls all listener of the QuestTagetChanged event with the parameter qt
+	 * 
+	 * @param qt
+	 *            parameter of the listener function
+	 */
 	private void CallOnQuestTargetChangedListerns(QuestTarget qt) {
 		for (OnQuestTargetChangedListener lst : _questTargetListeners)
 			lst.onQuestTargetChanged(qt);
 	}
 
+	/**
+	 * Registers a sensor for the {@link SensorType} type
+	 * 
+	 * @param type
+	 *            datatype of the sensor
+	 * @param sensor
+	 *            new sensor
+	 */
 	public void registerSensor(SensorType type, ISensor sensor) {
 		_map.get(type).registerSensor(sensor);
 	}
 
+	/**
+	 * Unregisters a sensor for the {@link SensorType} type
+	 * 
+	 * @param type
+	 *            datatype of the sensor
+	 * @param sensor
+	 *            old sensor
+	 */
 	public void unregisterSensor(SensorType type, ISensor sensor) {
 		_map.get(type).unregisterSensor(sensor);
 	}
 
+	/**
+	 * Registers a sensor for the {@link SensorType} type (if its not
+	 * registered) and set the sensor as default.
+	 * 
+	 * @param type
+	 *            datatype of the sensor
+	 * @param sensor
+	 *            new sensor
+	 */
 	public void setDefaultSensor(SensorType type, ISensor sensor) {
 		_map.get(type).setDefaultSensor(sensor);
 	}
 
+	/**
+	 * Return the default sensor for the specific type
+	 * 
+	 * @param type
+	 *            Type of the sensor data
+	 * @return the default sensor or null
+	 */
 	public ISensor getDefaultSensor(SensorType type) {
 		return _map.get(type).getDefaultSensor();
 	}
 
+	/**
+	 * Determines if the target should receive new sensordata
+	 * 
+	 * @param questTarget
+	 *            the target to be checked
+	 * @return true if the {@link QuestTarget} should get new sensordata
+	 */
 	public boolean isTargetTracked(QuestTarget questTarget) {
 		return questTarget.getTrackTarget();
 		// return _trackedQuests.contains(questTarget);
 	}
 
+	/**
+	 * Add the {@link QuestTarget} to the list so that the target can receive
+	 * new sensordata
+	 * 
+	 * @param questTarget
+	 *            Target that should receive sensor data
+	 */
 	public void trackQuestTarget(QuestTarget questTarget) {
 		// TODO: create own method for next 2 lines
 		System.out.println(questTarget.getName());
@@ -218,6 +340,13 @@ public class SensorService {
 		_trackedQuests.add(questTarget);
 	}
 
+	/**
+	 * Removes the target from the list so that no more sensor data is send to
+	 * the target.
+	 * 
+	 * @param questTarget
+	 *            target that will receive no more sensor data
+	 */
 	public void untrackQuestTarget(QuestTarget questTarget) {
 		questTarget.setTrackTarget(false);
 		_trackedQuests.remove(questTarget);
@@ -226,16 +355,36 @@ public class SensorService {
 
 	}
 
+	/**
+	 * Tracks all target of the Quest
+	 * 
+	 * @see SensorService#trackQuestTarget(QuestTarget)
+	 * @param quest
+	 *            quest with the targets
+	 */
 	public void trackQuest(Quest quest) {
 		for (QuestTarget questTarget : quest.getQuestTargets())
 			trackQuestTarget(questTarget);
 	}
 
+	/**
+	 * Untracks all target of the Quest
+	 * 
+	 * @see SensorService#untrackQuestTarget(QuestTarget)
+	 * @param quest
+	 *            quest with the targets
+	 */
 	public void untrackQuest(Quest quest) {
 		for (QuestTarget questTarget : quest.getQuestTargets())
 			untrackQuestTarget(questTarget);
 	}
 
+	/**
+	 * Add a {@link ISensorSensitive} to the receiver list.
+	 * 
+	 * @param ss
+	 *            the new listener
+	 */
 	public void trackSensorReceiver(ISensorSensitive ss) {
 		if (ss instanceof QuestTarget)
 			trackQuestTarget((QuestTarget) ss);
@@ -243,6 +392,12 @@ public class SensorService {
 			_map.get(st).addSensorReceiver(ss);
 	}
 
+	/**
+	 * Removes the {@link ISensorSensitive} from the tracking list
+	 * 
+	 * @param ss
+	 *            The {@link ISensorSensitive} that will receive no more data.
+	 */
 	public void untrackSensorReceiver(ISensorSensitive ss) {
 		if (ss instanceof QuestTarget)
 			untrackQuestTarget((QuestTarget) ss);
@@ -265,6 +420,13 @@ public class SensorService {
 		return true;
 	}
 
+	/**
+	 * Determines if the required sensor is running
+	 * 
+	 * @param st
+	 *            SensorTypes which should checked
+	 * @return true if the default sensor of {@link SensorType} st is running
+	 */
 	public boolean sensorRunning(SensorType st) {
 		return _map.get(st).isRunning();
 
@@ -285,17 +447,31 @@ public class SensorService {
 		return true;
 	}
 
+	/**
+	 * Determines if the required sensor is available
+	 * 
+	 * @param st
+	 *            SensorTypes which should checked
+	 * @return true if the default sensor of {@link SensorType} st is available
+	 */
 	public boolean sensorAvailable(SensorType st) {
 		return _map.get(st).isAvailable();
 
 	}
 
 	/**
-	 * you can enter here asynchrony process if needed
+	 * Update the {@link QuestTarget}s with the new sensor data and updates the
+	 * changed status (if needed) at the server.
+	 * 
+	 * you can enter here asynchrony process if needed.
+	 * 
 	 * 
 	 * @param questTargets
+	 *            target with will get the new sensordata
 	 * @param type
+	 *            type of the data
 	 * @param data
+	 *            the new sensor data
 	 */
 	protected void sendSensorData_QuestTargets(List<QuestTarget> questTargets,
 			SensorType type, ISensorData data) {
@@ -327,6 +503,18 @@ public class SensorService {
 		}
 	}
 
+	/**
+	 * Updates all {@link ISensorSensitive} with the new data.
+	 * 
+	 * @param dataReceiver
+	 *            list of data {@link ISensorSensitive} which will get the new
+	 *            sensor data
+	 * 
+	 * @param type
+	 *            type of the data
+	 * @param data
+	 *            the new sensor data
+	 */
 	protected void sendSensorData_Other(List<ISensorSensitive> dataReceiver,
 			SensorType type, ISensorData data) {
 
@@ -348,7 +536,7 @@ public class SensorService {
 
 	/**
 	 * lists all available Sensor for non background observation. So these needs
-	 * to be activated to get data once
+	 * to be activated to get data once.
 	 * 
 	 * @return list of such sensors
 	 */

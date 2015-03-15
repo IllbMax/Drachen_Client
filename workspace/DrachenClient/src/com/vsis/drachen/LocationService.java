@@ -15,6 +15,10 @@ import com.vsis.drachen.model.User;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.drachen.model.world.Point;
 
+/**
+ * Service to holding all locations with automated reload and defines methods to
+ * change the user's location.
+ */
 public class LocationService {
 
 	public static interface LocationChanged {
@@ -25,9 +29,19 @@ public class LocationService {
 	private boolean inRoom;
 
 	// SparseArray<Location> locationIdMap;
+	/**
+	 * Map: locationId -> location
+	 */
 	Map<Integer, Location> locationIdMap;
+	/**
+	 * Map: scannerkey -> location
+	 */
 	Map<String, Location> locationKeyMap;
-	List<Location> locationHierachy;
+	/**
+	 * List of top level locations. (the locations itself build the tree with
+	 * all locations)
+	 */
+	List<Location> locationHierarchy;
 
 	User user;
 
@@ -37,7 +51,7 @@ public class LocationService {
 
 	public LocationService(BlubClient client) {
 		listener = new ArrayList<LocationService.LocationChanged>();
-		locationHierachy = new ArrayList<Location>();
+		locationHierarchy = new ArrayList<Location>();
 		// locationIdMap = new SparseArray<Location>();
 		locationIdMap = new HashMap<Integer, Location>();
 		locationKeyMap = new HashMap<String, Location>();
@@ -70,13 +84,13 @@ public class LocationService {
 		List<Location> locs = client.allLocationForest();
 		if (locs == null)
 			throw new InternalProcessException(new NullPointerException());
-		locationHierachy.clear();
+		locationHierarchy.clear();
 		locationIdMap.clear();
 		locationKeyMap.clear();
 		for (Location loc : locs) {
 			loc.updateReferences();
 
-			locationHierachy.add(loc);
+			locationHierarchy.add(loc);
 			addLocationToMap(loc);
 		}
 		if (user.getLocation() != null
@@ -93,10 +107,22 @@ public class LocationService {
 			addLocationToMap(l);
 	}
 
+	/**
+	 * Register a listener for the LocationChanged event
+	 * 
+	 * @param lst
+	 *            listener
+	 */
 	public void RegisterListener(LocationChanged lst) {
 		listener.add(lst);
 	}
 
+	/**
+	 * Unregister the listener for the LocationChanged event
+	 * 
+	 * @param lst
+	 *            listener
+	 */
 	public void UnregisterListener(LocationChanged lst) {
 		listener.remove(lst);
 	}
@@ -106,6 +132,11 @@ public class LocationService {
 			lst.Changed(oldLocation, newLocation);
 	}
 
+	/**
+	 * Return the current location of the user
+	 * 
+	 * @return location of the user
+	 */
 	public Location getCurrentLocation() {
 		return user.getLocation();
 	}
@@ -124,9 +155,18 @@ public class LocationService {
 		return this.lastCurrentLocationSetTime;
 	}
 
+	/**
+	 * Search through the location hierarchy to find the smallest (lowest in the
+	 * hierarchy-tree), which contains the {@link Point} p
+	 * 
+	 * @param p
+	 *            Point which should be contained by the location
+	 * @return the (smallest) location containing the point or null if no
+	 *         location contains the point
+	 */
 	public Location getLoationFromPoint(Point p) {
 		System.out.println("getLocationFromPoint called:" + p.getX());
-		for (Location loc : locationHierachy) {
+		for (Location loc : locationHierarchy) {
 			System.out.println("getLocationFromPoint called:checking location");
 			Location l = loc.findSublocation(p);
 			if (l != null)
@@ -136,15 +176,22 @@ public class LocationService {
 		return null;
 	}
 
+	/**
+	 * Search for the location with name locationName
+	 * 
+	 * @param locationName
+	 *            name of the desired location
+	 * @return Location with the name or null if no location found
+	 */
 	public Location getLocationFromName(String locationName) {
-		System.out.println("getLocationFromPoint called");
-		for (Location loc : locationHierachy) {
+
+		for (Location loc : locationHierarchy) {
 			System.out.println("getLocationFromPoint called:checking location");
 			Location l = loc.findSublocation(locationName);
 			if (l != null)
 				return l;
 		}
-		System.out.println("getLocationFromPoint called:no location found");
+		System.out.println("getLocationFromName called:no location found");
 		return null;
 	}
 
@@ -159,6 +206,14 @@ public class LocationService {
 		return locationKeyMap.get(key);
 	}
 
+	/**
+	 * Sets the the new location with the Id locationId.
+	 * 
+	 * @see LocationService#SetRegion(Location)
+	 * @param locationId
+	 *            id of the location
+	 * @return true if the setting was successful
+	 */
 	synchronized public boolean SetRegion(int locationId) {
 		if (getCurrentLocation() == null
 				|| locationId != getCurrentLocation().getId()) {
@@ -180,9 +235,12 @@ public class LocationService {
 	}
 
 	/**
+	 * Sets the the new location loc. the server will update the user's location
+	 * to loc (if it is valid).
 	 * 
 	 * @param loc
-	 * @return
+	 *            new location
+	 * @return true if the setting was successful
 	 */
 	synchronized public boolean SetRegion(Location loc) {
 		Location old = getCurrentLocation();
@@ -216,13 +274,13 @@ public class LocationService {
 
 	public void dispose() {
 		// no resources, so all done
-
 	}
 
 	public void setDummyLocation() {
 
 	}
 
+	// the Room functions aren't currently in use
 	public boolean isInRoom() {
 		return inRoom;
 	}

@@ -55,6 +55,9 @@ import com.vsis.drachen.model.quest.QuestTarget;
 import com.vsis.drachen.model.world.Location;
 import com.vsis.net.CookieManager;
 
+/**
+ * Class for (http(s)) server connection handling
+ */
 public class BlubClient {
 	private CookieManager cookieManager;
 	private URL _base;
