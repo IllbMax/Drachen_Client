@@ -9,6 +9,12 @@ import android.util.SparseArray;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.vsis.drachenmobile.R;
 
+/**
+ * 
+ * Hack class to start a {@link Activity} for a result. It simulates the work of
+ * {@link Activity#startActivityForResult(Intent, int, Bundle)} but callable
+ * from other classes than Activity (with a valid {@link Context})
+ */
 public class StartForResult_Activity extends Activity {
 
 	private static final String EXTRA_INTENT = "startForResult.intent";
@@ -24,6 +30,21 @@ public class StartForResult_Activity extends Activity {
 		void onActivityResult(int resultCode, Intent data);
 	}
 
+	/**
+	 * Start the Activity defined in intent for result and calls callback
+	 * 
+	 * @param ctx
+	 *            Context in which the activity will be started
+	 * @param intent
+	 *            intent of the desired activity
+	 * @param options
+	 *            options for the activity call
+	 * @param callback
+	 *            {@link IOnResultListener} that will be called with the result
+	 *            of the intent's {@link Activity}
+	 * 
+	 * @see Activity#startActivityForResult(Intent, int, Bundle)
+	 */
 	public static synchronized void startForResult(Context ctx, Intent intent,
 			Bundle options, IOnResultListener callback) {
 		Intent hack = new Intent(ctx, StartForResult_Activity.class);
@@ -39,6 +60,15 @@ public class StartForResult_Activity extends Activity {
 		ctx.startActivity(hack);
 	}
 
+	/**
+	 * Starts the XZing Scanner-Activity for result
+	 * 
+	 * @param ctx
+	 *            Context in which the scanner be be started
+	 * @param callback
+	 *            {@link IOnResultListener} that will be called with the result
+	 *            of the scanner
+	 */
 	public static synchronized void startForXZingResult(Context ctx,
 			IOnResultListener callback) {
 		Intent hack = new Intent(ctx, StartForResult_Activity.class);
@@ -62,11 +92,13 @@ public class StartForResult_Activity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_forresult);
+		// layout: invisible Activity
 
 		zxing = getIntent().getExtras().getBoolean(EXTRA_ZXING, false);
 		listener_id = getIntent().getExtras().getInt(EXTRA_CALLBACK);
 		listener = callback_map.get(listener_id);
 
+		// do a specific task for zxing scanner
 		if (zxing) {
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
@@ -95,6 +127,7 @@ public class StartForResult_Activity extends Activity {
 		} else if (requestCode == RESULTCODE) {
 			listener.onActivityResult(resultCode, data);
 		}
-		finish();
+		finish(); // make sure to end the activity after getting the (maybe bad
+					// result)
 	}
 }

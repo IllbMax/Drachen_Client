@@ -6,10 +6,10 @@ import java.util.List;
 
 import android.content.Context;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
 
 /**
- * 
- * @author
+ * Helper for {@link ExpandableListAdapter} to simply display a {@link HashMap}
  * 
  * @param <T>
  *            Type of the header items in List
