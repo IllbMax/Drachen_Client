@@ -11,13 +11,19 @@ import com.vsis.drachen.sensor.AbstractSensor;
 import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.AccelarationSensorData;
 
+/**
+ * {@link ISensor} that reads the acceleration data from the Android
+ * {@link Sensor} ({@link Sensor#TYPE_ACCELEROMETER}) and converts them to
+ * {@link AccelarationSensorData}
+ */
 public class AccelarationSensor extends AbstractSensor implements ISensor {
 
-	// private long _lastLocationReciev;
 	private Service _context;
 	private boolean _running;
 
-	private final SensorManager sensorService;
+	private final SensorManager sensorManager;
+
+	// last values and timestamps received by the sensor
 	private float[] values;
 	private long millis;
 	private long nanos;
@@ -28,7 +34,7 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		_context = ctx;
 		_running = false;
 
-		sensorService = (SensorManager) ctx
+		sensorManager = (SensorManager) ctx
 				.getSystemService(Context.SENSOR_SERVICE);
 
 	}
@@ -51,16 +57,16 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 	@Override
 	public void pause() {
 		_running = false;
-		sensorService.unregisterListener(accelSensorEventListener);
+		sensorManager.unregisterListener(accelSensorEventListener);
 	}
 
 	@Override
 	public void resume() {
-		Sensor sensor = sensorService
+		Sensor sensor = sensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 		if (sensor != null) {
-			sensorService.registerListener(accelSensorEventListener, sensor,
+			sensorManager.registerListener(accelSensorEventListener, sensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 			_running = true;
 			if (values != null) {
@@ -92,6 +98,13 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		return true;
 	}
 
+	/**
+	 * Convert the acceleration data from {@link SensorEvent} event to
+	 * {@link AccelarationSensorData} and calls the listener.
+	 * 
+	 * @param event
+	 *            acceleration event data from {@link Sensor}
+	 */
 	protected void useData(SensorEvent event) {
 		values = event.values;
 		millis = System.currentTimeMillis();
@@ -103,6 +116,10 @@ public class AccelarationSensor extends AbstractSensor implements ISensor {
 		callListener(new AccelarationSensorData(millis, nanos, x, y, z));
 	}
 
+	/**
+	 * Calls the listener with the last event data.
+	 * 
+	 */
 	protected void useDataOld() {
 		float x = values[0];
 		float y = values[1];

@@ -15,7 +15,16 @@ import com.vsis.drachen.sensor.AbstractSensor;
 import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.LocationSensorData;
 import com.vsis.drachenmobile.DrachenApplication;
+import com.vsis.drachenmobile.service.LocationLocalService;
 
+/**
+ * {@link ISensor} that receives {@link Location} change events from a
+ * {@link BroadcastReceiver} and converts them to {@link LocationSensorData}.
+ * 
+ * Compared to the {@link GPSSensor} this sensor will fire events less often
+ * caused it isn't based on a coordinate System but on the specific internal
+ * application {@link Location}.
+ */
 public class LocationSensor extends AbstractSensor implements ISensor {
 
 	private Date _lastLocationReciev;
@@ -90,6 +99,13 @@ public class LocationSensor extends AbstractSensor implements ISensor {
 		return true;
 	}
 
+	/**
+	 * Convert the {@link Location} data to {@link LocationSensorData} and calls
+	 * the listener.
+	 * 
+	 * @param location
+	 *            location from broadcast (by {@link LocationLocalService})
+	 */
 	protected void useData(Location location) {
 		long millis = System.currentTimeMillis();
 		long nanos = System.nanoTime();

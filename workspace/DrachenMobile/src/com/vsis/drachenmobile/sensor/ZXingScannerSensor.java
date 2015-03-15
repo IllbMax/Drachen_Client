@@ -11,6 +11,11 @@ import com.vsis.drachen.sensor.data.StringSensorData;
 import com.vsis.drachenmobile.util.StartForResult_Activity;
 import com.vsis.drachenmobile.util.StartForResult_Activity.IOnResultListener;
 
+/**
+ * {@link ISensor} that receives Strings from barcodes via the zxing code
+ * scanner and converts them to {@link StringSensorData}.
+ * 
+ */
 public class ZXingScannerSensor extends AbstractSensor implements ISensor {
 
 	private Context _ctx;
@@ -79,10 +84,21 @@ public class ZXingScannerSensor extends AbstractSensor implements ISensor {
 		return false;
 	}
 
+	/**
+	 * start the zxing intent
+	 */
 	private void startIntent() {
 		StartForResult_Activity.startForXZingResult(_ctx, callback);
 	}
 
+	/**
+	 * Convert the {@link String} data from barcode to {@link StringSensorData}
+	 * and calls the listener.
+	 * 
+	 * @param data
+	 *            string from barcode
+	 * 
+	 */
 	protected void useData(String data) {
 		long millis = System.currentTimeMillis();
 		long nanos = System.nanoTime();

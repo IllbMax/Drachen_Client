@@ -13,6 +13,12 @@ import com.vsis.drachen.sensor.data.StringSensorData;
 import com.vsis.drachenmobile.util.StartForResult_Activity;
 import com.vsis.drachenmobile.util.StartForResult_Activity.IOnResultListener;
 
+/**
+ * {@link ISensor} that receives Strings from speech input by the user (via the
+ * default {@link RecognizerIntent#ACTION_RECOGNIZE_SPEECH}) and converts them
+ * to {@link StringSensorData}.
+ * 
+ */
 public class SpeechSensor extends AbstractSensor implements ISensor {
 
 	private Context _ctx;
@@ -79,6 +85,10 @@ public class SpeechSensor extends AbstractSensor implements ISensor {
 		return false;
 	}
 
+	/**
+	 * start the intent for speech recognition by calling the activity for
+	 * result.
+	 */
 	private void startIntent() {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
@@ -86,6 +96,14 @@ public class SpeechSensor extends AbstractSensor implements ISensor {
 		StartForResult_Activity.startForResult(_ctx, intent, null, callback);
 	}
 
+	/**
+	 * Convert the list of {@link String} data to {@link StringSensorData} and
+	 * calls the listener.
+	 * 
+	 * @param data
+	 *            List of String recognized by the speech recognizer
+	 * 
+	 */
 	protected void useData(ArrayList<String> data) {
 		long millis = System.currentTimeMillis();
 		long nanos = System.nanoTime();

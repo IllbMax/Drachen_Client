@@ -12,6 +12,11 @@ import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.StringSensorData;
 import com.vsis.drachenmobile.R;
 
+/**
+ * {@link ISensor} that opens an input dialog for String and converts them to
+ * {@link StringSensorData}.
+ * 
+ */
 public class StringInputSensor extends AbstractSensor implements ISensor {
 
 	private Context _ctx;
@@ -67,6 +72,9 @@ public class StringInputSensor extends AbstractSensor implements ISensor {
 		return false;
 	}
 
+	/**
+	 * Start a AlertDialog with a textbox as input.
+	 */
 	private void startIntent() {
 
 		final EditText input = new EditText(_ctx);
@@ -96,6 +104,14 @@ public class StringInputSensor extends AbstractSensor implements ISensor {
 
 	}
 
+	/**
+	 * Convert the string data to {@link StringSensorData} and calls the
+	 * listener.
+	 * 
+	 * @param data
+	 *            CharSequence of the AlertDialog Textbox
+	 * 
+	 */
 	protected void useData(CharSequence data) {
 		long millis = System.currentTimeMillis();
 		long nanos = System.nanoTime();

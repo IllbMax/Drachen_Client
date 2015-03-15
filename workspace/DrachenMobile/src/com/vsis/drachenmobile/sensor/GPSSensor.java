@@ -14,9 +14,13 @@ import com.vsis.drachen.sensor.AbstractSensor;
 import com.vsis.drachen.sensor.ISensor;
 import com.vsis.drachen.sensor.data.GPSSensorData;
 
+/**
+ * {@link ISensor} that reads the GPS data ({@link Location}) from the Android
+ * {@link LocationManager} ({@link LocationManager#GPS_PROVIDER}) and converts
+ * them to {@link GPSSensorData}
+ */
 public class GPSSensor extends AbstractSensor implements ISensor {
 
-	// private long _lastLocationReciev;
 	private Service _context;
 	private boolean _running;
 	/**
@@ -90,11 +94,28 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 		_running = true;
 	}
 
+	/**
+	 * Convert the {@link Location} data to {@link GPSSensorData} and calls the
+	 * listener.
+	 * 
+	 * @param location
+	 *            location data from {@link LocationManager}.
+	 */
 	protected void useData(Location location) {
 		callListener(new GPSSensorData(location.getTime(), getNanos(location),
 				location.getLatitude(), location.getLongitude()));
 	}
 
+	/**
+	 * Compatibility for older API. {@link Location#getElapsedRealtimeNanos()}
+	 * introduced in API 17. Workaround with {@link System#nanoTime()} for lower
+	 * API (so there could be a different in time when calling nanoTime() and
+	 * get the data from the {@link LocationManager})
+	 * 
+	 * @param location
+	 *            location that (could) hold the nanotime
+	 * @return
+	 */
 	private long getNanos(Location location) {
 		if (Build.VERSION.SDK_INT >= 17)
 			return getNanos_o17(location);
@@ -112,6 +133,10 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 		return System.nanoTime();
 	}
 
+	/**
+	 * Removes the {@link LocationListener} {@link GPSSensor#locationListener}
+	 * from {@link LocationManager} so there is no more GPS data receiving.
+	 */
 	private synchronized void unregisterLocationListener() {
 		if (_isRegistered) {
 			LocationManager locationManager = (LocationManager) _context
@@ -121,6 +146,10 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 		}
 	}
 
+	/**
+	 * Add the {@link GPSSensor#locationListener} to the {@link LocationManager}
+	 * so it can receive data from it.
+	 */
 	private synchronized void startLoctionListener() {
 		if (!_isRegistered) {
 			LocationManager locationManager = (LocationManager) _context
@@ -138,6 +167,9 @@ public class GPSSensor extends AbstractSensor implements ISensor {
 		}
 	}
 
+	/**
+	 * Initialize the {@link GPSSensor#locationListener}.
+	 */
 	private void initLocationListener() {
 		locationListener = new LocationListener() {
 			public void onLocationChanged(android.location.Location location) {
