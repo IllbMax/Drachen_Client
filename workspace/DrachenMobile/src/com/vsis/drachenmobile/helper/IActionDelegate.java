@@ -1,7 +1,7 @@
 package com.vsis.drachenmobile.helper;
 
 /**
- * Defines a parameter less delegate
+ * Defines a parameter less delegate.
  * 
  */
 public interface IActionDelegate {

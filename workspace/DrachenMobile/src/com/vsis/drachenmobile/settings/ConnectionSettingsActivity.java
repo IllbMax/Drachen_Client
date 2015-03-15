@@ -6,6 +6,11 @@ import android.preference.PreferenceFragment;
 
 import com.vsis.drachenmobile.R;
 
+/**
+ * 
+ * Activity handling the interaction with server connection related settings
+ * (currently one: the base the server's base).
+ */
 public class ConnectionSettingsActivity extends Activity {
 
 	public static final String KEY_PREF_BASE_URL = "pref_base_url";

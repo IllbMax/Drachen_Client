@@ -13,6 +13,10 @@ import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.R;
 import com.vsis.drachenmobile.service.AndroidDrachenResourceService;
 
+/**
+ * 
+ * Defines static methods for utility.
+ */
 public final class Helper {
 	private Helper() {
 	}
@@ -40,6 +44,7 @@ public final class Helper {
 	 * @param ctx
 	 *            The Context
 	 * @param progress
+	 *            Progress which will be described
 	 * @return string for the status
 	 */
 	public static String getProgressDisplayText(Context ctx, boolean finished,
@@ -71,6 +76,7 @@ public final class Helper {
 	 * @param ctx
 	 *            The Context
 	 * @param progress
+	 *            Progress which will be colored.
 	 * @return color for the status
 	 */
 	public static int getProgressDisplayColor(Context ctx, boolean finished,
