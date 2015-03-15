@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -36,6 +37,10 @@ import com.vsis.drachenmobile.sensor.SpeechSensor;
 import com.vsis.drachenmobile.sensor.StringInputSensor;
 import com.vsis.drachenmobile.sensor.ZXingScannerSensor;
 
+/**
+ * Local {@link Service} that coordinates primely {@link Location} related
+ * operations in the background.
+ */
 public class LocationLocalService extends Service {
 
 	public class MyBinder extends Binder {
@@ -56,6 +61,11 @@ public class LocationLocalService extends Service {
 		// initialize();
 	}
 
+	/**
+	 * Initialize the {@link ISensor}s, {@link OnQuestTargetChangedListener},
+	 * GPS sensor listener to update current user location and Code-Scanner
+	 * sensor to enter rooms.
+	 */
 	public void initialize() {
 		DrachenApplication app = (DrachenApplication) getApplication();
 		locationService = app.getAppData().getLocationService();
@@ -147,6 +157,9 @@ public class LocationLocalService extends Service {
 		sensorService.trackSensorReceiver(listener);
 	}
 
+	/**
+	 * Initialize the GPS sensor to update the current {@link Location}
+	 */
 	private void installPositionListener() {
 		positionListener = new ISensorSensitive() {
 			private final EnumSet<SensorType> sensors = EnumSet
@@ -187,6 +200,9 @@ public class LocationLocalService extends Service {
 		return _binder;
 	}
 
+	/**
+	 * Initialize the {@link BroadcastReceiver} for {@link Location} changes
+	 */
 	private void installDrachenLocationListener() {
 		drachenLocationListener = new LocationChanged() {
 
@@ -198,6 +214,12 @@ public class LocationLocalService extends Service {
 		locationService.RegisterListener(drachenLocationListener);
 	}
 
+	/**
+	 * determines the current {@link Location} from the {@link GPSSensorData}
+	 * gps and calls the {@link LocationService} to update the {@link Location}.
+	 * 
+	 * @param gps
+	 */
 	protected void makeUseOfNewLocation(final GPSSensorData gps) {
 		if (!locationService.isInRoom()) {
 			Point p = new Point(gps.getLatitude(), gps.getLongitude());
