@@ -55,10 +55,10 @@
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/button_main_SensorManager"
+        android:id="@+id/button_main_Items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sensormanager"
+        android:text="Items"
         android:visibility="visible" />
 
     <Button

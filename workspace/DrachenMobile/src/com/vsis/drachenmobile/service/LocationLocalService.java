@@ -116,7 +116,7 @@ public class LocationLocalService extends Service {
 
 				String input = sdata.getFirstString();
 
-				showToastInThread(input);
+				// showToastInThread(input);
 				// Toast.makeText(getApplicationContext(), input,
 				// Toast.LENGTH_SHORT).show();
 

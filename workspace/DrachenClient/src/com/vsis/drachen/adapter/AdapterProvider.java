@@ -17,6 +17,7 @@ import com.vsis.drachen.exception.QuestTargetException;
 import com.vsis.drachen.exception.RestrictionException;
 import com.vsis.drachen.model.objects.ObjectEffect;
 import com.vsis.drachen.model.objects.ObjectEffectBreak;
+import com.vsis.drachen.model.objects.ObjectEffectCreate;
 import com.vsis.drachen.model.objects.ObjectEffectTakeDrop;
 import com.vsis.drachen.model.objects.ObjectUseListener;
 import com.vsis.drachen.model.objects.ShakeObjectUseListener;
@@ -67,6 +68,7 @@ public class AdapterProvider {
 				ObjectEffect.class, "type");
 		adapter.registerSubtype(ObjectEffectBreak.class);
 		adapter.registerSubtype(ObjectEffectTakeDrop.class);
+		adapter.registerSubtype(ObjectEffectCreate.class);
 		// .registerSubtype(MoreObjectEffect.class)
 
 		return adapter;// .create();

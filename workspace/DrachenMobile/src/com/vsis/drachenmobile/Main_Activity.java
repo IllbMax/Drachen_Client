@@ -144,7 +144,7 @@ public class Main_Activity extends Activity {
 			}
 		});
 
-		btn = (Button) findViewById(R.id.button_main_SensorManager);
+		btn = (Button) findViewById(R.id.button_main_Items);
 		btn.setOnClickListener(new OnClickListener() {
 
 			@Override

@@ -3,14 +3,17 @@ package com.vsis.drachenmobile;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +33,7 @@ import com.vsis.drachen.model.objects.Item;
 import com.vsis.drachen.model.objects.ObjectAction;
 import com.vsis.drachen.model.objects.ObjectUseListener;
 import com.vsis.drachen.model.objects.ObjectUseListener.IOnActionEventLister;
+import com.vsis.drachen.util.StringFunction;
 import com.vsis.drachenmobile.helper.Helper;
 
 public class Item_details_Activity extends Activity {
@@ -83,6 +87,12 @@ public class Item_details_Activity extends Activity {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		_itemId = savedInstanceState.getInt(EXTRA_ITEMID);
 		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
+	public void onBackPressed() {
+		setResult(RESULT_CANCELED);
+		super.onBackPressed();
 	}
 
 	private void displayItem() {
@@ -172,6 +182,7 @@ public class Item_details_Activity extends Activity {
 					@Override
 					public void run() {
 						synchronized (item) {
+
 							untrackListeners();
 							performAction(a, item);
 						}
@@ -246,15 +257,31 @@ public class Item_details_Activity extends Activity {
 			super.onPostExecute(result);
 			if (result != null && result) {
 				ringProgressDialog.dismiss();
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						Item_details_Activity.this);
-				builder.setTitle(action.getName());
-				builder.setMessage(action.getActionDescription());
+				if (StringFunction.nullOrWhiteSpace(action
+						.getActionDescription())) {
+					setResult(RESULT_OK);
+					finish();
 
-				builder.show();
+				} else {
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							Item_details_Activity.this);
+					builder.setTitle(action.getName());
+					builder.setMessage(action.getActionDescription());
+					builder.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
 
-				setResult(RESULT_OK);
-				finish();
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									setResult(RESULT_OK);
+									finish();
+								}
+							});
+					setResult(RESULT_OK);
+					if (Build.VERSION.SDK_INT >= 17)
+						setOnDismiss(builder);
+					builder.show();
+				}
 			} else {
 				String message = getErrorString();
 
@@ -267,6 +294,18 @@ public class Item_details_Activity extends Activity {
 				builder.show();
 			}
 
+		}
+
+		@TargetApi(17)
+		private void setOnDismiss(AlertDialog.Builder builder) {
+			builder.setOnDismissListener(new OnDismissListener() {
+
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					setResult(RESULT_OK);
+					finish();
+				}
+			});
 		}
 
 		private String getErrorString() {

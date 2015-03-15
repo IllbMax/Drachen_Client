@@ -103,10 +103,6 @@ public class ItemList_Activity extends Activity {
 			}
 		});
 
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-				locationChangedReceiver,
-				new IntentFilter(DrachenApplication.EVENT_LOCATION_CHANGED));
-
 		MyDataSet appData = ((DrachenApplication) getApplication())
 				.getAppData();
 		LocationService locationService = appData.getLocationService();
@@ -118,6 +114,12 @@ public class ItemList_Activity extends Activity {
 			actionBar.setSubtitle(getString(R.string.item_in_inventory, appData
 					.getUser().getDisplayName()));
 		} else {
+			LocalBroadcastManager.getInstance(this)
+					.registerReceiver(
+							locationChangedReceiver,
+							new IntentFilter(
+									DrachenApplication.EVENT_LOCATION_CHANGED));
+
 			setDisplayLocation(locationService.getCurrentLocation());
 			actionBar.setSubtitle(getString(R.string.item_at_location));
 		}
@@ -163,6 +165,21 @@ public class ItemList_Activity extends Activity {
 		_lastLocationReciev.setTime(savedInstanceState.getLong("lastRecieve"));
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 0)
+			if (resultCode == RESULT_OK)
+				if (isInventory) {
+					setInventory();
+				} else {
+					LocationService locationService = ((DrachenApplication) getApplication())
+							.getAppData().getLocationService();
+					setDisplayLocation(locationService.getCurrentLocation());
+				}
+
+	}
+
 	private void showDetails(Item item) {
 		Intent intent = new Intent(this, Item_details_Activity.class);
 		intent.putExtra(Item_details_Activity.EXTRA_ITEMID, item.getId());
@@ -182,6 +199,7 @@ public class ItemList_Activity extends Activity {
 		locationView.setText(Helper.getLocationDisplay(ItemList_Activity.this,
 				location));
 
+		_itemAdapter.clear();
 		if (location != null) {
 			ItemLoadTask task = new ItemLoadTask(forceReload);
 			task.execute(location.getId());
@@ -315,6 +333,7 @@ public class ItemList_Activity extends Activity {
 		protected void onPostExecute(Collection<Item> result) {
 			super.onPostExecute(result);
 			if (result != null) {
+				_itemAdapter.clear();
 				_itemAdapter.addAll(result);
 				_itemAdapter.notifyDataSetChanged();
 				ringProgressDialog.dismiss();
